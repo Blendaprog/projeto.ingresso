@@ -1,0 +1,24 @@
+<div class="pix-container">
+  <div class="pix-card">
+
+    <h2> Pagamento via Cartão</h2>
+
+    <p>Preencha os dados do cartão para continuar</p>
+
+    <form method="POST">
+
+      <input type="text" placeholder="Número do cartão" class="form-control mb-2">
+      <input type="text" placeholder="Nome no cartão" class="form-control mb-2">
+      <input type="text" placeholder="Validade" class="form-control mb-2">
+      <input type="text" placeholder="CVV" class="form-control mb-2">
+
+      <button class="pix-btn">Pagar com cartão</button>
+
+    </form>
+
+    <a href="{{ url_for('home') }}" class="btn btn-outline-light w-100 mt-3">
+      Voltar
+    </a>
+
+  </div>
+</div>

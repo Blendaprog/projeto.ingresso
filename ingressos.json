@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": 1,
+    "show": "Veigh",
+    "preco": 200.0,
+    "local": "Allianz Parque - São Paulo",
+    "data": "2026-09-15",
+    "pagamento": "PIX",
+    "usuario_id": 1,
+    "codigo": "a99e65ac"
+  }
+]

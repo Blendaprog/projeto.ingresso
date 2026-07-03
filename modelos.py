@@ -2,7 +2,18 @@ from datetime import datetime
 
 
 class Usuario:
-    def __init__(self, id, nome, email, senha, tipo, data_nascimento, genero, foto="sem_foto.png", ingressos=None):
+    def __init__(
+        self,
+        id,
+        nome,
+        email,
+        senha,
+        tipo="usuario",
+        data_nascimento="",
+        genero="",
+        foto="sem_foto.png",
+        ingressos=None
+    ):
         self.id = id
         self.nome = nome
         self.email = email
@@ -28,14 +39,25 @@ class Usuario:
 
 
 class Ingresso:
-    def __init__(self, id, show, preco, local, data, pagamento, usuario_id):
+    def __init__(
+        self,
+        id,
+        show,
+        preco,
+        local,
+        data,
+        pagamento,
+        usuario_id,
+        codigo=None
+    ):
         self.id = id
         self.show = show
-        self.preco = preco
+        self.preco = float(preco)
         self.local = local
         self.data = data
         self.pagamento = pagamento
         self.usuario_id = usuario_id
+        self.codigo = codigo
 
     def to_dict(self):
         return {
@@ -45,5 +67,6 @@ class Ingresso:
             "local": self.local,
             "data": self.data,
             "pagamento": self.pagamento,
-            "usuario_id": self.usuario_id
+            "usuario_id": self.usuario_id,
+            "codigo": self.codigo
         }

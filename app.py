@@ -1,104 +1,63 @@
 import json
-import qrcode
 import os
 import uuid
-
+import random
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session
-from modelos import Usuario, Ingresso
 from functools import wraps
+
+import mercadopago
+import qrcode
+
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_mail import Mail, Message
+
+from modelos import Usuario, Ingresso
 
 app = Flask(__name__)
 app.secret_key = "segredo"
 
+# =========================
+# MERCADO PAGO
+# =========================
+sdk = mercadopago.SDK("SEU_ACCESS_TOKEN_DE_TESTE")  # Depois troque pelo seu Access Token
+
+# =========================
+# FLASK-MAIL
+# =========================
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "ticketshows26@gmail.com"
+app.config["MAIL_PASSWORD"] = "SUA_SENHA_DE_APP"
+
+mail = Mail(app)
+
+# =========================
+# DADOS
+# =========================
 usuarios = [
     Usuario(1, "Admin", "admin@gmail.com", "123", "admin", "2000-01-01", "M")
 ]
 
-shows = []
 ingressos = []
+@app.route("/pagar", methods=["POST"])
+def pagar():
 
-def login_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if "usuario" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return wrapper
-
-def admin_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if session.get("tipo") != "admin":
-            return "Acesso negado"
-        return f(*args, **kwargs)
-    return wrapper
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        senha = request.form["senha"]
-
-        for u in usuarios:
-            if u.email == email and u.senha == senha:
-                session["usuario"] = u.email
-                session["tipo"] = u.tipo
-                return redirect(url_for("home"))
-
-        return "Login inválido"
-
-    return render_template("login.html")
-
-@app.route("/")
-@login_required
-def home():
-    return render_template("home.html", tipo=session["tipo"])
-
-@app.route("/cadastrar_show", methods=["GET", "POST"])
-@login_required
-@admin_required
-def cadastrar_show():
-    if request.method == "POST":
-        show = {
-            "id": len(shows) + 1,
-            "nome": request.form["nome"],
-            "preco": request.form["preco"],
-            "admin": session["usuario"]
+    pagamento = {
+        "transaction_amount": float(request.form["valor"]),
+        "description": "Compra de ingresso",
+        "payment_method_id": "pix",
+        "payer": {
+            "email": "teste@email.com"
         }
+    }
 
-        shows.append(show)
-        return redirect(url_for("meus_shows"))
+    resultado = sdk.payment().create(pagamento)
 
-    return render_template("cadastrar_show.html")
+    qr_code = resultado["response"]["point_of_interaction"]["transaction_data"]["qr_code"]
 
-@app.route("/meus_shows")
-@login_required
-@admin_required
-def meus_shows():
-    meus = [s for s in shows if s["admin"] == session["usuario"]]
-    return render_template("meus_shows.html", shows=meus)
+    return render_template("pix.html", qr_code=qr_code)
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "usuario" not in session:
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-usuarios = []
-ingressos = []
 
 SHOWS = [
     {
@@ -180,7 +139,6 @@ SHOWS = [
         "idade_minima": 16,
         "categoria": "Trap",
         "imagem": "ghard.png"
-
     },
     {
         "id": 9,
@@ -261,47 +219,44 @@ SHOWS = [
         "idade_minima": 14,
         "categoria": "R&B",
         "imagem": "gaab.png"
-
     },
     {
         "id": 17,
         "nome": "Brandão",
-        "preco": "250",
+        "preco": 250,
         "local": "A definir!",
         "data": "A definir!",
-        "idade_minima": "16",
+        "idade_minima": 16,
         "categoria": "Trap",
         "imagem": "BRANDAO.png"
-
-
     },
     {
-         "id": 18,
+        "id": 18,
         "nome": "Kyan",
-        "preco": "220",
+        "preco": 220,
         "local": "A definir!",
-        "data": " A definir! ",
-        "idade_minima": "18 ",
+        "data": "A definir!",
+        "idade_minima": 18,
         "categoria": "Trap",
         "imagem": "kyan.png"
     },
     {
         "id": 19,
         "nome": "Marina Sena",
-        "preco": "220",
+        "preco": 220,
         "local": "Parque Ibirapuera!",
         "data": "2026-06-13",
-        "idade_minima": "16 ",
+        "idade_minima": 16,
         "categoria": "Trap",
         "imagem": "marinasena.png"
     },
     {
         "id": 20,
-        "nome": " Mc paiva",
-        "preco": "180",
-        "local": " Vigor On Stage",
+        "nome": "Mc paiva",
+        "preco": 180,
+        "local": "Vigor On Stage",
         "data": "2026-07-18",
-        "idade_minima": "18 ",
+        "idade_minima": 18,
         "categoria": "Funk",
         "imagem": "paiva.png"
     },
@@ -322,7 +277,7 @@ SHOWS = [
         "local": "Tokio Marine Hall",
         "data": "2026-04-14",
         "idade_minima": 16,
-            "categoria": "Trap",
+        "categoria": "Trap",
         "imagem": "vulgofk.png"
     },
     {
@@ -529,24 +484,430 @@ SHOWS = [
     }
 ]
 
-from datetime import datetime
+def corrigir_shows():
+    for s in SHOWS:
+        if "lotes" not in s:
+            preco = s["preco"]
 
-hoje = datetime.now().date()
+            s["lote_atual"] = 1
+            s["ingressos_total"] = 100
+            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0)
+
+            s["lotes"] = [
+                {"limite": 50, "preco": preco},
+                {"limite": 100, "preco": round(preco * 1.2, 2)},
+                {"limite": 150, "preco": round(preco * 1.4, 2)}
+            ]
+corrigir_shows()
+
+# ---------------------------------------------------------------------------
+# Carrega usuarios salvos em disco (se existir o arquivo)
+# ---------------------------------------------------------------------------
+try:
+    with open("usuarios.json", "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+        usuarios = [Usuario(**usuario) for usuario in dados]
+except FileNotFoundError:
+    pass
+
+
+def _to_dict(obj):
+    """Converte um objeto Usuario/Ingresso em dict para salvar em JSON."""
+    if hasattr(obj, "to_dict"):
+        return obj.to_dict()
+    return vars(obj)
+
+
+def salvar_usuarios_json():
+    with open("usuarios.json", "w", encoding="utf-8") as arquivo:
+        json.dump([_to_dict(u) for u in usuarios], arquivo, ensure_ascii=False, indent=2)
+
+
+def salvar_ingressos_json():
+    with open("ingressos.json", "w", encoding="utf-8") as arquivo:
+        json.dump([_to_dict(i) for i in ingressos], arquivo, ensure_ascii=False, indent=2)
+
 
 def atualizar_shows():
     for show in SHOWS:
-
         if "ingressos_total" not in show:
             show["ingressos_total"] = 100
 
         if "ingressos_vendidos" not in show:
             show["ingressos_vendidos"] = 0
 
-        show["esgotado"] = (
-            show["ingressos_vendidos"] >= show["ingressos_total"]
+        show["esgotado"] = show["ingressos_vendidos"] >= show["ingressos_total"]
+
+
+# ---------------------------------------------------------------------------
+# Decorators
+# ---------------------------------------------------------------------------
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if "usuario" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return wrapper
+
+
+def admin_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get("tipo") != "admin":
+            return "Acesso negado"
+        return f(*args, **kwargs)
+    return wrapper
+
+
+# ---------------------------------------------------------------------------
+# Autenticação
+# ---------------------------------------------------------------------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form["email"]
+        senha = request.form["senha"]
+
+        for u in usuarios:
+            if u.email == email and u.senha == senha:
+                session["usuario"] = u.email
+                session["usuario_id"] = u.id
+                session["nome_usuario"] = u.nome
+                session["tipo"] = u.tipo
+
+                return redirect(url_for("home"))
+
+        return render_template("login.html", resultado="falha")
+
+    return render_template("login.html", resultado=None)
+
+@app.route("/admin")
+@login_required
+@admin_required
+def admin():
+    return render_template("admin.html", shows=SHOWS)
+
+@app.route("/editar_ingressos/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def editar_ingressos(id):
+
+    for show in SHOWS:
+        if show["id"] == id:
+            show["ingressos_total"] = int(request.form["total"])
+            show["ingressos_vendidos"] = int(request.form["vendidos"])
+            break
+
+    salvar_shows_json()
+
+    return redirect(url_for("admin"))
+
+
+    
+
+
+@app.route("/autenticar", methods=["POST"])
+def autenticar():
+
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+
+    for usuario in usuarios:
+        if usuario.email == email and usuario.senha == senha:
+            session["usuario"] = usuario.email
+            session["usuario_id"] = usuario.id
+            session["nome_usuario"] = usuario.nome
+            session["tipo"] = usuario.tipo
+
+            return redirect(url_for("home"))
+
+    return render_template("login.html", resultado="falha")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+@app.route("/cadastro_usuario")
+def cadastro_usuario():
+    return render_template("cadastro_usuario.html", resultado=None)
+
+
+
+
+@app.route("/salvar_usuario", methods=["POST"])
+def salvar_usuario():
+
+    nome = request.form.get("nome")
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+    data_nascimento = request.form.get("data_nascimento")
+    genero = request.form.get("genero")
+
+    adicionar_foto = request.form.get("adicionar_foto")
+
+    nome_arquivo = "sem_foto.png"
+    if adicionar_foto == "sim":
+        foto = request.files.get("foto")
+        if foto and foto.filename != "":
+            nome_arquivo = foto.filename
+            foto.save(os.path.join("static", "img", nome_arquivo))
+
+    usuarios.append(
+        Usuario(
+            len(usuarios) + 1,
+            nome,
+            email,
+            senha,
+            "usuario",
+            data_nascimento,
+            genero,
+            nome_arquivo
         )
+    )
+
+    salvar_usuarios_json()
+
+    return redirect(url_for("login"))
+
+@app.route("/meus_ingressos")
+@login_required
+def meus_ingressos():
+
+    meus = [
+        ingresso for ingresso in ingressos
+        if ingresso.usuario_id == session["usuario_id"]
+    ]
+
+    return render_template(
+        "meus_ingressos.html",
+        ingressos=meus
+    )
+
+@app.route("/cancelar_ingresso/<int:id>")
+@login_required
+def cancelar_ingresso(id):
+
+    global ingressos
+
+    ingressos = [
+        ingresso for ingresso in ingressos
+        if not (
+            ingresso.id == id and
+            ingresso.usuario_id == session["usuario_id"]
+        )
+    ]
+
+    salvar_ingressos_json()
+
+    return redirect(url_for("meus_ingressos"))
+
+@app.route("/meu_ingresso/<codigo>")
+@login_required
+def meu_ingresso(codigo):
+
+    ingresso = next((i for i in ingressos if i.codigo == codigo), None)
+
+    if ingresso is None:
+        return redirect(url_for("home"))
+
+    return render_template("ingresso.html", ingresso=ingresso)
+
+@app.route("/cadastro_adm")
+def cadastro_adm():
+    return render_template("cadastro_adm.html")
+
+
+@app.route("/salvar_adm", methods=["POST"])
+def salvar_adm():
+
+    nome = request.form.get("nome")
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+    data_nascimento = request.form.get("data_nascimento")
+    genero = request.form.get("genero")
+
+    codigo = str(random.randint(100000, 999999))
+    session["codigo_verificacao"] = codigo
+
+
+
+
+    novo = Usuario(
+        len(usuarios) + 1,
+        nome,
+        email,
+        senha,
+        "admin",
+        data_nascimento,
+        genero
+    )
+
+    usuarios.append(novo)
+    salvar_usuarios_json()
+
+    return redirect(url_for("login"))
+
+@app.route("/perfil")
+@login_required
+def perfil():
+
+    usuario_atual = next(
+        (u for u in usuarios if u.id == session["usuario_id"]),
+        None
+    )
+
+    return render_template("perfil.html", usuario=usuario_atual)
+
+
+@app.route("/atualizar_foto", methods=["POST"])
+@login_required
+def atualizar_foto():
+
+    foto = request.files.get("foto")
+
+    if foto and foto.filename != "":
+        nome_arquivo = foto.filename
+        foto.save(os.path.join("static", "img", nome_arquivo))
+
+        for usuario in usuarios:
+            if usuario.id == session["usuario_id"]:
+                usuario.foto = nome_arquivo
+                break
+
+        salvar_usuarios_json()
+
+    return redirect(url_for("perfil"))
+
+@app.route("/verificar", methods=["GET", "POST"])
+def verificar():
+
+    if request.method == "POST":
+        codigo_digitado = request.form["codigo"]
+
+        if codigo_digitado == session.get("codigo_verificacao"):
+            return redirect(url_for("login"))
+        else:
+            return "Código inválido"
+
+    return render_template("verificar.html")
+
+
+
+
+# ---------------------------------------------------------------------------
+# Shows
+# ---------------------------------------------------------------------------
+@app.route("/")
+@login_required
+def home():
+
+    atualizar_shows()
+
+    shows_disponiveis = [show for show in SHOWS if not show["esgotado"]]
+
+    return render_template(
+        "index.html",
+        shows=shows_disponiveis,
+        nome=session.get("nome_usuario")
+    )
+
+@app.route("/categorias")
+@login_required
+def categorias():
+    return render_template("categorias.html")
+
+@app.route("/categoria/<categoria>")
+@login_required
+def filtrar_categoria(categoria):
+
+    atualizar_shows()
+
+    categoria = categoria.lower()
+
+    shows_filtrados = [
+        show for show in SHOWS
+        if show.get("categoria", "").lower() == categoria
+        and not show.get("esgotado", False)
+    ]
+
+    # 🔥 AQUI VOCÊ COLOCA O CÓDIGO
+    if not shows_filtrados:
+        return render_template(
+            "index.html",
+            shows=[],
+            nome=session.get("nome_usuario"),
+            mensagem="Nenhum show encontrado nessa categoria."
+        )
+
+    return render_template(
+        "index.html",
+        shows=shows_filtrados,
+        nome=session.get("nome_usuario"),
+        categoria=categoria
+    )
+
+
+
+@app.route("/meus_shows")
+@login_required
+@admin_required
+def meus_shows():
+    meus = [s for s in SHOWS if s.get("admin") == session["usuario"]]
+    return render_template("meus_shows.html", shows=meus)
+
+@app.route("/excluir_show/<int:id>")
+@login_required
+@admin_required
+def excluir_show(id):
+
+    global SHOWS
+
+    SHOWS = [
+        show for show in SHOWS
+        if not (
+            show["id"] == id and
+            show["admin"] == session["usuario"]
+        )
+    ]
+
+    salvar_shows_json()
+
+    return redirect(url_for("meus_shows"))
+
+@app.route("/editar_show/<int:id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def editar_show(id):
+
+    show = next((s for s in SHOWS if s["id"] == id and s["admin"] == session["usuario"]), None)
+
+    if show is None:
+        return redirect(url_for("meus_shows"))
+
+    if request.method == "POST":
+
+        show["nome"] = request.form["nome"]
+        show["categoria"] = request.form["categoria"]
+        show["local"] = request.form["local"]
+        show["data"] = request.form["data"]
+        show["preco"] = float(request.form["preco"])
+        show["idade_minima"] = int(request.form["idade_minima"])
+        show["ingressos_total"] = int(request.form["ingressos_total"])
+
+        salvar_shows_json()
+
+        return redirect(url_for("meus_shows"))
+
+    return render_template("editar_show.html", show=show)
+
 @app.route("/cadastrar_show", methods=["GET", "POST"])
 @login_required
+@admin_required
 def cadastrar_show():
 
     if request.method == "POST":
@@ -561,200 +922,99 @@ def cadastrar_show():
             "preco": float(request.form["preco"]),
             "imagem": request.form["imagem"],
             "ingressos_total": 100,
-            "ingressos_vendidos": 0
+            "ingressos_vendidos": 0,
+            "admin": session["usuario"],
+            "lote_atual": 1,
+            "lotes": [
+                {"limite": 50, "preco": float(request.form["preco_lote1"])},
+                {"limite": 100, "preco": float(request.form["preco_lote2"])},
+                {"limite": 150, "preco": float(request.form["preco_lote3"])}
+],
         }
 
         SHOWS.append(novo_show)
 
-        return redirect(url_for("home"))
+        salvar_shows_json()
+
+        return redirect(url_for("meus_shows"))
 
     return render_template("cadastrar_show.html")
 
-try:
-    with open("usuarios.json", "r") as arquivo:
-        dados = json.load(arquivo)
-        usuarios = [Usuario(**usuario) for usuario in dados]
-except:
-    pass
-
-@app.route("/")
-@login_required
-def home():
-
-    atualizar_shows()
-
-    shows_disponiveis = [
-        show for show in SHOWS
-        if not show["esgotado"]
-    ]
-
-    return render_template(
-        "index.html",
-        shows=shows_disponiveis,
-        nome=session["nome_usuario"]
-    )
-@app.route("/esgotados")
-@login_required
-def shows_esgotados():
-
-    atualizar_shows()
-
-    lista = [
-        show for show in SHOWS
-        if show["esgotado"]
-    ]
-
-    return render_template(
-        "esgotados.html",
-        shows=lista,
-        nome=session["nome_usuario"]
-    )
-
-@app.route("/categoria/<categoria>")
-@login_required
-def filtrar_categoria(categoria):
-
-    shows_filtrados = [
-        show for show in SHOWS
-        if show["categoria"] == categoria
-    ]
-
-    return render_template(
-        "index.html",
-        shows=shows_filtrados,
-        nome=session["nome_usuario"]
-    )
 
 
-@app.route("/login")
-def login():
-    return render_template("login.html", resultado=None)
-
-
-
-
-@app.route("/autenticar", methods=["POST"])
-def autenticar():
-
-    email = request.form.get("email")
-    senha = request.form.get("senha")
-
-    for usuario in usuarios:
-
-        if usuario.email == email and usuario.senha == senha:
-
-            session["usuario"] = usuario.email
-            session["usuario_id"] = usuario.id
-            session["nome_usuario"] = usuario.nome
-
-            return redirect(url_for("home"))
-
-    return render_template(
-        "login.html",
-        resultado="falha"
-    )
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
-
-
-@app.route("/cadastro_usuario")
-def cadastro_usuario():
-    return render_template(
-        "cadastro_usuario.html",
-        resultado=None
-    )
-@app.route("/atualizar_foto", methods=["POST"])
-@login_required
-def atualizar_foto():
-
-    foto = request.files.get("foto")
-
-    if foto and foto.filename != "":
-
-        nome_arquivo = foto.filename
-        foto.save(f"static/img/{nome_arquivo}")
-
-        for usuario in usuarios:
-            if usuario.id == session["usuario_id"]:
-                usuario.foto = nome_arquivo
-                break
-
-        salvar_usuarios_json()
-
-    return redirect(url_for("perfil"))
-
-
-@app.route("/salvar_usuario", methods=["POST"])
-def salvar_usuario():
-
-    nome = request.form.get("nome")
-    email = request.form.get("email")
-    senha = request.form.get("senha")
-    data_nascimento = request.form.get("data_nascimento")
-    genero = request.form.get("genero")
-
-    adicionar_foto = request.form.get("adicionar_foto")
-
-    if adicionar_foto == "sim":
-        foto = request.files.get("foto")
-
-        if foto and foto.filename != "":
-            nome_arquivo = foto.filename
-            foto.save(f"static/img/{nome_arquivo}")
-        else:
-            nome_arquivo = "sem_foto.png"
-    else:
-        nome_arquivo = "sem_foto.png"
-
-    usuarios.append(
-    Usuario(
-    len(usuarios) + 1,
-    nome,
-    email,
-    senha,
-    data_nascimento,
-    genero,
-    nome_arquivo
-)
-    )
-
-    salvar_usuarios_json()
-
-    return redirect(url_for("login"))
-
-
-
+# ---------------------------------------------------------------------------
+# Compra de ingressos
+# ---------------------------------------------------------------------------
 @app.route("/comprar/<int:id>")
 @login_required
 def comprar(id):
 
-    show = None
+    show = next((s for s in SHOWS if s["id"] == id), None)
 
-    for s in SHOWS:
-        if s["id"] == id:
-            show = s
-            break
+    if show is None:
+        return redirect(url_for("home"))
 
-    return render_template(
-        "comprar.html",
-        show=show
-    )
+    return render_template("comprar.html", show=show)
 
 @app.route("/finalizar_compra", methods=["POST"])
 @login_required
 def finalizar_compra():
 
     show = request.form.get("show")
-    preco = request.form.get("preco")
+    preco_form = request.form.get("preco")
     local = request.form.get("local")
     data = request.form.get("data")
     pagamento = request.form.get("pagamento")
 
     codigo = str(uuid.uuid4())[:8]
+
+    # pega o show real
+    show_obj = next((s for s in SHOWS if s["nome"] == show), None)
+
+    if show_obj is None:
+        return redirect(url_for("home"))
+
+    # ===== SISTEMA DE LOTE =====
+    vendidos = show_obj.get("ingressos_vendidos", 0)
+
+    if vendidos < 50:
+        preco = show_obj["lotes"][0]["preco"]
+        lote = 1
+
+    elif vendidos < 100:
+        preco = show_obj["lotes"][1]["preco"]
+        lote = 2
+
+    else:
+        preco = show_obj["lotes"][2]["preco"]
+        lote = 3
+
+    # cria ingresso
+    ingresso = Ingresso(
+        id=len(ingressos) + 1,
+        show=show,
+        preco=preco,
+        local=local,
+        data=data,
+        pagamento=pagamento,
+        usuario_id=session["usuario_id"],
+        codigo=codigo
+    )
+
+    ingresso.lote = lote
+    ingressos.append(ingresso)
+
+    # atualiza vendas
+    for s in SHOWS:
+        if s["nome"] == show:
+            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0) + 1
+            break
+
+    salvar_ingressos_json()
+
+    # =========================
+    # 🔥 SEPARAÇÃO CORRETA
+    # =========================
 
     if pagamento == "PIX":
 
@@ -762,11 +1022,11 @@ def finalizar_compra():
             f"PIX\n"
             f"Show: {show}\n"
             f"Valor: R$ {preco}\n"
+            f"Lote: {lote}\n"
             f"Código: {codigo}"
         )
 
         img = qrcode.make(texto_pix)
-
         caminho = os.path.join("static", "img", f"{codigo}.png")
         img.save(caminho)
 
@@ -777,23 +1037,61 @@ def finalizar_compra():
             codigo=codigo
         )
 
-    ingresso = Ingresso(
-        id=len(ingressos) + 1,
-        show=show,
-        preco=preco,
-        local=local,
-        data=data,
-        pagamento=pagamento,
-        usuario_id=session["usuario"]
-    )
+    elif pagamento == "CARTAO":
+
+        return render_template(
+            "cartao.html",
+            show=show,
+            preco=preco,
+            codigo=codigo
+        )
+
+    return redirect(url_for("home"))
+   
+    ingresso.lote = lote
 
     ingressos.append(ingresso)
 
-    for s in shows:
+    # atualiza vendas
+    for s in SHOWS:
         if s["nome"] == show:
-            s["ingressos_vendidos"] += 1
+            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0) + 1
             break
 
     salvar_ingressos_json()
 
+    if pagamento == "PIX":
+
+        texto_pix = (
+            f"PIX\n"
+            f"Show: {show}\n"
+            f"Valor: R$ {preco}\n"
+            f"Lote: {lote}\n"
+            f"Código: {codigo}"
+        )
+
+        img = qrcode.make(texto_pix)
+        caminho = os.path.join("static", "img", f"{codigo}.png")
+        img.save(caminho)
+
+        return render_template("pix.html", show=show, preco=preco, codigo=codigo)
+
     return redirect(url_for("home"))
+
+@app.route("/esgotados")
+@login_required
+def esgotados():
+
+    shows_esgotados = [
+        show for show in SHOWS
+        if show.get("ingressos_vendidos", 0) >= show.get("ingressos_total", 0)
+    ]
+
+    return render_template(
+        "esgotados.html",
+        shows=shows_esgotados
+    )
+
+if __name__ == "__main__":
+    print("Flask iniciando...")
+    app.run(debug=True)

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Show</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">Editar Show</h2>
+
+    <form method="POST">
+
+        <input type="text" name="nome" class="form-control mb-2" value="{{ show.nome }}" placeholder="Nome">
+
+        <input type="text" name="categoria" class="form-control mb-2" value="{{ show.categoria }}" placeholder="Categoria">
+
+        <input type="text" name="local" class="form-control mb-2" value="{{ show.local }}" placeholder="Local">
+
+        <input type="text" name="data" class="form-control mb-2" value="{{ show.data }}" placeholder="Data">
+
+        <input type="number" name="preco" class="form-control mb-2" value="{{ show.preco }}" placeholder="Preço">
+
+        <input type="number" name="idade_minima" class="form-control mb-2" value="{{ show.idade_minima }}" placeholder="Idade mínima">
+
+        <input type="number" name="ingressos_total" class="form-control mb-3" value="{{ show.ingressos_total }}" placeholder="Ingressos total">
+
+        <button class="btn btn-success w-100">
+            Salvar alterações
+        </button>
+
+    </form>
+
+    <a href="/meus_shows" class="btn btn-secondary w-100 mt-2">
+        Voltar
+    </a>
+
+</div>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,61 +12,68 @@
 
 <body>
 
-<h1 class="text-center mt-3">
-    Ingressos
-</h1>
+<!-- TÍTULO -->
+<h1 class="text-center mt-3">Ingressos</h1>
 
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
 
-        <a class="navbar-brand" href="/">
-            TicketShow
-        </a>
+        <a class="navbar-brand" href="/">TicketShow</a>
 
         <span class="text-white me-3">
             Olá, {{ nome }}
         </span>
 
-        <a href="/perfil" class="btn btn-outline-primary me-2">
-            👤 Meu Perfil
-        </a>
+        <a href="/perfil" class="btn btn-outline-primary me-2">👤 Perfil</a>
 
-        <a href="/cadastrar_show" class="btn btn-success me-2">
-            Cadastrar Show
-        </a>
+        {% if session["tipo"] == "admin" %}
+        <a href="/cadastrar_show" class="btn btn-success me-2">Cadastrar Show</a>
+        {% endif %}
 
-        <a href="/meus_ingressos" class="btn btn-warning me-2">
-             Meus Ingressos
-        </a>
+        <a href="/meus_ingressos" class="btn btn-warning me-2">Ingressos</a>
 
-        <a href="/esgotados" class="btn btn-secondary me-2">
-             Shows Esgotados
-        </a>
+        <a href="/esgotados" class="btn btn-secondary me-2">Esgotados</a>
 
-        <a href="/logout" class="btn btn-danger">
-            Sair
-        </a>
+        <a href="/logout" class="btn btn-danger">Sair</a>
 
     </div>
 </nav>
 
+<!-- CONTEÚDO -->
 <div class="container mt-4">
 
-    <h1 class="text-center mb-5">
-        Shows Disponíveis
-    </h1>
+    <h2 class="text-center mb-4">Shows Disponíveis</h2>
 
+    <!-- CATEGORIAS -->
     <div class="text-center mb-4">
+
         <a href="/" class="btn btn-outline-dark">Todos</a>
-        <a href="/categoria/Trap" class="btn btn-outline-dark">Trap</a>
-        <a href="/categoria/Rap" class="btn btn-outline-dark">Rap</a>
-        <a href="/categoria/Funk" class="btn btn-outline-dark">Funk</a>
-        <a href="/categoria/K-Pop" class="btn btn-outline-dark">K-Pop</a>
-        <a href="/categoria/R&B" class="btn btn-outline-dark">R&B</a>
-        <a href="/categoria/MPB" class="btn btn-outline-dark">MPB</a>
-        <a href="/categoria/Pop" class="btn btn-outline-dark">Pop</a>
+        <a href="/categoria/trap" class="btn btn-outline-dark">Trap</a>
+        <a href="/categoria/rap" class="btn btn-outline-dark">Rap</a>
+        <a href="/categoria/funk" class="btn btn-outline-dark">Funk</a>
+        <a href="/categoria/k-pop" class="btn btn-outline-dark">K-Pop</a>
+        <a href="/categoria/r&b" class="btn btn-outline-dark">R&B</a>
+        <a href="/categoria/mpb" class="btn btn-outline-dark">MPB</a>
+        <a href="/categoria/pop" class="btn btn-outline-dark">Pop</a>
+
     </div>
 
+    <!-- BOTÃO CATEGORIAS -->
+    <div class="text-center mb-4">
+        <a href="{{ url_for('categorias') }}" class="btn btn-dark">
+            Ver categorias
+        </a>
+    </div>
+
+    <!-- MENSAGEM -->
+    {% if mensagem %}
+    <div class="alert alert-warning text-center">
+        {{ mensagem }}
+    </div>
+    {% endif %}
+
+    <!-- CARDS -->
     <div class="row justify-content-center">
 
         {% for show in shows %}
@@ -76,36 +84,18 @@
 
                 <img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
                      class="card-img-top"
-                     alt="{{ show.nome }}"
                      style="height:250px; object-fit:cover;">
 
                 <div class="card-body">
 
                     <h3>{{ show.nome }}</h3>
 
-                    <p>
-                        <strong>Categoria:</strong>
-                        {{ show.categoria }}
-                    </p>
+                    <p><strong>Categoria:</strong> {{ show.categoria }}</p>
+                    <p><strong>Local:</strong> {{ show.local }}</p>
+                    <p><strong>Data:</strong> {{ show.data }}</p>
+                    <p><strong>Idade mínima:</strong> {{ show.idade_minima }} anos</p>
 
-                    <p>
-                        <strong>Local:</strong>
-                        {{ show.local }}
-                    </p>
-
-                    <p>
-                        <strong>Data:</strong>
-                        {{ show.data }}
-                    </p>
-
-                    <p>
-                        <strong>Idade mínima:</strong>
-                        {{ show.idade_minima }} anos
-                    </p>
-
-                    <h4 class="text-success">
-                        R$ {{ show.preco }}
-                    </h4>
+                    <h4 class="text-success">R$ {{ show.preco }}</h4>
 
                     <div class="progress">
                         <div class="progress-bar"
@@ -122,17 +112,13 @@
                 <div class="card-footer">
 
                     {% if show.esgotado %}
-
                         <button class="btn btn-danger w-100" disabled>
-                             Ingressos Esgotados
+                            Esgotado
                         </button>
-
                     {% else %}
-
                         <a href="/comprar/{{ show.id }}" class="btn btn-dark w-100">
                             Comprar Ingresso
                         </a>
-
                     {% endif %}
 
                 </div>

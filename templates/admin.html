@@ -1,0 +1,23 @@
+<h1>Painel do Admin</h1>
+
+{% for show in shows %}
+
+<div class="card p-3 mb-3">
+
+    <h3>{{ show.nome }}</h3>
+
+    <p>Ingressos vendidos: {{ show.ingressos_vendidos }}</p>
+    <p>Total: {{ show.ingressos_total }}</p>
+
+    <form action="/editar_ingressos/{{ show.id }}" method="POST">
+
+        <input type="number" name="total" value="{{ show.ingressos_total }}">
+        <input type="number" name="vendidos" value="{{ show.ingressos_vendidos }}">
+
+        <button type="submit">Atualizar</button>
+
+    </form>
+
+</div>
+
+{% endfor %}

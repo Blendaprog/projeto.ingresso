@@ -1,38 +1,56 @@
-<div class="container mt-5 d-flex justify-content-center">
-  <div class="card shadow-lg p-4 text-center" style="max-width: 400px; width: 100%; border-radius: 20px;">
-    
-    <h3 class="mb-3">Pagamento via PIX</h3>
-    <p class="text-muted">Escaneie o QR Code abaixo para pagar</p>
+<!DOCTYPE html>
+<html lang="pt-br">
 
-    <div class="my-3">
-      <img 
-        src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PIX"
-        alt="QR Code PIX"
-        class="img-fluid rounded"
-        style="max-width: 250px;"
-      >
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento PIX</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="pix-container">
+
+  <div class="pix-card">
+
+    <h2>💳 Pagamento via PIX</h2>
+
+    <p>Escaneie o QR Code abaixo para pagar seu ingresso</p>
+
+    <img 
+      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PIX"
+      alt="QR Code PIX"
+    >
+
+    <hr style="border-color: rgba(255,255,255,0.2);">
+
+    <p><strong>🎤 Show:</strong> {{ show }}</p>
+    <p><strong>💰 Valor:</strong> R$ {{ preco }}</p>
+
+    <div class="pix-code">
+      {{ codigo }}
     </div>
 
-    <hr>
-
-    <p class="mb-1"><strong>Valor:</strong> R$ {{ preco }}</p>
-    <p class="mb-3"><strong>Show:</strong> {{ show }}</p>
-
-    <button class="btn btn-success w-100 mb-2" onclick="copiarPix()">
-      Copiar código PIX
+    <button class="pix-btn" onclick="copiarPix()">
+      📋 Copiar código PIX
     </button>
 
-    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary w-100">
-      Voltar
+    <a href="{{ url_for('home') }}" class="btn btn-outline-light w-100 mt-3">
+      ⬅ Voltar
     </a>
 
   </div>
+
 </div>
 
 <script>
 function copiarPix() {
-  const pix = "SEU_CODIGO_PIX_AQUI";
+  const pix = "{{ codigo }}";
   navigator.clipboard.writeText(pix);
-  alert("Código PIX copiado!");
+  alert("Código PIX copiado com sucesso!");
 }
 </script>
+
+</body>
+</html>
