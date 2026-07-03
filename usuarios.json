@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "1481a67c493a2b89727e8e0a2b1e4827.jpg",
+        "ingressos": []
+    },
+    {
+        "id": 2,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 3,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 4,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 5,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 6,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-04-10",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 7,
+        "nome": "Danilo Iago de melo de Paula",
+        "email": "danniago7@gmail.com",
+        "senha": "melonilo12",
+        "data_nascimento": "2002-09-08",
+        "genero": "Masculino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 8,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-10-04",
+        "genero": "Feminino",
+        "foto": "sem_foto.png",
+        "ingressos": []
+    },
+    {
+        "id": 9,
+        "nome": "Blenda de Siqueira da Silva",
+        "email": "blendasiqueira51@gmail.com",
+        "senha": "100410",
+        "data_nascimento": "2010-10-04",
+        "genero": "Feminino",
+        "foto": "Captura de tela_23-6-2026_104929_127.0.0.1.jpeg",
+        "ingressos": []
+    }
+]

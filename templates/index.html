@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketShow</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<h1 class="text-center mt-3">
+    Ingressos
+</h1>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+
+        <a class="navbar-brand" href="/">
+            TicketShow
+        </a>
+
+        <span class="text-white me-3">
+            Olá, {{ nome }}
+        </span>
+
+        <a href="/perfil" class="btn btn-outline-primary me-2">
+            👤 Meu Perfil
+        </a>
+
+        <a href="/cadastrar_show" class="btn btn-success me-2">
+            Cadastrar Show
+        </a>
+
+        <a href="/meus_ingressos" class="btn btn-warning me-2">
+             Meus Ingressos
+        </a>
+
+        <a href="/esgotados" class="btn btn-secondary me-2">
+             Shows Esgotados
+        </a>
+
+        <a href="/logout" class="btn btn-danger">
+            Sair
+        </a>
+
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <h1 class="text-center mb-5">
+        Shows Disponíveis
+    </h1>
+
+    <div class="text-center mb-4">
+        <a href="/" class="btn btn-outline-dark">Todos</a>
+        <a href="/categoria/Trap" class="btn btn-outline-dark">Trap</a>
+        <a href="/categoria/Rap" class="btn btn-outline-dark">Rap</a>
+        <a href="/categoria/Funk" class="btn btn-outline-dark">Funk</a>
+        <a href="/categoria/K-Pop" class="btn btn-outline-dark">K-Pop</a>
+        <a href="/categoria/R&B" class="btn btn-outline-dark">R&B</a>
+        <a href="/categoria/MPB" class="btn btn-outline-dark">MPB</a>
+        <a href="/categoria/Pop" class="btn btn-outline-dark">Pop</a>
+    </div>
+
+    <div class="row justify-content-center">
+
+        {% for show in shows %}
+
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+
+            <div class="card h-100 shadow">
+
+                <img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
+                     class="card-img-top"
+                     alt="{{ show.nome }}"
+                     style="height:250px; object-fit:cover;">
+
+                <div class="card-body">
+
+                    <h3>{{ show.nome }}</h3>
+
+                    <p>
+                        <strong>Categoria:</strong>
+                        {{ show.categoria }}
+                    </p>
+
+                    <p>
+                        <strong>Local:</strong>
+                        {{ show.local }}
+                    </p>
+
+                    <p>
+                        <strong>Data:</strong>
+                        {{ show.data }}
+                    </p>
+
+                    <p>
+                        <strong>Idade mínima:</strong>
+                        {{ show.idade_minima }} anos
+                    </p>
+
+                    <h4 class="text-success">
+                        R$ {{ show.preco }}
+                    </h4>
+
+                    <div class="progress">
+                        <div class="progress-bar"
+                             style="width: {{ (show.ingressos_vendidos / show.ingressos_total) * 100 }}%;">
+                        </div>
+                    </div>
+
+                    <p class="mt-2 text-center">
+                        {{ show.ingressos_vendidos }} / {{ show.ingressos_total }} ingressos vendidos
+                    </p>
+
+                </div>
+
+                <div class="card-footer">
+
+                    {% if show.esgotado %}
+
+                        <button class="btn btn-danger w-100" disabled>
+                             Ingressos Esgotados
+                        </button>
+
+                    {% else %}
+
+                        <a href="/comprar/{{ show.id }}" class="btn btn-dark w-100">
+                            Comprar Ingresso
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

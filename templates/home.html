@@ -1,0 +1,30 @@
+<a href="{{ url_for('perfil') }}" class="btn btn-info">
+    Meu Perfil
+</a>
+<p>Imagem: {{ show.imagem }}</p>
+
+<img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
+     class="card-img-top"
+     alt="{{ show.nome }}"
+     style="height:200px;">
+     {% if show.encerrado %}
+    <span class="badge bg-secondary">Show Encerrado</span>
+{% endif %}
+{% if show.esgotado %}
+    <span class="badge bg-danger">Esgotado</span>
+{% endif %}
+{% if show.encerrado %}
+    <button class="btn btn-secondary" disabled>
+        Show Encerrado
+    </button>
+
+{% elif show.esgotado %}
+    <button class="btn btn-danger" disabled>
+        Ingressos Esgotados
+    </button>
+
+{% else %}
+    <a href="{{ url_for('comprar_ingresso', id_show=show.id) }}"
+       class="btn btn-success">
+       Comprar
+    </a>

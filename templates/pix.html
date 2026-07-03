@@ -1,0 +1,38 @@
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg p-4 text-center" style="max-width: 400px; width: 100%; border-radius: 20px;">
+    
+    <h3 class="mb-3">Pagamento via PIX</h3>
+    <p class="text-muted">Escaneie o QR Code abaixo para pagar</p>
+
+    <div class="my-3">
+      <img 
+        src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PIX"
+        alt="QR Code PIX"
+        class="img-fluid rounded"
+        style="max-width: 250px;"
+      >
+    </div>
+
+    <hr>
+
+    <p class="mb-1"><strong>Valor:</strong> R$ {{ preco }}</p>
+    <p class="mb-3"><strong>Show:</strong> {{ show }}</p>
+
+    <button class="btn btn-success w-100 mb-2" onclick="copiarPix()">
+      Copiar código PIX
+    </button>
+
+    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary w-100">
+      Voltar
+    </a>
+
+  </div>
+</div>
+
+<script>
+function copiarPix() {
+  const pix = "SEU_CODIGO_PIX_AQUI";
+  navigator.clipboard.writeText(pix);
+  alert("Código PIX copiado!");
+}
+</script>
