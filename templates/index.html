@@ -11,127 +11,361 @@
 </head>
 
 <body>
-
-<!-- TÍTULO -->
-<h1 class="text-center mt-3">Ingressos</h1>
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
 
-        <a class="navbar-brand" href="/">TicketShow</a>
-
-        <span class="text-white me-3">
-            Olá, {{ nome }}
-        </span>
-
-        <a href="/perfil" class="btn btn-outline-primary me-2">👤 Perfil</a>
-
-        {% if session["tipo"] == "admin" %}
-        <a href="/cadastrar_show" class="btn btn-success me-2">Cadastrar Show</a>
-        {% endif %}
-
-        <a href="/meus_ingressos" class="btn btn-warning me-2">Ingressos</a>
-
-        <a href="/esgotados" class="btn btn-secondary me-2">Esgotados</a>
-
-        <a href="/logout" class="btn btn-danger">Sair</a>
-
-    </div>
-</nav>
-
-<!-- CONTEÚDO -->
-<div class="container mt-4">
-
-    <h2 class="text-center mb-4">Shows Disponíveis</h2>
-
-    <!-- CATEGORIAS -->
-    <div class="text-center mb-4">
-
-        <a href="/" class="btn btn-outline-dark">Todos</a>
-        <a href="/categoria/trap" class="btn btn-outline-dark">Trap</a>
-        <a href="/categoria/rap" class="btn btn-outline-dark">Rap</a>
-        <a href="/categoria/funk" class="btn btn-outline-dark">Funk</a>
-        <a href="/categoria/k-pop" class="btn btn-outline-dark">K-Pop</a>
-        <a href="/categoria/r&b" class="btn btn-outline-dark">R&B</a>
-        <a href="/categoria/mpb" class="btn btn-outline-dark">MPB</a>
-        <a href="/categoria/pop" class="btn btn-outline-dark">Pop</a>
-
-    </div>
-
-    <!-- BOTÃO CATEGORIAS -->
-    <div class="text-center mb-4">
-        <a href="{{ url_for('categorias') }}" class="btn btn-dark">
-            Ver categorias
+        <a class="navbar-brand fw-bold fs-3" href="/">
+            🎟 TicketShow
         </a>
-    </div>
 
-    <!-- MENSAGEM -->
-    {% if mensagem %}
-    <div class="alert alert-warning text-center">
-        {{ mensagem }}
-    </div>
-    {% endif %}
+        <button class="navbar-toggler" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- CARDS -->
-    <div class="row justify-content-center">
 
-        {% for show in shows %}
+        <div class="collapse navbar-collapse" id="menu">
 
-        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="ms-auto d-flex align-items-center flex-wrap gap-2">
 
-            <div class="card h-100 shadow">
+                <span class="text-white">
+                    Olá, {{ nome }}
+                </span>
 
-                <img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
-                     class="card-img-top"
-                     style="height:250px; object-fit:cover;">
 
-                <div class="card-body">
+                <a href="/perfil" class="btn btn-outline-light">
+                    👤 Perfil
+                </a>
 
-                    <h3>{{ show.nome }}</h3>
 
-                    <p><strong>Categoria:</strong> {{ show.categoria }}</p>
-                    <p><strong>Local:</strong> {{ show.local }}</p>
-                    <p><strong>Data:</strong> {{ show.data }}</p>
-                    <p><strong>Idade mínima:</strong> {{ show.idade_minima }} anos</p>
+                {% if session["tipo"] == "admin" %}
 
-                    <h4 class="text-success">R$ {{ show.preco }}</h4>
+                <a href="/cadastrar_show" class="btn btn-success">
+                    ➕ Cadastrar Show
+                </a>
 
-                    <div class="progress">
-                        <div class="progress-bar"
-                             style="width: {{ (show.ingressos_vendidos / show.ingressos_total) * 100 }}%;">
-                        </div>
-                    </div>
+                <a href="/meus_shows" class="btn btn-primary">
+                    🎤 Meus Shows
+                </a>
 
-                    <p class="mt-2 text-center">
-                        {{ show.ingressos_vendidos }} / {{ show.ingressos_total }} ingressos vendidos
-                    </p>
+                {% endif %}
 
-                </div>
 
-                <div class="card-footer">
+                <a href="/meus_ingressos" class="btn btn-warning">
+                    🎟 Ingressos
+                </a>
 
-                    {% if show.esgotado %}
-                        <button class="btn btn-danger w-100" disabled>
-                            Esgotado
-                        </button>
-                    {% else %}
-                        <a href="/comprar/{{ show.id }}" class="btn btn-dark w-100">
-                            Comprar Ingresso
-                        </a>
-                    {% endif %}
 
-                </div>
+                <a href="/logout" class="btn btn-danger">
+                    🚪 Sair
+                </a>
 
             </div>
 
         </div>
 
-        {% endfor %}
 
     </div>
 
+</nav>
+
+
+<section class="hero">
+    
+
+    <div class="hero-content">
+
+        <h1>
+            Viva grandes experiências
+        </h1>
+
+        <p>
+            Encontre os melhores shows e garanta seu ingresso.
+        </p>
+
+        <a href="#shows" class="hero-btn">
+            Ver shows
+        </a>
+
+    </div>
+
+</section>
+
+<!-- TÍTULO -->
+<h1 class="text-center mt-3">Ingressos</h1>
+
+
+<!-- CONTEÚDO -->
+<div class="container mt-4">
+    <h2 class="section-title">
+     Eventos em destaque
+</h2>
+
+    <h2 class="text-center mb-4">Shows Disponíveis</h2>
+
+    <!-- CATEGORIAS -->
+<div class="categories">
+
+    <a href="/">Todos</a>
+
+    <a href="/categoria/trap">Trap</a>
+
+    <a href="/categoria/rap">Rap</a>
+
+    <a href="/categoria/funk">Funk</a>
+
+    <a href="/categoria/k-pop">K-Pop</a>
+
+    <a href="/categoria/r&b">R&B</a>
+
+    <a href="/categoria/mpb">MPB</a>
+
+    <a href="/categoria/pop">Pop</a>
+
 </div>
+
+    <!-- BOTÃO CATEGORIAS -->
+    <!-- CARDS -->
+
+<!-- CARDS -->
+
+<div class="container">
+
+    <div class="row g-4">
+
+        {% for show in shows %}
+
+        <div class="col-md-4">
+
+            <div class="card show-card h-100">
+
+
+                <div class="show-image">
+
+                    <img src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
+                         class="card-img-top">
+
+                </div>
+
+
+
+                <div class="card-body">
+
+                    <h3 class="show-title">
+                        {{ show['nome'] }}
+                    </h3>
+
+
+
+                    {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
+
+
+
+                    {% if porcentagem >= 90 %}
+
+                        <span class="status last">
+                            Últimos ingressos
+                        </span>
+
+
+                    {% elif porcentagem >= 50 %}
+
+
+                        <span class="status medium">
+                            Alta procura
+                        </span>
+
+
+                    {% else %}
+
+
+                        <span class="status available">
+                            Disponível
+                        </span>
+
+
+                    {% endif %}
+
+
+
+                    <span class="category-tag">
+                        {{ show['categoria'] }}
+                    </span>
+
+
+
+
+                    <div class="show-info">
+
+                        <p>
+                            📍 {{ show['local'] }}
+                        </p>
+
+
+                        <p>
+                            📅 {{ show['data'] }}
+                        </p>
+
+
+                        <p>
+                            🔞 {{ show['idade_minima'] }} anos
+                        </p>
+
+
+                    </div>
+
+
+
+
+                    <div class="ticket-price">
+
+                        R$ {{ show['preco'] }}
+
+                    </div>
+
+
+
+
+                    <div class="progress mt-3">
+
+                        <div class="progress-bar"
+                             style="width: {{ porcentagem }}%;">
+                        </div>
+
+                    </div>
+
+
+
+
+                    <p class="tickets-left">
+
+                        {{ show['ingressos_vendidos'] }}
+                        /
+                        {{ show['ingressos_total'] }}
+
+                        ingressos vendidos
+
+                    </p>
+
+
+                </div>
+
+
+
+
+                <div class="card-footer">
+
+
+                    {% if show['esgotado'] %}
+
+
+                        <button class="sold-out-btn" disabled>
+
+                            Ingressos esgotados
+
+                        </button>
+
+
+
+                    {% else %}
+
+
+
+                        <a href="/comprar/{{ show['id'] }}" class="buy-ticket-btn">
+
+                            🎟 Comprar ingresso
+
+                        </a>
+
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+
+
+
+<footer class="footer">
+
+
+    <div class="footer-content">
+
+
+        <h3>
+            🎟️ TicketShow
+        </h3>
+
+
+
+        <p>
+            Os melhores shows e experiências em um só lugar.
+        </p>
+
+
+
+
+        <div class="footer-links">
+
+
+            <a href="/">
+                Início
+            </a>
+
+
+            <a href="/meus_ingressos">
+                Meus ingressos
+            </a>
+
+
+            <a href="#">
+                Ajuda
+            </a>
+
+
+            <a href="#">
+                Contato
+            </a>
+
+
+
+        </div>
+
+
+
+
+        <p class="copyright">
+
+            © 2026 TicketShow. Todos os direitos reservados.
+
+        </p>
+
+
+
+    </div>
+
+
+</footer>
+
 
 </body>
 </html>

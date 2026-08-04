@@ -55,11 +55,14 @@
             background: rgba(255,255,255,0.2);
         }
 
-        #pixArea, #cartaoArea {
+        #pixArea,
+        #cartaoArea {
             display: none;
         }
     </style>
+
 </head>
+
 
 <body>
 
@@ -71,72 +74,172 @@
 
             <div class="card shadow p-4">
 
-                <h2 class="text-center mb-4">🎟 Comprar Ingresso</h2>
 
-                <h3>{{ show.nome }}</h3>
+                <h2 class="text-center mb-4">
+                    🎟 Comprar Ingresso
+                </h2>
 
-                <p><strong>Local:</strong> {{ show.local }}</p>
-                <p><strong>Data:</strong> {{ show.data }}</p>
-                <p><strong>Categoria:</strong> {{ show.categoria }}</p>
 
-                {% set vendidos = show.ingressos_vendidos %}
+                <h3>
+                    {{ show.nome }}
+                </h3>
+
+
+                <p>
+                    <strong>Local:</strong> {{ show.local }}
+                </p>
+
+
+                <p>
+                    <strong>Data:</strong> {{ show.data }}
+                </p>
+
+
+                <p>
+                    <strong>Categoria:</strong> {{ show.categoria }}
+                </p>
+
 
                 <hr>
 
-                <h5>Preço atual:</h5>
 
-                {% if vendidos < 50 %}
-                    <h4 class="text-success">R$ {{ show.lotes[0].preco }} (Lote 1)</h4>
-                {% elif vendidos < 100 %}
-                    <h4 class="text-success">R$ {{ show.lotes[1].preco }} (Lote 2)</h4>
-                {% else %}
-                    <h4 class="text-success">R$ {{ show.lotes[2].preco }} (Lote 3)</h4>
-                {% endif %}
+                <h5>
+                    Preço do ingresso:
+                </h5>
+
+
+                <h4 class="text-success">
+                    R$ {{ show.preco }}
+                </h4>
+
 
                 <hr>
 
-                <!-- FORM ÚNICO -->
+
+
                 <form action="/finalizar_compra" method="POST">
 
+
                     <input type="hidden" name="show" value="{{ show.nome }}">
+
                     <input type="hidden" name="local" value="{{ show.local }}">
+
                     <input type="hidden" name="data" value="{{ show.data }}">
 
-                    <div class="mb-3">
-                        <label class="form-label">Forma de Pagamento</label>
+                    <input type="hidden" name="preco" value="{{ show.preco }}">
 
-                        <select name="pagamento" id="pagamento" class="form-select" onchange="mostrarPagamento()" required>
-                            <option value="">Selecione</option>
-                            <option value="PIX">PIX</option>
-                            <option value="CARTAO">Cartão</option>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Forma de Pagamento
+                        </label>
+
+
+                        <select 
+                            name="pagamento" 
+                            id="pagamento" 
+                            class="form-select"
+                            onchange="mostrarPagamento()"
+                            required>
+
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+
+                            <option value="PIX">
+                                PIX
+                            </option>
+
+
+                            <option value="CARTAO">
+                                Cartão
+                            </option>
+
+
                         </select>
+
                     </div>
+
+
 
                     <!-- PIX -->
+
                     <div id="pixArea" class="text-center mt-3">
-                        <h5>Pagamento via PIX</h5>
-                        <p>Use o QR Code após finalizar</p>
+
+
+                        <h5>
+                            Pagamento via PIX
+                        </h5>
+
+
+                        <p>
+                            Após finalizar a compra será confirmado o pagamento.
+                        </p>
+
+
                     </div>
+
+
 
                     <!-- CARTÃO -->
+
                     <div id="cartaoArea">
 
-                        <input type="text" class="form-control mb-2" placeholder="Número do cartão">
-                        <input type="text" class="form-control mb-2" placeholder="Nome no cartão">
-                        <input type="text" class="form-control mb-2" placeholder="Validade MM/AA">
-                        <input type="text" class="form-control mb-2" placeholder="CVV">
+
+                        <input 
+                        type="text" 
+                        class="form-control mb-2"
+                        placeholder="Número do cartão">
+
+
+                        <input 
+                        type="text" 
+                        class="form-control mb-2"
+                        placeholder="Nome no cartão">
+
+
+                        <input 
+                        type="text" 
+                        class="form-control mb-2"
+                        placeholder="Validade MM/AA">
+
+
+                        <input 
+                        type="text" 
+                        class="form-control mb-2"
+                        placeholder="CVV">
+
 
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100 mt-4">
+
+
+
+                    <button 
+                    type="submit" 
+                    class="btn btn-success w-100 mt-4">
+
                         Finalizar Compra
+
                     </button>
+
 
                 </form>
 
+
+
+
                 <a href="/" class="btn btn-secondary w-100 mt-3">
+
                     Voltar
+
                 </a>
+
+
 
             </div>
 
@@ -146,23 +249,44 @@
 
 </div>
 
+
+
+
 <script>
+
 function mostrarPagamento() {
+
 
     let pagamento = document.getElementById("pagamento").value;
 
+
     document.getElementById("pixArea").style.display = "none";
+
     document.getElementById("cartaoArea").style.display = "none";
 
+
+
     if (pagamento === "PIX") {
+
         document.getElementById("pixArea").style.display = "block";
+
     }
+
+
 
     if (pagamento === "CARTAO") {
+
         document.getElementById("cartaoArea").style.display = "block";
+
     }
+
+
 }
+
 </script>
 
+
+
 </body>
+
 </html>

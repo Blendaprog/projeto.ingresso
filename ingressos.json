@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "show": "Veigh",
-    "preco": 200.0,
+    "show": "Matuê",
+    "preco": 220.0,
     "local": "Allianz Parque - São Paulo",
-    "data": "2026-09-15",
+    "data": "2026-10-10",
     "pagamento": "PIX",
-    "usuario_id": 1,
-    "codigo": "a99e65ac"
+    "usuario_id": 13,
+    "codigo": "8097bdf9"
   }
 ]

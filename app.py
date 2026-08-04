@@ -486,18 +486,9 @@ SHOWS = [
 
 def corrigir_shows():
     for s in SHOWS:
-        if "lotes" not in s:
-            preco = s["preco"]
+        s.setdefault("ingressos_total", 100)
+        s.setdefault("ingressos_vendidos", 0)
 
-            s["lote_atual"] = 1
-            s["ingressos_total"] = 100
-            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0)
-
-            s["lotes"] = [
-                {"limite": 50, "preco": preco},
-                {"limite": 100, "preco": round(preco * 1.2, 2)},
-                {"limite": 150, "preco": round(preco * 1.4, 2)}
-            ]
 corrigir_shows()
 
 # ---------------------------------------------------------------------------
@@ -521,7 +512,9 @@ def _to_dict(obj):
 def salvar_usuarios_json():
     with open("usuarios.json", "w", encoding="utf-8") as arquivo:
         json.dump([_to_dict(u) for u in usuarios], arquivo, ensure_ascii=False, indent=2)
-
+def salvar_shows_json():
+    with open("shows.json", "w", encoding="utf-8") as arquivo:
+        json.dump(SHOWS, arquivo, ensure_ascii=False, indent=2)
 
 def salvar_ingressos_json():
     with open("ingressos.json", "w", encoding="utf-8") as arquivo:
@@ -923,13 +916,7 @@ def cadastrar_show():
             "imagem": request.form["imagem"],
             "ingressos_total": 100,
             "ingressos_vendidos": 0,
-            "admin": session["usuario"],
-            "lote_atual": 1,
-            "lotes": [
-                {"limite": 50, "preco": float(request.form["preco_lote1"])},
-                {"limite": 100, "preco": float(request.form["preco_lote2"])},
-                {"limite": 150, "preco": float(request.form["preco_lote3"])}
-],
+            "admin": session["usuario"]
         }
 
         SHOWS.append(novo_show)
@@ -939,8 +926,6 @@ def cadastrar_show():
         return redirect(url_for("meus_shows"))
 
     return render_template("cadastrar_show.html")
-
-
 
 # ---------------------------------------------------------------------------
 # Compra de ingressos
@@ -961,7 +946,6 @@ def comprar(id):
 def finalizar_compra():
 
     show = request.form.get("show")
-    preco_form = request.form.get("preco")
     local = request.form.get("local")
     data = request.form.get("data")
     pagamento = request.form.get("pagamento")
@@ -974,20 +958,8 @@ def finalizar_compra():
     if show_obj is None:
         return redirect(url_for("home"))
 
-    # ===== SISTEMA DE LOTE =====
-    vendidos = show_obj.get("ingressos_vendidos", 0)
-
-    if vendidos < 50:
-        preco = show_obj["lotes"][0]["preco"]
-        lote = 1
-
-    elif vendidos < 100:
-        preco = show_obj["lotes"][1]["preco"]
-        lote = 2
-
-    else:
-        preco = show_obj["lotes"][2]["preco"]
-        lote = 3
+    # preço único do show
+    preco = show_obj["preco"]
 
     # cria ingresso
     ingresso = Ingresso(
@@ -1001,7 +973,6 @@ def finalizar_compra():
         codigo=codigo
     )
 
-    ingresso.lote = lote
     ingressos.append(ingresso)
 
     # atualiza vendas
@@ -1012,17 +983,12 @@ def finalizar_compra():
 
     salvar_ingressos_json()
 
-    # =========================
-    # 🔥 SEPARAÇÃO CORRETA
-    # =========================
-
     if pagamento == "PIX":
 
         texto_pix = (
             f"PIX\n"
             f"Show: {show}\n"
             f"Valor: R$ {preco}\n"
-            f"Lote: {lote}\n"
             f"Código: {codigo}"
         )
 
@@ -1047,37 +1013,6 @@ def finalizar_compra():
         )
 
     return redirect(url_for("home"))
-   
-    ingresso.lote = lote
-
-    ingressos.append(ingresso)
-
-    # atualiza vendas
-    for s in SHOWS:
-        if s["nome"] == show:
-            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0) + 1
-            break
-
-    salvar_ingressos_json()
-
-    if pagamento == "PIX":
-
-        texto_pix = (
-            f"PIX\n"
-            f"Show: {show}\n"
-            f"Valor: R$ {preco}\n"
-            f"Lote: {lote}\n"
-            f"Código: {codigo}"
-        )
-
-        img = qrcode.make(texto_pix)
-        caminho = os.path.join("static", "img", f"{codigo}.png")
-        img.save(caminho)
-
-        return render_template("pix.html", show=show, preco=preco, codigo=codigo)
-
-    return redirect(url_for("home"))
-
 @app.route("/esgotados")
 @login_required
 def esgotados():
