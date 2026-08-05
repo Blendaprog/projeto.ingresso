@@ -1,71 +1,187 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Meus Ingressos</title>
 
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
 </head>
 
-<body class="bg-light">
 
-<nav class="navbar navbar-dark bg-dark">
+<body>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+
     <div class="container">
 
-        <a href="/" class="navbar-brand">
-            TicketShow
+
+        <a href="/" class="navbar-brand fw-bold fs-3">
+
+            🎟 TicketShow
+
         </a>
+
+
 
         <a href="/" class="btn btn-outline-light">
+
             Voltar
+
         </a>
 
+
     </div>
+
+
 </nav>
 
-<div class="container mt-4">
 
-    <h1 class="text-center mb-4">
-        Meus Ingressos
+
+
+
+<div class="container mt-5">
+
+
+    <h1 class="text-center mb-5">
+
+        🎟 Meus Ingressos
+
     </h1>
+
+
+
 
     {% if ingressos %}
 
+
+
+    <div class="ingressos-container">
+
+
+
         {% for ingresso in ingressos %}
 
-        <div class="card mb-3">
-            <div class="card-body">
 
-                <h5>{{ ingresso.show }}</h5>
 
-                <p><strong>Local:</strong> {{ ingresso.local }}</p>
+        <div class="ingresso-card">
 
-                <p><strong>Data:</strong> {{ ingresso.data }}</p>
 
-                <p><strong>Pagamento:</strong> {{ ingresso.pagamento }}</p>
+            <h3>
 
-                <p><strong>Valor:</strong> R$ {{ ingresso.preco }}</p>
+                {{ ingresso.show }}
 
-                <a href="{{ url_for('cancelar_ingresso', id=ingresso.id) }}"
-                   class="btn btn-danger">
-                    Cancelar Ingresso
-                </a>
+            </h3>
+
+
+
+            <p>
+
+                📍 <strong>Local:</strong>
+
+                {{ ingresso.local }}
+
+            </p>
+
+
+
+            <p>
+
+                📅 <strong>Data:</strong>
+
+                {{ ingresso.data }}
+
+            </p>
+
+
+
+            <p>
+
+                💳 <strong>Pagamento:</strong>
+
+                {{ ingresso.pagamento }}
+
+            </p>
+
+
+
+            <p>
+
+                💰 <strong>Valor:</strong>
+
+                R$ {{ ingresso.preco }}
+
+            </p>
+
+
+
+            <div class="codigo-ingresso">
+
+                🎫 Ingresso confirmado
 
             </div>
+
+
+
+
+            <a href="{{ url_for('cancelar_ingresso', id=ingresso.id) }}"
+
+               class="btn btn-danger w-100 mt-4">
+
+
+                Cancelar Ingresso
+
+
+            </a>
+
+
+
         </div>
+
+
 
         {% endfor %}
 
+
+
+    </div>
+
+
+
+
     {% else %}
 
-        <div class="alert alert-warning text-center">
-            Você ainda não comprou ingressos.
-        </div>
+
+
+
+    <div class="alert alert-warning text-center">
+
+        Você ainda não comprou ingressos.
+
+    </div>
+
+
+
 
     {% endif %}
 
+
+
+
 </div>
 
+
+
 </body>
+
 </html>

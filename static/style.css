@@ -610,3 +610,584 @@ h3 {
 .card-body {
     padding: 15px;
 }
+.banner {
+    height: 500px;
+    background-image: linear-gradient(
+        rgba(0,0,0,0.55),
+        rgba(0,0,0,0.75)
+    ),
+    url("/static/imagens/banner.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.banner-texto h1 {
+    font-size: 50px;
+    color: white;
+    font-weight: bold;
+}
+
+
+.banner-texto p {
+    font-size: 22px;
+    color: #bfdbfe;
+}
+
+
+.btn-banner {
+    display: inline-block;
+    margin-top: 25px;
+
+    background: #2563eb;
+    color: white;
+
+    padding: 15px 35px;
+    border-radius: 30px;
+
+    text-decoration: none;
+    font-size: 18px;
+}
+
+
+.btn-banner:hover {
+    background: #1d4ed8;
+}
+.banner {
+    height: 520px;
+
+    background:
+    linear-gradient(
+        rgba(3, 7, 18, 0.55),
+        rgba(3, 7, 18, 0.85)
+    ),
+    url("/static/imagens/banner.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.banner-texto {
+    max-width: 800px;
+}
+
+
+.banner-texto h1 {
+    font-size: 60px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+}
+
+
+.banner-texto p {
+    font-size: 24px;
+    color: #dbeafe;
+}
+
+
+.btn-banner {
+    margin-top: 30px;
+    display: inline-block;
+
+    background: #2563eb;
+    color: white;
+
+    padding: 16px 45px;
+
+    border-radius: 40px;
+
+    font-weight: bold;
+    font-size: 18px;
+
+    text-decoration: none;
+
+    transition: 0.3s;
+}
+
+
+.btn-banner:hover {
+    transform: scale(1.05);
+    background: #1d4ed8;
+}
+.show-card {
+
+    background: #111827;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    border: 1px solid #1e40af;
+
+    transition: 0.3s;
+
+    height: 100%;
+
+}
+
+
+.show-card:hover {
+
+    transform: translateY(-10px);
+
+    box-shadow: 0 15px 30px rgba(37,99,235,0.35);
+
+}
+
+
+.show-img {
+
+    width: 100%;
+
+    height: 280px;
+
+    object-fit: cover;
+
+}
+
+
+.show-info {
+
+    padding: 20px;
+
+}
+
+
+.show-info h3 {
+
+    color: white;
+
+    font-size: 25px;
+
+}
+
+
+.show-info p {
+
+    color: #bfdbfe;
+
+}
+
+
+.preco {
+
+    color: #60a5fa !important;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+}
+
+
+.btn-comprar {
+
+    display: block;
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 12px;
+
+    border-radius: 30px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+}
+
+
+.btn-comprar:hover {
+
+    background: #1d4ed8;
+
+}
+.busca {
+
+    text-align: center;
+
+    padding: 50px 20px;
+
+}
+
+
+.busca h2,
+.categorias h2 {
+
+    color: white;
+
+    font-size: 32px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.busca form {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+}
+
+
+.busca input {
+
+    width: 450px;
+
+    padding: 15px;
+
+    border-radius: 30px;
+
+    border: none;
+
+    font-size: 16px;
+
+}
+
+
+.busca button {
+
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 15px 30px;
+
+    border-radius: 30px;
+
+    font-weight: bold;
+
+}
+
+
+.categorias {
+
+    padding: 30px;
+
+    text-align: center;
+
+}
+
+
+.categoria-lista {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 20px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.categoria-lista a {
+
+    background: #1e3a8a;
+
+    color: white;
+
+    padding: 15px 30px;
+
+    border-radius: 30px;
+
+    text-decoration: none;
+
+    transition: .3s;
+
+}
+
+
+.categoria-lista a:hover {
+
+    background: #2563eb;
+
+    transform: translateY(-5px);
+
+}
+
+/* ==========================
+   PERFIL
+========================== */
+
+.perfil-card {
+
+    max-width: 600px;
+    margin: 50px auto;
+
+    background: linear-gradient(
+        145deg,
+        #0f172a,
+        #111827
+    );
+
+    border: 1px solid #2563eb;
+
+    border-radius: 25px;
+
+    padding: 35px;
+
+    text-align: center;
+
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+
+}
+
+
+.perfil-card img {
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 4px solid #2563eb;
+
+}
+
+
+.perfil-card h2 {
+
+    margin-top:20px;
+
+}
+
+
+.perfil-info {
+
+    text-align:left;
+
+    margin-top:25px;
+
+}
+
+
+.perfil-info p {
+
+    background:#1e293b;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    color:#dbeafe;
+
+}
+
+
+
+/* ==========================
+   PAGAMENTO CARTÃO
+========================== */
+
+
+.pagamento-card {
+
+    max-width:600px;
+
+    margin:50px auto;
+
+    background:
+    linear-gradient(
+        145deg,
+        #0f172a,
+        #111827
+    );
+
+    border:1px solid #2563eb;
+
+    border-radius:25px;
+
+    padding:35px;
+
+}
+
+
+.pagamento-card input {
+
+    background:#020617;
+
+    color:white;
+
+    border:1px solid #2563eb;
+
+    border-radius:12px;
+
+    padding:14px;
+
+    width:100%;
+
+    margin-bottom:15px;
+
+}
+
+
+.pagamento-card input::placeholder {
+
+    color:#94a3b8;
+
+}
+
+
+.cartao-preview {
+
+    background:
+    linear-gradient(
+        135deg,
+        #1d4ed8,
+        #0f172a
+    );
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    color:white;
+
+    text-align:left;
+
+}
+
+
+
+/* ==========================
+   MEUS INGRESSOS
+========================== */
+
+
+.ingressos-container {
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+    margin:50px auto;
+
+}
+
+
+
+.ingresso-card {
+
+    background:
+    linear-gradient(
+        145deg,
+        #0f172a,
+        #111827
+    );
+
+
+    border:1px solid #2563eb;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    transition:.3s;
+
+
+}
+
+
+
+.ingresso-card:hover {
+
+    transform:translateY(-8px);
+
+    box-shadow:
+    0 20px 40px rgba(37,99,235,.35);
+
+}
+
+
+
+.ingresso-card h3 {
+
+    color:#60a5fa;
+
+}
+
+
+.ingresso-card p {
+
+    color:#dbeafe;
+
+}
+
+
+
+.codigo-ingresso {
+
+    background:#020617;
+
+    border:1px dashed #60a5fa;
+
+    padding:15px;
+
+    text-align:center;
+
+    border-radius:12px;
+
+    margin-top:20px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+@media(max-width:992px){
+
+    .ingressos-container{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .ingressos-container{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

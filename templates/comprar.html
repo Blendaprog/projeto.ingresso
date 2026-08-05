@@ -2,288 +2,272 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprar Ingresso</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f172a, #111827);
-            color: white;
-        }
+<title>Meus Ingressos - TicketShow</title>
 
-        .card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            color: white;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        .text-success {
-            color: #22c55e !important;
-        }
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-        .form-select,
-        .form-control {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
 
-        .form-select option {
-            color: black;
-        }
+<style>
 
-        .btn-success {
-            background: #2563eb;
-            border: none;
-        }
+body{
+    background:#050b18;
+    color:white;
+}
 
-        .btn-success:hover {
-            background: #1d4ed8;
-        }
 
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            border: none;
-        }
+.ingresso-card{
 
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.2);
-        }
+    background:linear-gradient(145deg,#0f172a,#111827);
 
-        #pixArea,
-        #cartaoArea {
-            display: none;
-        }
-    </style>
+    border:1px solid #2563eb;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    color:white;
+
+    transition:.3s;
+
+}
+
+
+.ingresso-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 15px 30px rgba(37,99,235,.35);
+
+}
+
+
+
+.titulo{
+
+    color:white;
+
+    font-weight:800;
+
+}
+
+
+.info{
+
+    color:#bfdbfe;
+
+}
+
+
+.valor{
+
+    color:#60a5fa;
+
+    font-size:25px;
+
+    font-weight:bold;
+
+}
+
+
+
+.btn-cancelar{
+
+    background:#dc2626;
+
+    color:white;
+
+    border-radius:30px;
+
+    padding:12px 25px;
+
+    text-decoration:none;
+
+}
+
+
+
+.btn-cancelar:hover{
+
+    background:#b91c1c;
+
+}
+
+
+
+.navbar{
+
+    background:#07152e;
+
+}
+
+
+
+</style>
+
 
 </head>
 
 
+
 <body>
+
+
+
+<nav class="navbar navbar-dark">
+
+<div class="container">
+
+
+<a href="/" class="navbar-brand fw-bold fs-3">
+
+🎟 TicketShow
+
+</a>
+
+
+
+<a href="/" class="btn btn-outline-light">
+
+Voltar
+
+</a>
+
+
+</div>
+
+</nav>
+
+
+
 
 <div class="container mt-5">
 
-    <div class="row justify-content-center">
 
-        <div class="col-md-6">
+<h1 class="text-center titulo mb-5">
 
-            <div class="card shadow p-4">
+🎟 Meus Ingressos
 
+</h1>
 
-                <h2 class="text-center mb-4">
-                    🎟 Comprar Ingresso
-                </h2>
 
 
-                <h3>
-                    {{ show.nome }}
-                </h3>
 
+{% if ingressos %}
 
-                <p>
-                    <strong>Local:</strong> {{ show.local }}
-                </p>
 
 
-                <p>
-                    <strong>Data:</strong> {{ show.data }}
-                </p>
+<div class="row g-4">
 
 
-                <p>
-                    <strong>Categoria:</strong> {{ show.categoria }}
-                </p>
 
+{% for ingresso in ingressos %}
 
-                <hr>
 
 
-                <h5>
-                    Preço do ingresso:
-                </h5>
+<div class="col-md-6">
 
 
-                <h4 class="text-success">
-                    R$ {{ show.preco }}
-                </h4>
 
+<div class="ingresso-card">
 
-                <hr>
 
 
+<h3>
 
-                <form action="/finalizar_compra" method="POST">
+🎤 {{ ingresso.show }}
 
+</h3>
 
-                    <input type="hidden" name="show" value="{{ show.nome }}">
 
-                    <input type="hidden" name="local" value="{{ show.local }}">
 
-                    <input type="hidden" name="data" value="{{ show.data }}">
+<hr>
 
-                    <input type="hidden" name="preco" value="{{ show.preco }}">
 
 
+<p class="info">
 
-                    <div class="mb-3">
+📍 Local:
+{{ ingresso.local }}
 
-                        <label class="form-label">
-                            Forma de Pagamento
-                        </label>
+</p>
 
 
-                        <select 
-                            name="pagamento" 
-                            id="pagamento" 
-                            class="form-select"
-                            onchange="mostrarPagamento()"
-                            required>
 
+<p class="info">
 
-                            <option value="">
-                                Selecione
-                            </option>
+📅 Data:
+{{ ingresso.data }}
 
+</p>
 
-                            <option value="PIX">
-                                PIX
-                            </option>
 
 
-                            <option value="CARTAO">
-                                Cartão
-                            </option>
+<p class="info">
 
+💳 Pagamento:
+{{ ingresso.pagamento }}
 
-                        </select>
+</p>
 
-                    </div>
 
 
+<p class="valor">
 
-                    <!-- PIX -->
+R$ {{ ingresso.preco }}
 
-                    <div id="pixArea" class="text-center mt-3">
+</p>
 
 
-                        <h5>
-                            Pagamento via PIX
-                        </h5>
 
+<a href="{{ url_for('cancelar_ingresso', id=ingresso.id) }}"
 
-                        <p>
-                            Após finalizar a compra será confirmado o pagamento.
-                        </p>
+class="btn-cancelar">
 
+Cancelar ingresso
 
-                    </div>
+</a>
 
 
-
-                    <!-- CARTÃO -->
-
-                    <div id="cartaoArea">
-
-
-                        <input 
-                        type="text" 
-                        class="form-control mb-2"
-                        placeholder="Número do cartão">
-
-
-                        <input 
-                        type="text" 
-                        class="form-control mb-2"
-                        placeholder="Nome no cartão">
-
-
-                        <input 
-                        type="text" 
-                        class="form-control mb-2"
-                        placeholder="Validade MM/AA">
-
-
-                        <input 
-                        type="text" 
-                        class="form-control mb-2"
-                        placeholder="CVV">
-
-
-                    </div>
-
-
-
-
-                    <button 
-                    type="submit" 
-                    class="btn btn-success w-100 mt-4">
-
-                        Finalizar Compra
-
-                    </button>
-
-
-                </form>
-
-
-
-
-                <a href="/" class="btn btn-secondary w-100 mt-3">
-
-                    Voltar
-
-                </a>
-
-
-
-            </div>
-
-        </div>
-
-    </div>
 
 </div>
 
 
 
-
-<script>
-
-function mostrarPagamento() {
-
-
-    let pagamento = document.getElementById("pagamento").value;
-
-
-    document.getElementById("pixArea").style.display = "none";
-
-    document.getElementById("cartaoArea").style.display = "none";
+</div>
 
 
 
-    if (pagamento === "PIX") {
-
-        document.getElementById("pixArea").style.display = "block";
-
-    }
+{% endfor %}
 
 
 
-    if (pagamento === "CARTAO") {
-
-        document.getElementById("cartaoArea").style.display = "block";
-
-    }
+</div>
 
 
-}
 
-</script>
+{% else %}
+
+
+
+<div class="alert alert-warning text-center">
+
+Você ainda não comprou nenhum ingresso.
+
+</div>
+
+
+
+{% endif %}
+
+
+
+</div>
 
 
 
