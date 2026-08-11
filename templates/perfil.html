@@ -1,68 +1,283 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <title>Meu Perfil</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Meu Perfil</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, #0b1220, #111c30);
+        color: #e5e7eb;
+    }
+
+    .perfil-container {
+        max-width: 650px;
+        margin: 60px auto;
+        padding: 20px;
+    }
+
+    .perfil-card {
+        background: #121d30;
+        border: 1px solid #263a57;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .foto-perfil {
+        width: 130px;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #5b8fc9;
+        margin-bottom: 15px;
+    }
+
+    .nome {
+        color: #dbeafe;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    .informacoes {
+        background: #17263d;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: left;
+        margin-bottom: 20px;
+    }
+
+    .informacoes p {
+        margin: 10px 0;
+        color: #cbd5e1;
+    }
+
+    .informacoes strong {
+        color: #93b4d8;
+    }
+
+    .estatisticas {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .estatistica {
+        flex: 1;
+        background: #17263d;
+        border: 1px solid #263a57;
+        border-radius: 14px;
+        padding: 20px 10px;
+    }
+
+    .estatistica h4 {
+        color: #93b4d8;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .estatistica span {
+        color: #f1f5f9;
+        font-size: 23px;
+        font-weight: bold;
+    }
+
+    .titulo-foto {
+        color: #dbeafe;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        background: #0f1929;
+        border: 1px solid #314866;
+        color: white;
+    }
+
+    .form-control:focus {
+        background: #0f1929;
+        color: white;
+        border-color: #6b91bb;
+        box-shadow: 0 0 0 0.2rem rgba(107, 145, 187, 0.15);
+    }
+
+    .btn-ingressos {
+        background: #3f6f9f;
+        border: none;
+        color: white;
+        padding: 11px 25px;
+        border-radius: 10px;
+    }
+
+    .btn-ingressos:hover {
+        background: #527fae;
+        color: white;
+    }
+
+    .btn-foto {
+        background: #294866;
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 10px;
+    }
+
+    .btn-foto:hover {
+        background: #365d7e;
+        color: white;
+    }
+
+    hr {
+        border-color: #2b405b;
+        margin: 30px 0;
+    }
+
+    @media (max-width: 600px) {
+
+        .perfil-container {
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .perfil-card {
+            padding: 25px 18px;
+        }
+
+        .estatisticas {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
+<div class="perfil-container">
 
-    <div class="card shadow">
-        <div class="card-body text-center">
+<div class="perfil-card text-center">
 
-          
-          {% if usuario.foto %}
-            <img src="{{ url_for('static', filename='img/' + usuario.foto) }}"
-                width="120"
-                class="rounded-circle mb-3">
-            {% else %}
-                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                     width="120"
-                     class="rounded-circle mb-3">
-            {% endif %}
+    {% if usuario.foto %}
 
-            <h2>{{ usuario.nome }}</h2>
+        <img
+            src="{{ url_for('static', filename='img/' + usuario.foto) }}"
+            class="foto-perfil"
+            alt="Foto de perfil"
+        >
 
-            <p><strong>Email:</strong> {{ usuario.email }}</p>
-            <p><strong>Nascimento:</strong> {{ usuario.data_nascimento }}</p>
-            <p><strong>Gênero:</strong> {{ usuario.genero }}</p>
+    {% else %}
 
-            <hr>
+        <img
+            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            class="foto-perfil"
+            alt="Foto padrão"
+        >
 
-            <h4>Ingressos Comprados</h4>
-            <p>{{ total_ingressos }}</p>
+    {% endif %}
 
-            <a href="/meus_ingressos" class="btn btn-success">
-                Ver Meus Ingressos
-            </a>
 
-            <p><strong>Total Gasto:</strong>
-                R$ {{ "%.2f"|format(total_gasto or 0) }}
-            </p>
+    <h2 class="nome">
+        {{ usuario.nome }}
+    </h2>
 
-            <hr>
 
-            <h4>Foto de Perfil</h4>
+    <div class="informacoes">
 
-            <form action="/atualizar_foto" method="POST" enctype="multipart/form-data">
+        <p>
+            <strong> Email:</strong>
+            {{ usuario.email }}
+        </p>
 
-                <input type="file" name="foto" class="form-control" accept="image/*">
+        <p>
+            <strong> Data de nascimento:</strong>
+            {{ usuario.data_nascimento }}
+        </p>
 
-                <br>
+        <p>
+            <strong> Gênero:</strong>
+            {{ usuario.genero }}
+        </p>
 
-                <button type="submit" class="btn btn-primary">
-                    Salvar foto
-                </button>
+    </div>
 
-            </form>
+
+    <div class="estatisticas">
+
+        <div class="estatistica">
+
+            <h4> Ingressos</h4>
+
+            <span>
+                {{ total_ingressos }}
+            </span>
 
         </div>
+
+
+        <div class="estatistica">
+
+            <h4> Total gasto</h4>
+
+            <span>
+                R$ {{ "%.2f"|format(total_gasto or 0) }}
+            </span>
+
+        </div>
+
     </div>
+
+
+    <a href="/meus_ingressos" class="btn btn-ingressos">
+        Ver Meus Ingressos
+    </a>
+
+
+    <hr>
+
+
+    <h4 class="titulo-foto">
+         Foto de Perfil
+    </h4>
+
+
+    <form
+        action="/atualizar_foto"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input
+            type="file"
+            name="foto"
+            class="form-control mb-3"
+            accept="image/*"
+        >
+
+        <button type="submit" class="btn btn-foto">
+            Salvar foto
+        </button>
+
+    </form>
+
+</div>
+
 
 </div>
 
 </body>
+
 </html>

@@ -2,6 +2,13 @@
 <html lang="pt-br">
 
 <head>
+<<<<<<< HEAD
+=======
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Comprar Ingresso</title>
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -110,11 +117,21 @@ body{
 
 </style>
 
+<<<<<<< HEAD
 
 </head>
 
 
 
+=======
+        #pixArea {
+            display: none;
+        }
+    </style>
+
+</head>
+
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 <body>
 
 
@@ -153,6 +170,7 @@ Voltar
 
 🎟 Meus Ingressos
 
+<<<<<<< HEAD
 </h1>
 
 
@@ -194,9 +212,52 @@ Voltar
 
 📍 Local:
 {{ ingresso.local }}
+=======
+                <h2 class="text-center mb-4">
+                     Comprar Ingresso
+                </h2>
+
+                <h3>
+                    {{ show.nome }}
+                </h3>
+
+                <p>
+                    <strong>Local:</strong> {{ show.local }}
+                </p>
+
+                <p>
+                    <strong>Data:</strong> {{ show.data }}
+                </p>
+
+                <p>
+                    <strong>Categoria:</strong> {{ show.categoria }}
+                </p>
+
+                <hr>
+
+                <h5>
+                    Preço do ingresso:
+                </h5>
+
+                <h4 class="text-success">
+                    R$ {{ show.preco }}
+                </h4>
+
+                <hr>
+
+                <form action="/finalizar_compra" method="POST">
+
+                    <input type="hidden" name="show" value="{{ show.nome }}">
+                    <input type="hidden" name="local" value="{{ show.local }}">
+                    <input type="hidden" name="data" value="{{ show.data }}">
+                    <input type="hidden" name="preco" value="{{ show.preco }}">
+
+                    <div class="mb-3">
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 </p>
 
+<<<<<<< HEAD
 
 
 <p class="info">
@@ -214,15 +275,42 @@ Voltar
 {{ ingresso.pagamento }}
 
 </p>
+=======
+                        <select 
+                            name="pagamento" 
+                            id="pagamento" 
+                            class="form-select"
+                            onchange="mostrarPagamento()"
+                            required>
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="PIX">
+                                PIX
+                            </option>
+
+                            <option value="CARTAO">
+                                Cartão
+                            </option>
+
+                        </select>
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 
+<<<<<<< HEAD
 
 <p class="valor">
 
 R$ {{ ingresso.preco }}
+=======
+                    <!-- PIX -->
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 </p>
 
+<<<<<<< HEAD
 
 
 <a href="{{ url_for('cancelar_ingresso', id=ingresso.id) }}"
@@ -250,6 +338,55 @@ Cancelar ingresso
 </div>
 
 
+=======
+                        <h5>
+                            Pagamento via PIX
+                        </h5>
+
+                        <p>
+                            Após finalizar a compra será confirmado o pagamento.
+                        </p>
+
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="btn btn-success w-100 mt-4">
+
+                        Finalizar Compra
+
+                    </button>
+
+                </form>
+
+                <a href="/" class="btn btn-secondary w-100 mt-3">
+
+                    Voltar
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function mostrarPagamento() {
+
+    let pagamento = document.getElementById("pagamento").value;
+
+    document.getElementById("pixArea").style.display = "none";
+
+    if (pagamento === "PIX") {
+        document.getElementById("pixArea").style.display = "block";
+    }
+
+}
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 {% else %}
 
@@ -268,8 +405,6 @@ Você ainda não comprou nenhum ingresso.
 
 
 </div>
-
-
 
 </body>
 

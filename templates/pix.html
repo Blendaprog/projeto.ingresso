@@ -3,54 +3,236 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pagamento PIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pagamento PIX - TicketShow</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #061a40, #0b3d91, #000814);
+            font-family: Arial, sans-serif;
+        }
+
+        .pix-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .pix-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(10px);
+        }
+
+        .pix-card h2 {
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .pix-subtitle {
+            color: #d8e7ff;
+            margin-bottom: 25px;
+        }
+
+        .qr-area {
+            background: white;
+            padding: 15px;
+            width: fit-content;
+            margin: 0 auto 25px;
+            border-radius: 15px;
+        }
+
+        .qr-area img {
+            width: 230px;
+            height: 230px;
+            display: block;
+        }
+
+        .show-info {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .show-info p {
+            margin: 8px 0;
+        }
+
+        .valor {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .codigo-titulo {
+            margin-top: 25px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .pix-code {
+            background: #ffffff;
+            color: #222;
+            padding: 14px;
+            border-radius: 10px;
+            word-break: break-all;
+            font-size: 13px;
+            text-align: left;
+            max-height: 90px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .pix-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            background: #0d6efd;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pix-btn:hover {
+            background: #0b5ed7;
+            transform: translateY(-1px);
+        }
+
+        .home-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 13px;
+            border-radius: 10px;
+            text-decoration: none;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .home-btn:hover {
+            background: white;
+            color: #061a40;
+        }
+
+        .aviso {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #cbd9ee;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="pix-container">
 
-  <div class="pix-card">
+    <div class="pix-card">
 
-    <h2>💳 Pagamento via PIX</h2>
+        <h2> Pagamento via PIX</h2>
 
-    <p>Escaneie o QR Code abaixo para pagar seu ingresso</p>
+        <p class="pix-subtitle">
+            Escaneie o QR Code ou copie o código PIX para realizar o pagamento.
+        </p>
 
-    <img 
-      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PIX"
-      alt="QR Code PIX"
-    >
 
-    <hr style="border-color: rgba(255,255,255,0.2);">
+        <div class="qr-area">
 
-    <p><strong>🎤 Show:</strong> {{ show }}</p>
-    <p><strong>💰 Valor:</strong> R$ {{ preco }}</p>
+            <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PIX"
+                alt="QR Code PIX"
+            >
 
-    <div class="pix-code">
-      {{ codigo }}
+        </div>
+
+
+        <div class="show-info">
+
+            <p>
+                <strong> Show:</strong>
+                {{ show }}
+            </p>
+
+            <p>
+                <strong> Valor:</strong>
+                <span class="valor">
+                    R$ {{ preco }}
+                </span>
+            </p>
+
+        </div>
+
+
+        <p class="codigo-titulo">
+            Código PIX
+        </p>
+
+        <div class="pix-code" id="codigoPix">
+            {{ codigo }}
+        </div>
+
+
+        <button class="pix-btn" onclick="copiarPix()">
+             Copiar código PIX
+        </button>
+
+
+        <a href="{{ url_for('home') }}" class="home-btn">
+             Voltar para a tela inicial
+        </a>
+
+
+        <p class="aviso">
+             Pagamento seguro e rápido pelo PIX.
+        </p>
+
     </div>
-
-    <button class="pix-btn" onclick="copiarPix()">
-      📋 Copiar código PIX
-    </button>
-
-    <a href="{{ url_for('home') }}" class="btn btn-outline-light w-100 mt-3">
-      ⬅ Voltar
-    </a>
-
-  </div>
 
 </div>
 
+
 <script>
+
 function copiarPix() {
-  const pix = "{{ codigo }}";
-  navigator.clipboard.writeText(pix);
-  alert("Código PIX copiado com sucesso!");
+
+    const pix = "{{ codigo }}";
+
+    navigator.clipboard.writeText(pix)
+        .then(function() {
+
+            alert("Código PIX copiado com sucesso!");
+
+        })
+        .catch(function() {
+
+            alert("Não foi possível copiar o código PIX.");
+
+        });
 }
+
 </script>
 
 </body>
 </html>
+

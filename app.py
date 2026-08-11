@@ -803,9 +803,14 @@ def home():
 
     shows_disponiveis = [show for show in SHOWS if not show["esgotado"]]
 
+    destaque = next(
+    (show for show in shows_disponiveis if show.get("destaque")),
+    shows_disponiveis[0] if shows_disponiveis else None
+)
     return render_template(
         "index.html",
         shows=shows_disponiveis,
+        destaque=destaque,
         nome=session.get("nome_usuario")
     )
 
@@ -853,6 +858,22 @@ def meus_shows():
     meus = [s for s in SHOWS if s.get("admin") == session["usuario"]]
     return render_template("meus_shows.html", shows=meus)
 
+@app.route("/definir_destaque/<int:id>")
+@login_required
+@admin_required
+def definir_destaque(id):
+
+    for show in SHOWS:
+        if show["id"] == id:
+            for outro in SHOWS:
+                outro["destaque"] = False
+
+            show["destaque"] = True
+
+            break
+
+    return redirect(url_for("meus_shows"))
+
 @app.route("/excluir_show/<int:id>")
 @login_required
 @admin_required
@@ -898,6 +919,7 @@ def editar_show(id):
 
     return render_template("editar_show.html", show=show)
 
+
 @app.route("/cadastrar_show", methods=["GET", "POST"])
 @login_required
 @admin_required
@@ -914,8 +936,31 @@ def cadastrar_show():
             "idade_minima": int(request.form["idade_minima"]),
             "preco": float(request.form["preco"]),
             "imagem": request.form["imagem"],
+
             "ingressos_total": 100,
             "ingressos_vendidos": 0,
+
+            "lotes": [
+                {
+                    "nome": "Lote 1",
+                    "quantidade": 50,
+                    "vendidos": 0,
+                    "preco": float(request.form["preco"])
+                },
+                {
+                    "nome": "Lote 2",
+                    "quantidade": 30,
+                    "vendidos": 0,
+                    "preco": float(request.form["preco"]) + 20
+                },
+                {
+                    "nome": "Lote 3",
+                    "quantidade": 20,
+                    "vendidos": 0,
+                    "preco": float(request.form["preco"]) + 40
+                }
+            ],
+
             "admin": session["usuario"]
         }
 
@@ -926,6 +971,44 @@ def cadastrar_show():
         return redirect(url_for("meus_shows"))
 
     return render_template("cadastrar_show.html")
+
+
+
+@app.route("/gerenciar_lotes/<int:id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def gerenciar_lotes(id):
+
+    show = next((s for s in SHOWS if s["id"] == id), None)
+
+    if show is None:
+        return "Show não encontrado", 404
+
+    if request.method == "POST":
+
+        for i, lote in enumerate(show["lotes"]):
+
+            lote["quantidade"] = int(
+                request.form[f"quantidade_{i}"]
+            )
+
+            lote["preco"] = float(
+                request.form[f"preco_{i}"]
+            )
+
+        show["ingressos_total"] = sum(
+            lote["quantidade"]
+            for lote in show["lotes"]
+        )
+
+        salvar_shows_json()
+
+        return redirect(url_for("meus_shows"))
+
+    return render_template(
+        "gerenciar_lotes.html",
+        show=show
+    )
 
 # ---------------------------------------------------------------------------
 # Compra de ingressos
@@ -958,10 +1041,98 @@ def finalizar_compra():
     if show_obj is None:
         return redirect(url_for("home"))
 
-    # preço único do show
+    # preço do show
     preco = show_obj["preco"]
 
-    # cria ingresso
+    # PIX
+    if pagamento == "PIX":
+
+        ingresso = Ingresso(
+            id=len(ingressos) + 1,
+            show=show,
+            preco=preco,
+            local=local,
+            data=data,
+            pagamento="PIX",
+            usuario_id=session["usuario_id"],
+            codigo=codigo
+        )
+
+        ingressos.append(ingresso)
+
+        # atualiza vendas
+        show_obj["ingressos_vendidos"] = show_obj.get("ingressos_vendidos", 0) + 1
+
+        salvar_ingressos_json()
+
+        texto_pix = (
+            f"PIX\n"
+            f"Show: {show}\n"
+            f"Valor: R$ {preco}\n"
+            f"Código: {codigo}"
+        )
+
+        img = qrcode.make(texto_pix)
+
+        caminho = os.path.join(
+            "static",
+            "img",
+            f"{codigo}.png"
+        )
+
+        img.save(caminho)
+
+        return render_template(
+            "pix.html",
+            show=show,
+            preco=preco,
+            codigo=codigo,
+            qr_code=f"img/{codigo}.png"
+        )
+
+    # CARTÃO
+    elif pagamento == "CARTAO":
+
+        return render_template(
+            "cartao.html",
+            show=show,
+            preco=preco,
+            codigo=codigo,
+            local=local,
+            data=data
+        )
+
+        data_formatada = datetime.strptime(data, "%Y-%m-%d")
+    return redirect(url_for("home"))
+
+@app.route("/pagar_cartao", methods=["POST"])
+@login_required
+def pagar_cartao():
+
+    show = request.form.get("show")
+    local = request.form.get("local")
+    data = request.form.get("data")
+    preco = float(request.form.get("preco"))
+    codigo = request.form.get("codigo")
+
+    tipo_cartao = request.form.get("tipo_cartao")
+    numero = request.form.get("numero")
+    nome = request.form.get("nome")
+    validade = request.form.get("validade")
+    cvv = request.form.get("cvv")
+    parcelas = request.form.get("parcelas")
+
+    # verifica se os campos foram preenchidos
+    if not tipo_cartao or not numero or not nome or not validade or not cvv:
+        return "Preencha todos os dados do cartão."
+
+    # forma de pagamento
+    pagamento = f"Cartão - {tipo_cartao}"
+
+    if tipo_cartao == "Crédito":
+        pagamento += f" - {parcelas}x"
+
+    # cria ingresso somente depois do pagamento
     ingresso = Ingresso(
         id=len(ingressos) + 1,
         show=show,
@@ -976,56 +1147,42 @@ def finalizar_compra():
     ingressos.append(ingresso)
 
     # atualiza vendas
-    for s in SHOWS:
-        if s["nome"] == show:
-            s["ingressos_vendidos"] = s.get("ingressos_vendidos", 0) + 1
-            break
+    show_obj = next((s for s in SHOWS if s["nome"] == show), None)
+
+    if show_obj:
+        show_obj["ingressos_vendidos"] = show_obj.get(
+            "ingressos_vendidos", 0
+        ) + 1
 
     salvar_ingressos_json()
 
-    if pagamento == "PIX":
+    return render_template(
+        "confirmacao.html",
+        ingresso=ingresso,
+        show=show,
+        preco=preco,
+        local=local,
+        data=data,
+        pagamento=pagamento,
+        codigo=codigo
+    )
 
-        texto_pix = (
-            f"PIX\n"
-            f"Show: {show}\n"
-            f"Valor: R$ {preco}\n"
-            f"Código: {codigo}"
-        )
 
-        img = qrcode.make(texto_pix)
-        caminho = os.path.join("static", "img", f"{codigo}.png")
-        img.save(caminho)
-
-        return render_template(
-            "pix.html",
-            show=show,
-            preco=preco,
-            codigo=codigo
-        )
-
-    elif pagamento == "CARTAO":
-
-        return render_template(
-            "cartao.html",
-            show=show,
-            preco=preco,
-            codigo=codigo
-        )
-
-    return redirect(url_for("home"))
 @app.route("/esgotados")
 @login_required
 def esgotados():
 
     shows_esgotados = [
         show for show in SHOWS
-        if show.get("ingressos_vendidos", 0) >= show.get("ingressos_total", 0)
+        if show.get("ingressos_vendidos", 0)
+        >= show.get("ingressos_total", 0)
     ]
 
     return render_template(
         "esgotados.html",
         shows=shows_esgotados
     )
+
 
 if __name__ == "__main__":
     print("Flask iniciando...")

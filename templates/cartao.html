@@ -1,24 +1,247 @@
-<div class="pix-container">
-  <div class="pix-card">
+<!DOCTYPE html>
+<html lang="pt-br">
 
-    <h2> Pagamento via Cartão</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <p>Preencha os dados do cartão para continuar</p>
+    <title>Pagamento com Cartão</title>
 
-    <form method="POST">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-      <input type="text" placeholder="Número do cartão" class="form-control mb-2">
-      <input type="text" placeholder="Nome no cartão" class="form-control mb-2">
-      <input type="text" placeholder="Validade" class="form-control mb-2">
-      <input type="text" placeholder="CVV" class="form-control mb-2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-      <button class="pix-btn">Pagar com cartão</button>
+<body>
 
-    </form>
+    <div class="container py-5">
 
-    <a href="{{ url_for('home') }}" class="btn btn-outline-light w-100 mt-3">
-      Voltar
-    </a>
+        <div class="row justify-content-center">
 
-  </div>
-</div>
+            <div class="col-md-7">
+
+                <div class="card shadow-lg">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="text-center mb-4">
+                            💳 Pagamento com Cartão
+                        </h2>
+
+                        <div class="alert alert-primary text-center">
+
+                            <strong>{{ show }}</strong>
+
+                            <br>
+
+                            Valor da compra:
+
+                            <strong>
+                                R$ {{ "%.2f"|format(preco) }}
+                            </strong>
+
+                        </div>
+
+                        <form action="{{ url_for('pagar_cartao') }}" method="POST">
+
+                            <input type="hidden" name="show" value="{{ show }}">
+                            <input type="hidden" name="local" value="{{ local }}">
+                            <input type="hidden" name="data" value="{{ data }}">
+                            <input type="hidden" name="preco" value="{{ preco }}">
+                            <input type="hidden" name="codigo" value="{{ codigo }}">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Tipo de cartão
+                                </label>
+
+                                <div class="d-flex gap-3">
+
+                                    <div class="form-check">
+
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="tipo_cartao"
+                                            id="debito"
+                                            value="Débito"
+                                            required
+                                            onchange="mostrarParcelas()"
+                                        >
+
+                                        <label class="form-check-label" for="debito">
+                                            Débito
+                                        </label>
+
+                                    </div>
+
+                                    <div class="form-check">
+
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="tipo_cartao"
+                                            id="credito"
+                                            value="Crédito"
+                                            onchange="mostrarParcelas()"
+                                        >
+
+                                        <label class="form-check-label" for="credito">
+                                            Crédito
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Número do cartão
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="numero"
+                                    class="form-control"
+                                    placeholder="0000 0000 0000 0000"
+                                    maxlength="19"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Nome no cartão
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="nome"
+                                    class="form-control"
+                                    placeholder="Nome completo"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label">
+                                        Validade
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="validade"
+                                        class="form-control"
+                                        placeholder="MM/AA"
+                                        maxlength="5"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label">
+                                        CVV
+                                    </label>
+
+                                    <input
+                                        type="password"
+                                        name="cvv"
+                                        class="form-control"
+                                        placeholder="123"
+                                        maxlength="4"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="mb-4"
+                                id="parcelasArea"
+                                style="display: none;"
+                            >
+
+                                <label class="form-label">
+                                    Parcelamento
+                                </label>
+
+                                <select
+                                    name="parcelas"
+                                    id="parcelas"
+                                    class="form-select"
+                                >
+
+                                    <option value="1">1x sem juros</option>
+                                    <option value="2">2x sem juros</option>
+                                    <option value="3">3x sem juros</option>
+                                    <option value="4">4x sem juros</option>
+                                    <option value="5">5x sem juros</option>
+                                    <option value="6">6x sem juros</option>
+
+                                </select>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 py-2"
+                            >
+                                 Pagar R$ {{ "%.2f"|format(preco) }}
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function mostrarParcelas() {
+
+            const credito = document.getElementById("credito");
+            const parcelasArea = document.getElementById("parcelasArea");
+
+            if (credito.checked) {
+
+                parcelasArea.style.display = "block";
+
+            } else {
+
+                parcelasArea.style.display = "none";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

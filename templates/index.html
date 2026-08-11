@@ -83,7 +83,9 @@
 
 </nav>
 
+{% set destaque = shows[0] %}
 
+<<<<<<< HEAD
 
 
 <section class="banner">
@@ -94,10 +96,24 @@
 
         <h1>
             Os melhores shows estão aqui 🎤
+=======
+<section class="featured-show"
+    style="background-image: url('{{ url_for("static", filename="imagens/" + destaque["imagem"]) }}');">
+
+    <div class="featured-content">
+
+        <span class="featured-label">
+            🔥 EM DESTAQUE
+        </span>
+
+        <h1>
+            {{ destaque["nome"] }}
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
         </h1>
 
 
         <p>
+<<<<<<< HEAD
             Encontre seu próximo evento no TicketShow
         </p>
 
@@ -107,6 +123,25 @@
 
             Comprar ingresso
 
+=======
+            Uma experiência inesquecível ao vivo.
+        </p>
+
+        <div class="featured-info">
+
+            <div>
+                📍 {{ destaque["local"] }}
+            </div>
+
+            <div>
+                📅 {{ destaque["data"] }}
+            </div>
+
+        </div>
+
+        <a href="/comprar/{{ destaque['id'] }}" class="featured-btn">
+            🎟 Comprar ingresso
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
         </a>
 
 
@@ -116,7 +151,9 @@
 </section>
 
 
+<main class="home-content">
 
+<<<<<<< HEAD
 
 
 <div class="container mt-5">
@@ -276,15 +313,31 @@ class="show-img">
 
 
             </div>
+=======
+    <div class="section-heading">
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
+        <div>
+            <span class="section-label">
+                🎟 INGRESSOS
+            </span>
 
+            <h2>
+                Eventos em destaque
+            </h2>
         </div>
 
+<<<<<<< HEAD
 
 
 
         {% endfor %}
 
+=======
+        <a href="#shows" class="see-all">
+            Ver todos →
+        </a>
+>>>>>>> 81ece44 (corrigi organizacao dos shows)
 
 
  <section class="categorias">
@@ -474,7 +527,181 @@ class="show-img">
 {% endfor %}
 
 
-</div>
+    <div id="shows">
+
+        <h2 class="shows-title">
+            Shows Disponíveis
+        </h2>
+
+
+        <div class="categories">
+
+            <a href="/">Todos</a>
+
+            <a href="/categoria/trap">
+                Trap
+            </a>
+
+            <a href="/categoria/rap">
+                Rap
+            </a>
+
+            <a href="/categoria/funk">
+                Funk
+            </a>
+
+            <a href="/categoria/k-pop">
+                K-Pop
+            </a>
+
+            <a href="/categoria/r&b">
+                R&B
+            </a>
+
+            <a href="/categoria/mpb">
+                MPB
+            </a>
+
+            <a href="/categoria/pop">
+                Pop
+            </a>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for show in shows %}
+
+            <div class="col-md-4">
+
+                <div class="show-card">
+
+
+                    <div class="show-image">
+
+                        <img
+                            src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
+                            alt="{{ show['nome'] }}"
+                        >
+
+                        <span class="card-category">
+                            {{ show['categoria'] }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <h3 class="show-title">
+                            {{ show['nome'] }}
+                        </h3>
+
+
+                        {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
+
+
+                        {% if porcentagem >= 90 %}
+
+                            <span class="status last">
+                                Últimos ingressos
+                            </span>
+
+                        {% elif porcentagem >= 50 %}
+
+                            <span class="status medium">
+                                Alta procura
+                            </span>
+
+                        {% else %}
+
+                            <span class="status available">
+                                Disponível
+                            </span>
+
+                        {% endif %}
+
+
+                        <div class="show-info">
+
+                            <p>
+                                📍 {{ show['local'] }}
+                            </p>
+
+                            <p>
+                                📅 {{ show['data'] }}
+                            </p>
+
+                            <p>
+                                🔞 {{ show['idade_minima'] }} anos
+                            </p>
+
+                        </div>
+
+
+                        <div class="ticket-price">
+                            R$ {{ show['preco'] }}
+                        </div>
+
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width: {{ porcentagem }}%;">
+                            </div>
+
+                        </div>
+
+
+                        <p class="tickets-left">
+
+                            {{ show['ingressos_vendidos'] }}
+                            /
+                            {{ show['ingressos_total'] }}
+
+                            ingressos vendidos
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="card-footer">
+
+                        {% if show['esgotado'] %}
+
+                            <button class="sold-out-btn" disabled>
+                                Ingressos esgotados
+                            </button>
+
+                        {% else %}
+
+                            <a
+                                href="/comprar/{{ show['id'] }}"
+                                class="buy-ticket-btn">
+
+                                🎟 Comprar ingresso
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</main>
 
 
 
