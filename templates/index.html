@@ -2,13 +2,97 @@
 <html lang="pt-br">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>TicketShow</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<body>
+
+   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            background: #030712 !important;
+            color: white !important;
+        }
+
+        .navbar {
+            background: #030712 !important;
+            border-bottom: 1px solid #1e3a8a !important;
+        }
+
+        .featured-show {
+            width: 100% !important;
+            height: 500px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        .featured-content h1 {
+            font-size: 75px !important;
+            font-weight: 900 !important;
+        }
+
+        .featured-btn {
+            background: #2563eb !important;
+            color: white !important;
+            padding: 15px 25px !important;
+            border-radius: 10px !important;
+        }
+
+        .categoria-lista a {
+            background: #172f75 !important;
+            color: white !important;
+            border: 1px solid #315ac7 !important;
+            border-radius: 30px !important;
+            padding: 12px 22px !important;
+        }
+
+        .show-card {
+            background: #0b1426 !important;
+            border: 1px solid #2448a8 !important;
+            border-radius: 15px !important;
+            overflow: hidden !important;
+        }
+
+        .show-card .card-body,
+        .show-card .card-footer {
+            background: #0b1426 !important;
+        }
+
+        .show-image {
+            height: 230px !important;
+        }
+
+        .ticket-price {
+            color: #60a5fa !important;
+            font-size: 25px !important;
+            font-weight: 900 !important;
+        }
+
+        .buy-ticket-btn {
+            background: #2563eb !important;
+            color: white !important;
+            border-radius: 8px !important;
+        }
+
+        .buy-ticket-btn:hover {
+            background: #1d4ed8 !important;
+        }
+
+        .footer {
+            background: #020617 !important;
+            border-top: 1px solid #172554 !important;
+        }
+
+    </style>
+
+</head> 
+
+<body class="pagina-home">
 
 
 <nav class="navbar navbar-expand-lg navbar-dark">
@@ -16,748 +100,355 @@
     <div class="container">
 
         <a class="navbar-brand fw-bold fs-3" href="/">
-            🎟 TicketShow
+             TicketShow
         </a>
 
-
-        <button class="navbar-toggler" 
-                type="button" 
-                data-bs-toggle="collapse" 
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
                 data-bs-target="#menu">
 
             <span class="navbar-toggler-icon"></span>
 
         </button>
 
-
-
         <div class="collapse navbar-collapse" id="menu">
 
             <div class="ms-auto d-flex align-items-center flex-wrap gap-2">
-
 
                 <span class="text-white">
                     Olá, {{ nome }}
                 </span>
 
-
                 <a href="/perfil" class="btn btn-outline-light">
                     👤 Perfil
                 </a>
 
-
-
                 {% if session["tipo"] == "admin" %}
 
+                    <a href="/cadastrar_show" class="btn btn-success">
+                        ➕ Cadastrar Show
+                    </a>
 
-                <a href="/cadastrar_show" class="btn btn-success">
-                    ➕ Cadastrar Show
-                </a>
-
-
-                <a href="/meus_shows" class="btn btn-primary">
-                    🎤 Meus Shows
-                </a>
-
+                    <a href="/meus_shows" class="btn btn-primary">
+                        🎤 Meus Shows
+                    </a>
 
                 {% endif %}
-
-
 
                 <a href="/meus_ingressos" class="btn btn-warning">
                     🎟 Ingressos
                 </a>
 
-
                 <a href="/logout" class="btn btn-danger">
                     🚪 Sair
                 </a>
 
-
             </div>
 
         </div>
-
 
     </div>
 
 </nav>
 
-{% set destaque = shows[0] %}
 
-<<<<<<< HEAD
+{% if shows %}
 
+    {% set destaque = shows[0] %}
 
-<section class="banner">
+    <section class="featured-show"
+        style="background-image: url('{{ url_for("static", filename="imagens/" + destaque["imagem"]) }}');">
 
+        <div class="featured-content">
 
-    <div class="banner-texto">
+            <span class="featured-label">
+                🔥 EM DESTAQUE
+            </span>
 
+            <h1>
+                {{ destaque["nome"] }}
+            </h1>
 
-        <h1>
-            Os melhores shows estão aqui 🎤
-=======
-<section class="featured-show"
-    style="background-image: url('{{ url_for("static", filename="imagens/" + destaque["imagem"]) }}');">
+            <p>
+                Uma experiência inesquecível ao vivo.
+            </p>
 
-    <div class="featured-content">
+            <div class="featured-info">
 
-        <span class="featured-label">
-            🔥 EM DESTAQUE
-        </span>
+                <div>
+                    📍 {{ destaque["local"] }}
+                </div>
 
-        <h1>
-            {{ destaque["nome"] }}
->>>>>>> 81ece44 (corrigi organizacao dos shows)
-        </h1>
+                <div>
+                    📅 {{ destaque["data"] }}
+                </div>
 
-
-        <p>
-<<<<<<< HEAD
-            Encontre seu próximo evento no TicketShow
-        </p>
-
-
-
-        <a href="#shows" class="btn-banner">
-
-            Comprar ingresso
-
-=======
-            Uma experiência inesquecível ao vivo.
-        </p>
-
-        <div class="featured-info">
-
-            <div>
-                📍 {{ destaque["local"] }}
             </div>
 
-            <div>
-                📅 {{ destaque["data"] }}
-            </div>
+            <a href="/comprar/{{ destaque['id'] }}" class="featured-btn">
+                🎟 Comprar ingresso
+            </a>
 
         </div>
-
-        <a href="/comprar/{{ destaque['id'] }}" class="featured-btn">
-            🎟 Comprar ingresso
->>>>>>> 81ece44 (corrigi organizacao dos shows)
-        </a>
-
-
-    </div>
-
-
-</section>
-
-
-<main class="home-content">
-
-<<<<<<< HEAD
-
-
-<div class="container mt-5">
-
-
-    <h1 class="text-center">
-
-        🎟 Eventos em destaque
-
-    </h1>
-
-
-
-
-    <section class="busca">
-
-
-        <h2>
-
-            Encontre seu próximo show 🔍
-
-        </h2>
-
-
-
-        <form action="/buscar" method="GET">
-
-
-            <input 
-                type="text" 
-                name="pesquisa"
-                placeholder="Digite o nome do artista ou evento..."
-            >
-
-
-
-            <button type="submit">
-
-                Buscar
-
-            </button>
-
-
-
-        </form>
-
 
     </section>
 
 
+    <main class="home-content">
 
+        <div class="container mt-5">
 
+            <div class="section-heading">
 
+                <div>
 
-    <div class="categories">
+                    <span class="section-label">
+                        🎟 INGRESSOS
+                    </span>
 
-
-        <a href="/">
-            Todos
-        </a>
-
-
-        <a href="/categoria/trap">
-            Trap
-        </a>
-
-
-        <a href="/categoria/rap">
-            Rap
-        </a>
-
-
-        <a href="/categoria/funk">
-            Funk
-        </a>
-
-
-        <a href="/categoria/k-pop">
-            K-Pop
-        </a>
-
-
-        <a href="/categoria/r&b">
-            R&B
-        </a>
-
-
-        <a href="/categoria/mpb">
-            MPB
-        </a>
-
-
-        <a href="/categoria/pop">
-            Pop
-        </a>
-
-
-    </div>
-
-
-
-
-
-    <div class="row g-4" id="shows">
-
-
-        {% for show in shows %}
-
-
-
-        <div class="col-md-4">
-
-
-            <div class="show-card">
-
-
-
-                <img 
-src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
-class="show-img">
-
-
-<h3>
-    {{ show['nome'] }}
-</h3>
-
-
-
-
-                    <p>
-
-                        📅 {{ show.data }}
-
-                    </p>
-
-
-
-                    <p>
-
-                        📍 {{ show.local }}
-
-                    </p>
-
-
-
-                    <p class="preco">
-
-                        💰 R$ {{ show.preco }}
-
-                    </p>
-
-
-
-
+                    <h2>
+                        Eventos em destaque
+                    </h2>
 
                 </div>
 
+                <a href="#shows" class="see-all">
+                    Ver todos →
+                </a>
 
             </div>
-=======
-    <div class="section-heading">
->>>>>>> 81ece44 (corrigi organizacao dos shows)
 
-        <div>
-            <span class="section-label">
-                🎟 INGRESSOS
-            </span>
 
-            <h2>
-                Eventos em destaque
-            </h2>
-        </div>
+            <section class="categorias">
 
-<<<<<<< HEAD
+                <h2>
+                    Escolha por categoria
+                </h2>
 
+                <div class="categoria-lista">
 
-
-        {% endfor %}
-
-=======
-        <a href="#shows" class="see-all">
-            Ver todos →
-        </a>
->>>>>>> 81ece44 (corrigi organizacao dos shows)
-
-
- <section class="categorias">
-
-    <h2>
-        Escolha por categoria
-    </h2>
-
-
-    <div class="categoria-lista">
-
-        <a href="/categoria/Trap">
-            🔥 Trap
-        </a>
-
-
-        <a href="/categoria/K-pop">
-            💜 K-pop
-        </a>
-
-
-        <a href="/categoria/Rock">
-            🎸 Rock
-        </a>
-
-
-        <a href="/categoria/MPB">
-            🎶 MPB
-        </a>
-
-
-        <a href="/categoria/Funk">
-            🔥 Funk
-        </a>
-
-    </div>
-
-</section>
-
-
-
-<div class="row g-4" id="shows">
-
-
-{% for show in shows %}
-
-
-<div class="col-md-4">
-
-
-    <div class="show-card">
-
-
-        <div class="show-info">
-
-
-            {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
-
-
-
-            {% if porcentagem >= 90 %}
-
-                <span class="status last">
-                    Últimos ingressos
-                </span>
-
-
-            {% elif porcentagem >= 50 %}
-
-                <span class="status medium">
-                    Alta procura
-                </span>
-
-
-            {% else %}
-
-                <span class="status available">
-                    Disponível
-                </span>
-
-
-            {% endif %}
-
-
-
-            <span class="category-tag">
-
-                {{ show['categoria'] }}
-
-            </span>
-
-
-
-            <h3>
-                {{ show['nome'] }}
-            </h3>
-
-
-
-            <p>
-                📍 {{ show['local'] }}
-            </p>
-
-
-
-            <p>
-                📅 {{ show['data'] }}
-            </p>
-
-
-
-            <p>
-                🔞 {{ show['idade_minima'] }} anos
-            </p>
-
-
-
-            <div class="ticket-price">
-
-                R$ {{ show['preco'] }}
-
-            </div>
-
-
-
-
-            <div class="progress mt-3">
-
-                <div class="progress-bar"
-                     style="width: {{ porcentagem }}%;">
-                </div>
-
-            </div>
-
-
-
-
-            <p class="tickets-left">
-
-                {{ show['ingressos_vendidos'] }}
-                /
-                {{ show['ingressos_total'] }}
-
-                ingressos vendidos
-
-            </p>
-
-
-
-
-            <div class="card-footer">
-
-
-                {% if show['esgotado'] %}
-
-
-                    <button class="sold-out-btn" disabled>
-
-                        Ingressos esgotados
-
-                    </button>
-
-
-                {% else %}
-
-
-                    <a href="/comprar/{{ show['id'] }}" class="buy-ticket-btn">
-                        🎟 Comprar {{ show['nome'] }}
+                    <a href="/categoria/trap">
+                        🔥 Trap
                     </a>
 
-                {% endif %}
+                    <a href="/categoria/k-pop">
+                        💜 K-Pop
+                    </a>
+
+                    <a href="/categoria/rap">
+                        🎤 Rap
+                    </a>
+
+                    <a href="/categoria/funk">
+                        🔥 Funk
+                    </a>
+
+                    <a href="/categoria/mpb">
+                        🎶 MPB
+                    </a>
+
+                    <a href="/categoria/pop">
+                        🎵 Pop
+                    </a>
+
+                    <a href="/categoria/r&b">
+                        🎧 R&B
+                    </a>
+
+                </div>
+
+            </section>
 
 
-            </div>
+            <div class="row g-4" id="shows">
+
+                {% for show in shows %}
+
+                    <div class="col-md-4">
+
+                        <div class="show-card">
+
+                            <div class="show-image">
+
+                                <img
+                                    src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
+                                    alt="{{ show['nome'] }}"
+                                >
+
+                                <span class="card-category">
+                                    {{ show['categoria'] }}
+                                </span>
+
+                            </div>
 
 
+                            <div class="card-body">
 
-        </div>
-
-
-    </div>
-
-
-</div>
+                                <h3 class="show-title">
+                                    {{ show['nome'] }}
+                                </h3>
 
 
-{% endfor %}
+                                {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
 
 
-    <div id="shows">
+                                {% if porcentagem >= 90 %}
 
-        <h2 class="shows-title">
-            Shows Disponíveis
-        </h2>
+                                    <span class="status last">
+                                        Últimos ingressos
+                                    </span>
 
+                                {% elif porcentagem >= 50 %}
 
-        <div class="categories">
+                                    <span class="status medium">
+                                        Alta procura
+                                    </span>
 
-            <a href="/">Todos</a>
+                                {% else %}
 
-            <a href="/categoria/trap">
-                Trap
-            </a>
+                                    <span class="status available">
+                                        Disponível
+                                    </span>
 
-            <a href="/categoria/rap">
-                Rap
-            </a>
-
-            <a href="/categoria/funk">
-                Funk
-            </a>
-
-            <a href="/categoria/k-pop">
-                K-Pop
-            </a>
-
-            <a href="/categoria/r&b">
-                R&B
-            </a>
-
-            <a href="/categoria/mpb">
-                MPB
-            </a>
-
-            <a href="/categoria/pop">
-                Pop
-            </a>
-
-        </div>
+                                {% endif %}
 
 
-        <div class="row g-4">
+                                <div class="show-info">
 
-            {% for show in shows %}
+                                    <p>
+                                        📍 {{ show['local'] }}
+                                    </p>
 
-            <div class="col-md-4">
+                                    <p>
+                                        📅 {{ show['data'] }}
+                                    </p>
 
-                <div class="show-card">
+                                    <p>
+                                        🔞 {{ show['idade_minima'] }} anos
+                                    </p>
 
-
-                    <div class="show-image">
-
-                        <img
-                            src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
-                            alt="{{ show['nome'] }}"
-                        >
-
-                        <span class="card-category">
-                            {{ show['categoria'] }}
-                        </span>
-
-                    </div>
+                                </div>
 
 
-                    <div class="card-body">
-
-                        <h3 class="show-title">
-                            {{ show['nome'] }}
-                        </h3>
+                                <div class="ticket-price">
+                                    R$ {{ show['preco'] }}
+                                </div>
 
 
-                        {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
+                                <div class="progress">
+
+                                    <div
+                                        class="progress-bar"
+                                        style="width: {{ porcentagem }}%;">
+                                    </div>
+
+                                </div>
 
 
-                        {% if porcentagem >= 90 %}
+                                <p class="tickets-left">
 
-                            <span class="status last">
-                                Últimos ingressos
-                            </span>
+                                    {{ show['ingressos_vendidos'] }}
+                                    /
+                                    {{ show['ingressos_total'] }}
 
-                        {% elif porcentagem >= 50 %}
+                                    ingressos vendidos
 
-                            <span class="status medium">
-                                Alta procura
-                            </span>
+                                </p>
 
-                        {% else %}
-
-                            <span class="status available">
-                                Disponível
-                            </span>
-
-                        {% endif %}
+                            </div>
 
 
-                        <div class="show-info">
+                            <div class="card-footer">
 
-                            <p>
-                                📍 {{ show['local'] }}
-                            </p>
+                                {% if show['esgotado'] %}
 
-                            <p>
-                                📅 {{ show['data'] }}
-                            </p>
+                                    <button class="sold-out-btn" disabled>
+                                        Ingressos esgotados
+                                    </button>
 
-                            <p>
-                                🔞 {{ show['idade_minima'] }} anos
-                            </p>
+                                {% else %}
 
-                        </div>
+                                    <a
+                                        href="/comprar/{{ show['id'] }}"
+                                        class="buy-ticket-btn">
 
+                                        🎟 Comprar ingresso
 
-                        <div class="ticket-price">
-                            R$ {{ show['preco'] }}
-                        </div>
+                                    </a>
 
+                                {% endif %}
 
-                        <div class="progress">
-
-                            <div
-                                class="progress-bar"
-                                style="width: {{ porcentagem }}%;">
                             </div>
 
                         </div>
 
-
-                        <p class="tickets-left">
-
-                            {{ show['ingressos_vendidos'] }}
-                            /
-                            {{ show['ingressos_total'] }}
-
-                            ingressos vendidos
-
-                        </p>
-
                     </div>
 
-
-                    <div class="card-footer">
-
-                        {% if show['esgotado'] %}
-
-                            <button class="sold-out-btn" disabled>
-                                Ingressos esgotados
-                            </button>
-
-                        {% else %}
-
-                            <a
-                                href="/comprar/{{ show['id'] }}"
-                                class="buy-ticket-btn">
-
-                                🎟 Comprar ingresso
-
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-
-                </div>
+                {% endfor %}
 
             </div>
 
-            {% endfor %}
+        </div>
 
+    </main>
+
+{% else %}
+
+    <div class="container mt-5">
+
+        <div class="alert alert-warning text-center">
+            Nenhum show disponível no momento.
         </div>
 
     </div>
 
-</main>
-
-
+{% endif %}
 
 
 <footer class="footer">
 
-
     <div class="footer-content">
-
 
         <h3>
             🎟️ TicketShow
         </h3>
 
-
         <p>
             Os melhores shows e experiências em um só lugar.
         </p>
 
-
-
         <div class="footer-links">
-
 
             <a href="/">
                 Início
             </a>
 
-
             <a href="/meus_ingressos">
                 Meus ingressos
             </a>
-
 
             <a href="#">
                 Ajuda
             </a>
 
-
             <a href="#">
                 Contato
             </a>
 
-
         </div>
 
-
-
         <p class="copyright">
-
             © 2026 TicketShow. Todos os direitos reservados.
-
         </p>
-
 
     </div>
 
-
 </footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

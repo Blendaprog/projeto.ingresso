@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 [
   {
     "id": 1,
@@ -6,11 +5,18 @@
     "preco": 220.0,
     "local": "Allianz Parque - São Paulo",
     "data": "2026-10-10",
-    "pagamento": "PIX",
+    "pagamento": "Cartão - Crédito - Inter - 1x",
     "usuario_id": 1,
-    "codigo": "86687775"
+    "codigo": "9d02f6b2"
+  },
+  {
+    "id": 2,
+    "show": "Veigh",
+    "preco": 200.0,
+    "local": "Allianz Parque - São Paulo",
+    "data": "2026-09-15",
+    "pagamento": "Cartão - Débito - Nubank",
+    "usuario_id": 1,
+    "codigo": "a991d83a"
   }
 ]
-=======
-[]
->>>>>>> 81ece44 (corrigi organizacao dos shows)

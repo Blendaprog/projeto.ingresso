@@ -1,0 +1,36 @@
+EMAIL_ADMIN = "admin@ticketshow.com"
+
+
+@app.route("/login_admin", methods=["GET", "POST"])
+def login_admin():
+
+    if request.method == "POST":
+
+        email = request.form.get("email")
+        senha = request.form.get("senha")
+
+        if email != EMAIL_ADMIN:
+            return render_template(
+                "login_admin.html",
+                erro="Este e-mail não possui acesso administrativo."
+            )
+
+        usuario = next(
+            (u for u in usuarios if u.email == email and u.senha == senha),
+            None
+        )
+
+        if usuario is None:
+            return render_template(
+                "login_admin.html",
+                erro="E-mail ou senha incorretos."
+            )
+
+        session["usuario"] = usuario.email
+        session["usuario_id"] = usuario.id
+        session["nome_usuario"] = usuario.nome
+        session["tipo"] = "admin"
+
+        return redirect(url_for("area_admin"))
+
+    return render_template("login_admin.html")

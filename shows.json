@@ -9,7 +9,7 @@
     "categoria": "Trap",
     "imagem": "veigh.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
+    "ingressos_vendidos": 1,
     "esgotado": false
   },
   {
@@ -22,7 +22,7 @@
     "categoria": "Trap",
     "imagem": "matue.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
+    "ingressos_vendidos": 1,
     "esgotado": false
   },
   {
@@ -544,18 +544,5 @@
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
     "esgotado": false
-  },
-  {
-    "id": 43,
-    "nome": "Patrono",
-    "categoria": "MPB",
-    "local": "Bar Opinião, Porto Alegre (RS",
-    "data": "2026-08-22",
-    "idade_minima": 16,
-    "preco": 70.0,
-    "imagem": "patrono.png",
-    "ingressos_total": 100,
-    "ingressos_vendidos": 0,
-    "admin": "blenda.s@aluno.ifsp.edu.br"
   }
 ]

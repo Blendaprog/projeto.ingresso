@@ -218,5 +218,27 @@
     "genero": "Feminino",
     "foto": "sem_foto.png",
     "ingressos": []
+  },
+  {
+    "id": 21,
+    "nome": "Blenda de Siqueira da Silva ",
+    "email": "admin@ticketshow.com",
+    "senha": "adm123",
+    "tipo": "admin",
+    "data_nascimento": "2010-04-10",
+    "genero": "Feminino",
+    "foto": "sem_foto.png",
+    "ingressos": []
+  },
+  {
+    "id": 22,
+    "nome": "Blenda de Siqueira da Silva ",
+    "email": "admin@ticketshow.com",
+    "senha": "adm1234",
+    "tipo": "admin",
+    "data_nascimento": "2010-04-10",
+    "genero": "Feminino",
+    "foto": "sem_foto.png",
+    "ingressos": []
   }
 ]
