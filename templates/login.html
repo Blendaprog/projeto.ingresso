@@ -28,9 +28,15 @@
                 var(--bg);
         }
 
-        .login-card {
+        /* Wrapper que alinha card + footer */
+        .login-wrap {
             width: 100%;
             max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            width: 100%;
             padding: 40px 36px;
             background: var(--surface);
             border: 1px solid var(--border-strong);
@@ -260,7 +266,7 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Rodapé da página */
+        /* Rodapé da página — agora dentro do wrapper */
         .login-footer {
             margin-top: 22px;
             color: var(--text-dim);
@@ -275,82 +281,86 @@
 
 <main class="login-page">
 
-    <div class="login-card">
+    <div class="login-wrap">
 
-        <!-- LOGO -->
-        <a href="/" class="login-logo">
-            <span class="brand-ticket-icon">T</span>
-            <span>TicketShow</span>
-        </a>
+        <div class="login-card">
 
-        <!-- TÍTULO -->
-        <div class="login-header">
-            <h1>Bem-vindo de volta</h1>
-            <p>Entre para acessar seus ingressos e eventos</p>
-        </div>
-
-        <!-- MENSAGENS -->
-        {% if resultado == "falha" %}
-            <div class="login-alert danger">
-                <span>⚠️</span>
-                <span>E-mail ou senha inválidos. Tente novamente.</span>
-            </div>
-        {% endif %}
-
-        {% if resultado == "cadastrado" %}
-            <div class="login-alert success">
-                <span>✓</span>
-                <span>Cadastro realizado com sucesso! Faça login para continuar.</span>
-            </div>
-        {% endif %}
-
-        <!-- FORM -->
-        <form action="/autenticar" method="POST">
-
-            <div class="login-form-group">
-                <label for="email">E-mail</label>
-                <input type="email"
-                       id="email"
-                       name="email"
-                       placeholder="seu@email.com"
-                       required
-                       autofocus>
-            </div>
-
-            <div class="login-form-group">
-                <label for="senha">Senha</label>
-                <input type="password"
-                       id="senha"
-                       name="senha"
-                       placeholder="Sua senha"
-                       required>
-            </div>
-
-            <button type="submit" class="login-submit">
-                🔓 Entrar
-            </button>
-
-        </form>
-
-        <!-- CADASTRO -->
-        <div class="login-cadastro-area">
-
-            <p>Ainda não possui uma conta?</p>
-
-            <a href="{{ url_for('cadastro_usuario') }}" class="btn-cadastro-novo">
-                ✨ Criar conta
+            <!-- LOGO -->
+            <a href="/" class="login-logo">
+                <span class="brand-ticket-icon">T</span>
+                <span>TicketShow</span>
             </a>
 
-            <a href="/cadastro_adm" class="btn-adm-link">
-                Cadastrar administrador →
-            </a>
+            <!-- TÍTULO -->
+            <div class="login-header">
+                <h1>Bem-vindo de volta</h1>
+                <p>Entre para acessar seus ingressos e eventos</p>
+            </div>
+
+            <!-- MENSAGENS -->
+            {% if resultado == "falha" %}
+                <div class="login-alert danger">
+                    <span>⚠️</span>
+                    <span>E-mail ou senha inválidos. Tente novamente.</span>
+                </div>
+            {% endif %}
+
+            {% if resultado == "cadastrado" %}
+                <div class="login-alert success">
+                    <span>✓</span>
+                    <span>Cadastro realizado com sucesso! Faça login para continuar.</span>
+                </div>
+            {% endif %}
+
+            <!-- FORM -->
+            <form action="/autenticar" method="POST">
+
+                <div class="login-form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           placeholder="seu@email.com"
+                           required
+                           autofocus>
+                </div>
+
+                <div class="login-form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password"
+                           id="senha"
+                           name="senha"
+                           placeholder="Sua senha"
+                           required>
+                </div>
+
+                <button type="submit" class="login-submit">
+                    🔓 Entrar
+                </button>
+
+            </form>
+
+            <!-- CADASTRO -->
+            <div class="login-cadastro-area">
+
+                <p>Ainda não possui uma conta?</p>
+
+                <a href="{{ url_for('cadastro_usuario') }}" class="btn-cadastro-novo">
+                    ✨ Criar conta
+                </a>
+
+                <a href="/cadastro_adm" class="btn-adm-link">
+                    Cadastrar administrador →
+                </a>
+
+            </div>
 
         </div>
 
-    </div>
+        <div class="login-footer">
+            TicketShow • Sistema de venda de ingressos
+        </div>
 
-    <div class="login-footer">
-        TicketShow • Sistema de venda de ingressos
     </div>
 
 </main>
