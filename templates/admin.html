@@ -1,23 +1,466 @@
-<h1>Painel do Admin</h1>
+<!DOCTYPE html>
+<html lang="pt-br">
 
-{% for show in shows %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="card p-3 mb-3">
+    <title>Painel Administrativo - TicketShow</title>
 
-    <h3>{{ show.nome }}</h3>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <p>Ingressos vendidos: {{ show.ingressos_vendidos }}</p>
-    <p>Total: {{ show.ingressos_total }}</p>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: white;
+            padding: 30px;
+        }
 
-    <form action="/editar_ingressos/{{ show.id }}" method="POST">
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
 
-        <input type="number" name="total" value="{{ show.ingressos_total }}">
-        <input type="number" name="vendidos" value="{{ show.ingressos_vendidos }}">
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            gap: 20px;
+        }
 
-        <button type="submit">Atualizar</button>
+        .topo h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
 
-    </form>
+        .topo p {
+            color: #8996aa;
+        }
+
+        .btn-sair {
+            text-decoration: none;
+            background: #ef4444;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .resumo-card {
+            background: #151d29;
+            border: 1px solid #263b63;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .resumo-card .icone {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .resumo-card h3 {
+            font-size: 14px;
+            color: #8996aa;
+            margin-bottom: 8px;
+        }
+
+        .resumo-card strong {
+            font-size: 28px;
+        }
+
+        .acoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .btn-acao {
+            text-decoration: none;
+            background: #1976ff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .btn-acao.secundario {
+            background: #26354f;
+        }
+
+        .titulo-secao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .titulo-secao h2 {
+            font-size: 24px;
+        }
+
+        .eventos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .evento {
+            background: #151d29;
+            border: 1px solid #263b63;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .evento img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .evento-conteudo {
+            padding: 18px;
+        }
+
+        .categoria {
+            color: #4d9aff;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .evento h3 {
+            margin: 8px 0 12px;
+            font-size: 20px;
+        }
+
+        .info {
+            color: #a8b2c3;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .barra {
+            width: 100%;
+            height: 8px;
+            background: #26354f;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 12px 0 8px;
+        }
+
+        .barra div {
+            height: 100%;
+            background: #1976ff;
+        }
+
+        .vendas {
+            font-size: 12px;
+            color: #8996aa;
+        }
+
+        .botoes-evento {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .botoes-evento a,
+        .botoes-evento button {
+            border: none;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .editar {
+            background: #1976ff;
+            color: white;
+        }
+
+        .lotes {
+            background: #26354f;
+            color: white;
+        }
+
+        .destacar {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .excluir {
+            background: #ef4444;
+            color: white;
+        }
+
+        .destaque-tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: #1976ff;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .vazio {
+            background: #151d29;
+            border: 1px solid #263b63;
+            padding: 40px;
+            border-radius: 14px;
+            text-align: center;
+            color: #8996aa;
+        }
+
+        @media (max-width: 900px) {
+            .resumo {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .eventos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 18px;
+            }
+
+            .topo {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .resumo,
+            .eventos {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- CABEÇALHO -->
+    <div class="topo">
+        <div>
+            <h1>👑 Painel do Administrador</h1>
+            <p>Gerencie os eventos do TicketShow</p>
+        </div>
+
+        <a href="/logout" class="btn-sair">
+            Sair
+        </a>
+    </div>
+
+
+    <!-- RESUMO -->
+    <div class="resumo">
+
+        <div class="resumo-card">
+            <div class="icone">🎤</div>
+            <h3>Eventos cadastrados</h3>
+            <strong>{{ shows|length }}</strong>
+        </div>
+
+        <div class="resumo-card">
+            <div class="icone">🎟️</div>
+            <h3>Ingressos vendidos</h3>
+            <strong>
+                {{ shows|sum(attribute='ingressos_vendidos') }}
+            </strong>
+        </div>
+
+        <div class="resumo-card">
+            <div class="icone">📦</div>
+            <h3>Ingressos disponíveis</h3>
+            <strong>
+                {{ shows|sum(attribute='ingressos_total') - shows|sum(attribute='ingressos_vendidos') }}
+            </strong>
+        </div>
+
+        <div class="resumo-card">
+            <div class="icone">⭐</div>
+            <h3>Eventos em destaque</h3>
+            <strong>
+                {{ shows|selectattr('destaque', 'equalto', true)|list|length }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- AÇÕES -->
+    <div class="acoes">
+
+        <a href="/cadastrar_show" class="btn-acao">
+            ➕ Cadastrar evento
+        </a>
+        <a href="/admin_vendas" class="btn-acao secundario">
+    📊 Ver vendas
+</a>
+
+        <a href="/meus_shows" class="btn-acao secundario">
+            🎤 Meus shows
+        </a>
+
+    </div>
+
+
+    <!-- EVENTOS -->
+    <div class="titulo-secao">
+        <h2>🎟️ Eventos cadastrados</h2>
+    </div>
+
+
+    {% if shows %}
+
+        <div class="eventos">
+
+            {% for show in shows %}
+
+                <div class="evento">
+
+                    <!-- IMAGEM -->
+                    <img
+                        src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
+                        alt="{{ show['nome'] }}"
+                    >
+
+
+                    <div class="evento-conteudo">
+
+                        <span class="categoria">
+                            {{ show['categoria'] }}
+                        </span>
+
+                        <h3>
+                            {{ show['nome'] }}
+                        </h3>
+
+
+                        <div class="info">
+
+                             {{ show['data'] }}<br>
+
+                             {{ show['local'] }}<br>
+
+                             A partir de {{ show['idade_minima'] }} anos<br>
+
+                             R$ {{ show['preco'] }}
+
+                        </div>
+
+
+                        {% set total = show.get('ingressos_total', 0) %}
+                        {% set vendidos = show.get('ingressos_vendidos', 0) %}
+
+                        {% if total > 0 %}
+                            {% set porcentagem = (vendidos / total * 100) | round(0) %}
+                        {% else %}
+                            {% set porcentagem = 0 %}
+                        {% endif %}
+
+
+                        <div class="barra">
+                            <div style="width: {{ porcentagem }}%;"></div>
+                        </div>
+
+                        <div class="vendas">
+                            {{ vendidos }} / {{ total }} ingressos vendidos
+                        </div>
+
+
+                        {% if show.get('destaque') %}
+                            <span class="destaque-tag">
+                                ⭐ EVENTO EM DESTAQUE
+                            </span>
+                        {% endif %}
+
+
+                       <!-- BOTÕES -->
+<div class="botoes-evento">
+
+    <a
+        href="/editar_show/{{ show['id'] }}"
+        class="editar">
+        ✏️ Editar
+    </a>
+
+    <a
+        href="/gerenciar_lotes/{{ show['id'] }}"
+        class="lotes">
+        🎟️ Lotes
+    </a>
+
+    {% if show.get('destaque') %}
+
+        <span
+            class="destacar"
+            style="display:flex; align-items:center; justify-content:center;">
+            ⭐ Em destaque
+        </span>
+
+    {% else %}
+
+        <a
+            href="/admin_destaque/{{ show['id'] }}"
+            class="destacar">
+            ⭐ Destacar
+        </a>
+
+    {% endif %}
+
+    <a
+        href="/excluir_show/{{ show['id'] }}"
+        class="excluir"
+        onclick="return confirm('Tem certeza que deseja excluir este evento?');">
+        🗑️ Excluir
+    </a>
 
 </div>
 
-{% endfor %}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="vazio">
+            <h3>Nenhum evento cadastrado</h3>
+            <p>Comece cadastrando seu primeiro evento.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

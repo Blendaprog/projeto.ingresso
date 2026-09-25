@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -39,27 +39,25 @@
                     <label>Quantidade de ingressos</label>
 
                     <input
-                        type="number"
-                        name="quantidade_{{ loop.index0 }}"
-                        value="{{ lote['quantidade'] }}"
-                        class="form-control"
-                        min="0"
-                        required
-                    >
+                    type="number"
+                    name="quantidade_{{ loop.index0 }}"
+                    value="{{ lote['quantidade'] }}"
+                    min="0"
+                    required
+                >
                 </div>
 
                 <div class="mb-3">
                     <label>Preço</label>
 
-                    <input
-                        type="number"
-                        name="preco_{{ loop.index0 }}"
-                        value="{{ lote['preco'] }}"
-                        class="form-control"
-                        min="0"
-                        step="0.01"
-                        required
-                    >
+                            <input
+                type="number"
+                name="preco_{{ loop.index0 }}"
+                value="{{ lote['preco'] }}"
+                min="0"
+                step="0.01"
+                required
+            >
                 </div>
 
             </div>
@@ -84,4 +82,4 @@
 </body>
 
 </html>
-```
+

@@ -1,13 +1,13 @@
 [
   {
     "id": 1,
-    "show": "Matuê",
-    "preco": 220.0,
-    "local": "Allianz Parque - São Paulo",
-    "data": "2026-10-10",
-    "pagamento": "Cartão - Crédito - Inter - 1x",
-    "usuario_id": 1,
-    "codigo": "9d02f6b2"
+    "show": "Gaab",
+    "preco": 140.0,
+    "local": "Vivo Rio",
+    "data": "2026-07-05",
+    "pagamento": "Cartão - Crédito - Caixa - 6x",
+    "usuario_id": 20,
+    "codigo": "191228c7"
   },
   {
     "id": 2,
@@ -15,8 +15,18 @@
     "preco": 200.0,
     "local": "Allianz Parque - São Paulo",
     "data": "2026-09-15",
+    "pagamento": "PIX",
+    "usuario_id": 20,
+    "codigo": "fbec4df8"
+  },
+  {
+    "id": 3,
+    "show": "GHARD",
+    "preco": 100.0,
+    "local": "Vibra São Paulo",
+    "data": "2026-05-30",
     "pagamento": "Cartão - Débito - Nubank",
-    "usuario_id": 1,
-    "codigo": "a991d83a"
+    "usuario_id": 20,
+    "codigo": "3c8b209c"
   }
 ]

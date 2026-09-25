@@ -12,8 +12,10 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mail import Mail, Message
 
 from modelos import Usuario, Ingresso
+from banco import Banco
 
 app = Flask(__name__)
+banco = Banco()
 app.secret_key = "segredo"
 
 # =========================
@@ -36,7 +38,15 @@ mail = Mail(app)
 # DADOS
 # =========================
 usuarios = [
-    Usuario(1, "Admin", "admin@gmail.com", "123", "admin", "2000-01-01", "M")
+    Usuario(
+        1,
+        "Administrador",
+        "admin@ticketshow.com",
+        "Admin123",
+        "admin",
+        "2000-01-01",
+        "M"
+    )
 ]
 
 ingressos = []
@@ -547,9 +557,14 @@ def login_required(f):
 def admin_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if session.get("tipo") != "admin":
-            return "Acesso negado"
+        if (
+            session.get("tipo") != "admin"
+            or session.get("usuario") != ADMIN_EMAIL
+        ):
+            return "Acesso negado", 403
+
         return f(*args, **kwargs)
+
     return wrapper
 
 
@@ -564,14 +579,16 @@ def login():
         email = request.form["email"]
         senha = request.form["senha"]
 
-        for u in usuarios:
-            if u.email == email and u.senha == senha:
-                session["usuario"] = u.email
-                session["usuario_id"] = u.id
-                session["nome_usuario"] = u.nome
-                session["tipo"] = u.tipo
+        if u.email == email and u.senha == senha:
+            session["usuario"] = u.email
+            session["usuario_id"] = u.id
+            session["nome_usuario"] = u.nome
+            session["tipo"] = u.tipo
 
-                return redirect(url_for("home"))
+            if u.tipo == "admin":
+                return redirect(url_for("admin"))
+
+            return redirect(url_for("home"))
 
         return render_template("login.html", resultado="falha")
 
@@ -582,6 +599,38 @@ def login():
 @admin_required
 def admin():
     return render_template("admin.html", shows=SHOWS)
+
+@app.route("/admin_vendas")
+@login_required
+@admin_required
+def admin_vendas():
+
+    vendas = []
+
+    for ingresso in ingressos:
+
+        usuario = next(
+            (u for u in usuarios if u.id == ingresso.usuario_id),
+            None
+        )
+
+        vendas.append({
+            "codigo": ingresso.codigo,
+            "show": ingresso.show,
+            "preco": ingresso.preco,
+            "local": ingresso.local,
+            "data": ingresso.data,
+            "pagamento": ingresso.pagamento,
+            "usuario": usuario.nome if usuario else "Usuário"
+        })
+
+    faturamento = sum(v["preco"] for v in vendas)
+
+    return render_template(
+        "admin_vendas.html",
+        vendas=vendas,
+        faturamento=faturamento
+    )
 
 @app.route("/editar_ingressos/<int:id>", methods=["POST"])
 @login_required
@@ -601,14 +650,18 @@ def editar_ingressos(id):
 
     
 
-
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
 
     email = request.form.get("email")
     senha = request.form.get("senha")
 
+    print("EMAIL DIGITADO:", email)
+    print("SENHA DIGITADA:", senha)
+
     for usuario in usuarios:
+        print("USUARIO CADASTRADO:", usuario.email, usuario.senha)
+
         if usuario.email == email and usuario.senha == senha:
             session["usuario"] = usuario.email
             session["usuario_id"] = usuario.id
@@ -676,9 +729,15 @@ def meus_ingressos():
         if ingresso.usuario_id == session["usuario_id"]
     ]
 
+    total_gasto = sum(
+        float(ingresso.preco)
+        for ingresso in meus
+    )
+
     return render_template(
         "meus_ingressos.html",
-        ingressos=meus
+        ingressos=meus,
+        total_gasto=total_gasto
     )
 
 @app.route("/cancelar_ingresso/<int:id>")
@@ -715,26 +774,28 @@ def cadastro_adm():
     return render_template("cadastro_adm.html")
 
 
+
+
+
 @app.route("/salvar_adm", methods=["POST"])
 def salvar_adm():
-
     nome = request.form.get("nome")
     email = request.form.get("email")
     senha = request.form.get("senha")
     data_nascimento = request.form.get("data_nascimento")
     genero = request.form.get("genero")
 
-    codigo = str(random.randint(100000, 999999))
-    session["codigo_verificacao"] = codigo
+    if email.lower() != ADMIN_EMAIL:
+        return "Somente o administrador principal pode utilizar esta conta.", 403
 
-
-
+    if senha != ADMIN_SENHA:
+        return "Senha de administrador inválida.", 403
 
     novo = Usuario(
         len(usuarios) + 1,
-        nome,
-        email,
-        senha,
+        "Administrador",
+        ADMIN_EMAIL,
+        ADMIN_SENHA,
         "admin",
         data_nascimento,
         genero
@@ -799,21 +860,24 @@ def verificar():
 @login_required
 def home():
 
+    if session.get("tipo") == "admin":
+        return redirect(url_for("admin"))
+
     atualizar_shows()
 
     shows_disponiveis = [show for show in SHOWS if not show["esgotado"]]
 
     destaque = next(
-    (show for show in shows_disponiveis if show.get("destaque")),
-    shows_disponiveis[0] if shows_disponiveis else None
-)
+        (show for show in shows_disponiveis if show.get("destaque")),
+        shows_disponiveis[0] if shows_disponiveis else None
+    )
+
     return render_template(
         "index.html",
         shows=shows_disponiveis,
         destaque=destaque,
         nome=session.get("nome_usuario")
     )
-
 @app.route("/categorias")
 @login_required
 def categorias():
@@ -848,14 +912,65 @@ def filtrar_categoria(categoria):
         nome=session.get("nome_usuario"),
         categoria=categoria
     )
+# =========================
+# FILTRAR SHOWS POR LOCAL
+# =========================
 
+@app.route("/local/<path:local>")
+@login_required
+def filtrar_local(local):
+
+    atualizar_shows()
+
+    local_pesquisado = local.lower().strip()
+
+    shows_filtrados = []
+
+    for show in SHOWS:
+
+        if show.get("esgotado", False):
+            continue
+
+        local_show = show.get("local", "").lower().strip()
+
+        # Aceita variações como:
+        # Allianz Parque
+        # Allianz Parque - São Paulo
+
+        if (
+            local_show == local_pesquisado
+            or local_show.startswith(local_pesquisado + " -")
+            or local_show.startswith(local_pesquisado + ",")
+        ):
+            shows_filtrados.append(show)
+
+    if not shows_filtrados:
+
+        return render_template(
+            "index.html",
+            shows=[],
+            nome=session.get("nome_usuario"),
+            mensagem="Nenhum show encontrado nesse local."
+        )
+
+    return render_template(
+        "index.html",
+        shows=shows_filtrados,
+        nome=session.get("nome_usuario"),
+        local=local
+    )
 
 
 @app.route("/meus_shows")
 @login_required
 @admin_required
 def meus_shows():
-    meus = [s for s in SHOWS if s.get("admin") == session["usuario"]]
+
+    meus = [
+        s for s in SHOWS
+        if s.get("admin", ADMIN_EMAIL) == session["usuario"]
+    ]
+
     return render_template("meus_shows.html", shows=meus)
 
 @app.route("/definir_destaque/<int:id>")
@@ -885,7 +1000,7 @@ def excluir_show(id):
         show for show in SHOWS
         if not (
             show["id"] == id and
-            show["admin"] == session["usuario"]
+           show.get("admin", ADMIN_EMAIL) == session["usuario"]
         )
     ]
 
@@ -898,7 +1013,14 @@ def excluir_show(id):
 @admin_required
 def editar_show(id):
 
-    show = next((s for s in SHOWS if s["id"] == id and s["admin"] == session["usuario"]), None)
+    show = next(
+        (
+            s for s in SHOWS
+            if s["id"] == id
+            and s.get("admin", ADMIN_EMAIL) == session["usuario"]
+        ),
+        None
+    )
 
     if show is None:
         return redirect(url_for("meus_shows"))
@@ -912,6 +1034,9 @@ def editar_show(id):
         show["preco"] = float(request.form["preco"])
         show["idade_minima"] = int(request.form["idade_minima"])
         show["ingressos_total"] = int(request.form["ingressos_total"])
+
+        # Garante que shows antigos também tenham um administrador
+        show.setdefault("admin", session["usuario"])
 
         salvar_shows_json()
 
@@ -973,28 +1098,43 @@ def cadastrar_show():
     return render_template("cadastrar_show.html")
 
 
-
 @app.route("/gerenciar_lotes/<int:id>", methods=["GET", "POST"])
 @login_required
 @admin_required
 def gerenciar_lotes(id):
 
-    show = next((s for s in SHOWS if s["id"] == id), None)
+    show = next(
+        (s for s in SHOWS if s["id"] == id),
+        None
+    )
 
     if show is None:
         return "Show não encontrado", 404
 
-    if request.method == "POST":
+    # Cria lotes para shows antigos que ainda não possuem
+    if not show.get("lotes"):
+        preco_base = float(show.get("preco", 0))
 
-        for i, lote in enumerate(show["lotes"]):
-
-            lote["quantidade"] = int(
-                request.form[f"quantidade_{i}"]
-            )
-
-            lote["preco"] = float(
-                request.form[f"preco_{i}"]
-            )
+        show["lotes"] = [
+            {
+                "nome": "Lote 1",
+                "quantidade": 50,
+                "vendidos": 0,
+                "preco": preco_base
+            },
+            {
+                "nome": "Lote 2",
+                "quantidade": 30,
+                "vendidos": 0,
+                "preco": preco_base + 20
+            },
+            {
+                "nome": "Lote 3",
+                "quantidade": 20,
+                "vendidos": 0,
+                "preco": preco_base + 40
+            }
+        ]
 
         show["ingressos_total"] = sum(
             lote["quantidade"]
@@ -1003,19 +1143,42 @@ def gerenciar_lotes(id):
 
         salvar_shows_json()
 
-        return redirect(url_for("meus_shows"))
+    if request.method == "POST":
+
+        for i, lote in enumerate(show["lotes"]):
+
+            quantidade = request.form.get(f"quantidade_{i}")
+            preco = request.form.get(f"preco_{i}")
+
+            # Só altera se o campo realmente veio do formulário
+            if quantidade is not None:
+                lote["quantidade"] = int(quantidade)
+
+            if preco is not None:
+                lote["preco"] = float(preco)
+
+        show["ingressos_total"] = sum(
+            lote.get("quantidade", 0)
+            for lote in show["lotes"]
+        )
+
+        salvar_shows_json()
+
+        return redirect(url_for("admin"))
 
     return render_template(
         "gerenciar_lotes.html",
         show=show
     )
-
 # ---------------------------------------------------------------------------
 # Compra de ingressos
 # ---------------------------------------------------------------------------
 @app.route("/comprar/<int:id>")
 @login_required
 def comprar(id):
+
+    if session.get("tipo") == "admin":
+        return redirect(url_for("admin"))
 
     show = next((s for s in SHOWS if s["id"] == id), None)
 

@@ -110,39 +110,6 @@
     "ingressos": []
   },
   {
-    "id": 11,
-    "nome": "Blenda de Siqueira da Silva",
-    "email": "blendasiqueira51@gmail.com",
-    "senha": "100410",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
-    "genero": "Feminino",
-    "foto": "sem_foto.png",
-    "ingressos": []
-  },
-  {
-    "id": 12,
-    "nome": "Blenda de Siqueira da Silva",
-    "email": "blendasiqueira51@gmail.com",
-    "senha": "100410",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
-    "genero": "Feminino",
-    "foto": "sem_foto.png",
-    "ingressos": []
-  },
-  {
-    "id": 13,
-    "nome": "Be",
-    "email": "blenda.s@aluno.ifsp.edu.br",
-    "senha": "100410",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
-    "genero": "Feminino",
-    "foto": "13524a0d81d94710bc2f613b56d52461 (1).jpg",
-    "ingressos": []
-  },
-  {
     "id": 14,
     "nome": "Blenda de Siqueira da Silva",
     "email": "blendasiqueira51@gmail.com",
@@ -198,11 +165,44 @@
     "ingressos": []
   },
   {
+    "id": 21,
+    "nome": "Administrador",
+    "email": "admin@ticketshow.com",
+    "senha": "Admin123",
+    "tipo": "admin",
+    "data_nascimento": "2000-01-01",
+    "genero": "M",
+    "foto": "sem_foto.png",
+    "ingressos": []
+  },
+  {
+    "id": 17,
+    "nome": "Administrador",
+    "email": "admin@ticketshow.com",
+    "senha": "Admin123",
+    "tipo": "admin",
+    "data_nascimento": "2010-04-10",
+    "genero": "Outro",
+    "foto": "sem_foto.png",
+    "ingressos": []
+  },
+  {
+    "id": 18,
+    "nome": "Blenda de Siqueira da Silva ",
+    "email": "blendasiqueira51@gmail.com",
+    "senha": "100410",
+    "tipo": "usuario",
+    "data_nascimento": "2010-04-10",
+    "genero": "Feminino",
+    "foto": "sem_foto.png",
+    "ingressos": []
+  },
+  {
     "id": 19,
     "nome": "Blenda de Siqueira da Silva ",
     "email": "blendasiqueira51@gmail.com",
     "senha": "100410",
-    "tipo": "admin",
+    "tipo": "usuario",
     "data_nascimento": "2010-04-10",
     "genero": "Feminino",
     "foto": "sem_foto.png",
@@ -210,35 +210,13 @@
   },
   {
     "id": 20,
-    "nome": "Blenda de Siqueira da Silva ",
-    "email": "blenda.s@aluno.ifsp.edu.br",
-    "senha": "100410",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
+    "nome": "Maria Júlia De Araújo Rebelo",
+    "email": "mmaria.julia979@gmail.com",
+    "senha": "maju0907",
+    "tipo": "usuario",
+    "data_nascimento": "2009-07-09",
     "genero": "Feminino",
-    "foto": "sem_foto.png",
-    "ingressos": []
-  },
-  {
-    "id": 21,
-    "nome": "Blenda de Siqueira da Silva ",
-    "email": "admin@ticketshow.com",
-    "senha": "adm123",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
-    "genero": "Feminino",
-    "foto": "sem_foto.png",
-    "ingressos": []
-  },
-  {
-    "id": 22,
-    "nome": "Blenda de Siqueira da Silva ",
-    "email": "admin@ticketshow.com",
-    "senha": "adm1234",
-    "tipo": "admin",
-    "data_nascimento": "2010-04-10",
-    "genero": "Feminino",
-    "foto": "sem_foto.png",
+    "foto": "maju.jpg",
     "ingressos": []
   }
 ]

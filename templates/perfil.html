@@ -1,282 +1,742 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Meu Perfil</title>
+    <title>Meu Perfil - TicketShow</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-<style>
+    <style>
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(135deg, #0b1220, #111c30);
-        color: #e5e7eb;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .perfil-container {
-        max-width: 650px;
-        margin: 60px auto;
-        padding: 20px;
-    }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
 
-    .perfil-card {
-        background: #121d30;
-        border: 1px solid #263a57;
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
-    }
+            background:
+                radial-gradient(
+                    circle at top,
+                    rgba(25, 118, 255, 0.14),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #060b14,
+                    #0b1220 55%,
+                    #101a2b
+                );
 
-    .foto-perfil {
-        width: 130px;
-        height: 130px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid #5b8fc9;
-        margin-bottom: 15px;
-    }
+            color: #e5e7eb;
+        }
 
-    .nome {
-        color: #dbeafe;
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 25px;
-    }
 
-    .informacoes {
-        background: #17263d;
-        border-radius: 14px;
-        padding: 20px;
-        text-align: left;
-        margin-bottom: 20px;
-    }
-
-    .informacoes p {
-        margin: 10px 0;
-        color: #cbd5e1;
-    }
-
-    .informacoes strong {
-        color: #93b4d8;
-    }
-
-    .estatisticas {
-        display: flex;
-        gap: 15px;
-        margin: 20px 0;
-    }
-
-    .estatistica {
-        flex: 1;
-        background: #17263d;
-        border: 1px solid #263a57;
-        border-radius: 14px;
-        padding: 20px 10px;
-    }
-
-    .estatistica h4 {
-        color: #93b4d8;
-        font-size: 16px;
-        margin-bottom: 8px;
-    }
-
-    .estatistica span {
-        color: #f1f5f9;
-        font-size: 23px;
-        font-weight: bold;
-    }
-
-    .titulo-foto {
-        color: #dbeafe;
-        margin-top: 25px;
-        margin-bottom: 15px;
-    }
-
-    .form-control {
-        background: #0f1929;
-        border: 1px solid #314866;
-        color: white;
-    }
-
-    .form-control:focus {
-        background: #0f1929;
-        color: white;
-        border-color: #6b91bb;
-        box-shadow: 0 0 0 0.2rem rgba(107, 145, 187, 0.15);
-    }
-
-    .btn-ingressos {
-        background: #3f6f9f;
-        border: none;
-        color: white;
-        padding: 11px 25px;
-        border-radius: 10px;
-    }
-
-    .btn-ingressos:hover {
-        background: #527fae;
-        color: white;
-    }
-
-    .btn-foto {
-        background: #294866;
-        border: none;
-        color: white;
-        padding: 10px 25px;
-        border-radius: 10px;
-    }
-
-    .btn-foto:hover {
-        background: #365d7e;
-        color: white;
-    }
-
-    hr {
-        border-color: #2b405b;
-        margin: 30px 0;
-    }
-
-    @media (max-width: 600px) {
+        /* =========================
+           CONTAINER
+           ========================= */
 
         .perfil-container {
-            margin: 20px auto;
-            padding: 10px;
+            width: min(720px, 92%);
+            margin: 45px auto 70px;
         }
+
+
+        /* =========================
+           TOPO
+           ========================= */
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .logo:hover {
+            color: white;
+        }
+
+        .btn-voltar {
+            color: #c7d3e5;
+            text-decoration: none;
+
+            background: #111b2b;
+            border: 1px solid #29405f;
+
+            padding: 9px 15px;
+
+            border-radius: 9px;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            transition: .2s;
+        }
+
+        .btn-voltar:hover {
+            background: #1976ff;
+            border-color: #1976ff;
+            color: white;
+        }
+
+
+        /* =========================
+           CARD PRINCIPAL
+           ========================= */
 
         .perfil-card {
-            padding: 25px 18px;
+            background: rgba(15, 25, 41, 0.96);
+
+            border: 1px solid #243b5b;
+
+            border-radius: 22px;
+
+            padding: 36px;
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.35);
         }
+
+
+        /* =========================
+           CABEÇALHO DO PERFIL
+           ========================= */
+
+        .perfil-header {
+            text-align: center;
+
+            margin-bottom: 28px;
+        }
+
+        .foto-wrapper {
+            position: relative;
+
+            display: inline-block;
+
+            margin-bottom: 14px;
+        }
+
+        .foto-perfil {
+            width: 135px;
+            height: 135px;
+
+            object-fit: cover;
+
+            border-radius: 50%;
+
+            border: 4px solid #1976ff;
+
+            box-shadow:
+                0 0 0 5px rgba(25, 118, 255, 0.10);
+
+            display: block;
+        }
+
+        .status {
+            position: absolute;
+
+            width: 18px;
+            height: 18px;
+
+            right: 4px;
+            bottom: 5px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            border: 4px solid #0f1929;
+        }
+
+        .nome {
+            color: #ffffff;
+
+            font-size: 29px;
+            font-weight: 900;
+
+            margin: 0;
+        }
+
+        .subtitulo {
+            color: #7f8da4;
+
+            font-size: 12px;
+
+            margin-top: 7px;
+            margin-bottom: 0;
+        }
+
+
+        /* =========================
+           TÍTULOS
+           ========================= */
+
+        .secao-titulo {
+            color: #4d9aff;
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            letter-spacing: 1.7px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 12px;
+        }
+
+
+        /* =========================
+           INFORMAÇÕES
+           ========================= */
+
+        .informacoes {
+            background: #111c2e;
+
+            border: 1px solid #213957;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            margin-bottom: 24px;
+        }
+
+        .info-linha {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 11px 0;
+
+            border-bottom: 1px solid #1c314c;
+        }
+
+        .info-linha:first-child {
+            padding-top: 0;
+        }
+
+        .info-linha:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #7f8da4;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+        .info-valor {
+            color: #e1e8f2;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            text-align: right;
+        }
+
+
+        /* =========================
+           ESTATÍSTICA
+           ========================= */
 
         .estatisticas {
-            flex-direction: column;
+            display: flex;
+
+            justify-content: center;
+
+            margin-bottom: 20px;
         }
 
-    }
+        .estatistica {
+            width: 230px;
 
-</style>
+            text-align: center;
 
+            background:
+                linear-gradient(
+                    180deg,
+                    #142139,
+                    #101a2a
+                );
+
+            border: 1px solid #294365;
+
+            border-radius: 15px;
+
+            padding: 20px;
+        }
+
+        .estatistica-icone {
+            font-size: 23px;
+
+            margin-bottom: 7px;
+        }
+
+        .estatistica h4 {
+            color: #91a2ba;
+
+            font-size: 12px;
+
+            margin: 0 0 7px;
+        }
+
+        .estatistica span {
+            display: block;
+
+            color: #ffffff;
+
+            font-size: 30px;
+
+            font-weight: 900;
+        }
+
+
+        /* =========================
+           BOTÃO INGRESSOS
+           ========================= */
+
+        .btn-ingressos {
+            width: 100%;
+
+            border: none;
+
+            background: #1976ff;
+
+            color: white;
+
+            padding: 12px 20px;
+
+            border-radius: 9px;
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            text-decoration: none;
+
+            display: block;
+
+            text-align: center;
+
+            transition: .2s;
+        }
+
+        .btn-ingressos:hover {
+            background: #3488ff;
+
+            color: white;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================
+           DIVISÓRIA
+           ========================= */
+
+        hr {
+            border: 0;
+
+            border-top: 1px solid #203651;
+
+            margin: 30px 0;
+        }
+
+
+        /* =========================
+           FOTO
+           ========================= */
+
+        .foto-area {
+            background: #111c2e;
+
+            border: 1px solid #213957;
+
+            border-radius: 15px;
+
+            padding: 20px;
+        }
+
+        .titulo-foto {
+            color: #ffffff;
+
+            font-size: 17px;
+
+            font-weight: 800;
+
+            margin-bottom: 6px;
+        }
+
+        .descricao-foto {
+            color: #7f8da4;
+
+            font-size: 11px;
+
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            background: #0c1524 !important;
+
+            border: 1px solid #2b4465 !important;
+
+            color: white !important;
+
+            border-radius: 9px;
+
+            padding: 10px 12px;
+
+            font-size: 11px;
+        }
+
+        .form-control:focus {
+            background: #0c1524 !important;
+
+            color: white !important;
+
+            border-color: #1976ff !important;
+
+            box-shadow:
+                0 0 0 3px rgba(25,118,255,.10) !important;
+        }
+
+        .form-control::file-selector-button {
+            background: #1a2b44;
+
+            color: #dbe6f4;
+
+            border: none;
+
+            margin: -10px 10px -10px -12px;
+
+            padding: 10px 12px;
+
+            cursor: pointer;
+        }
+
+        .btn-foto {
+            background: #263b59;
+
+            border: 1px solid #355474;
+
+            color: white;
+
+            padding: 10px 19px;
+
+            border-radius: 9px;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            transition: .2s;
+        }
+
+        .btn-foto:hover {
+            background: #315170;
+
+            color: white;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 600px) {
+
+            .perfil-container {
+                width: 94%;
+
+                margin: 22px auto 45px;
+            }
+
+            .topo {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 12px;
+            }
+
+            .perfil-card {
+                padding: 25px 18px;
+            }
+
+            .foto-perfil {
+                width: 115px;
+                height: 115px;
+            }
+
+            .nome {
+                font-size: 25px;
+            }
+
+            .info-linha {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 4px;
+            }
+
+            .info-valor {
+                text-align: left;
+            }
+
+            .estatistica {
+                width: 100%;
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
+
 
 <div class="perfil-container">
 
-<div class="perfil-card text-center">
 
-    {% if usuario.foto %}
+    <!-- =========================
+         TOPO
+         ========================= -->
 
-        <img
-            src="{{ url_for('static', filename='img/' + usuario.foto) }}"
-            class="foto-perfil"
-            alt="Foto de perfil"
-        >
+    <div class="topo">
 
-    {% else %}
+        <a href="/" class="logo">
+            🎟️ TicketShow
+        </a>
 
-        <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            class="foto-perfil"
-            alt="Foto padrão"
-        >
-
-    {% endif %}
-
-
-    <h2 class="nome">
-        {{ usuario.nome }}
-    </h2>
-
-
-    <div class="informacoes">
-
-        <p>
-            <strong> Email:</strong>
-            {{ usuario.email }}
-        </p>
-
-        <p>
-            <strong> Data de nascimento:</strong>
-            {{ usuario.data_nascimento }}
-        </p>
-
-        <p>
-            <strong> Gênero:</strong>
-            {{ usuario.genero }}
-        </p>
+        <a href="/" class="btn-voltar">
+            ← Voltar
+        </a>
 
     </div>
 
 
-    <div class="estatisticas">
+    <!-- =========================
+         PERFIL
+         ========================= -->
 
-        <div class="estatistica">
+    <div class="perfil-card">
 
-            <h4> Ingressos</h4>
 
-            <span>
-                {{ total_ingressos }}
-            </span>
+        <!-- CABEÇALHO -->
+
+        <div class="perfil-header">
+
+            <div class="foto-wrapper">
+
+                {% if usuario.foto %}
+
+                    <img
+                        src="{{ url_for('static', filename='img/' + usuario.foto) }}"
+                        class="foto-perfil"
+                        alt="Foto de perfil"
+                    >
+
+                {% else %}
+
+                    <img
+                        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        class="foto-perfil"
+                        alt="Foto padrão"
+                    >
+
+                {% endif %}
+
+                <span class="status"></span>
+
+            </div>
+
+
+            <h1 class="nome">
+                {{ usuario.nome }}
+            </h1>
+
+
+            <p class="subtitulo">
+                Minha conta TicketShow
+            </p>
 
         </div>
 
 
-        <div class="estatistica">
+        <!-- =========================
+             INFORMAÇÕES
+             ========================= -->
 
-            <h4> Total gasto</h4>
+        <div class="secao-titulo">
+            Informações da conta
+        </div>
 
-            <span>
-                R$ {{ "%.2f"|format(total_gasto or 0) }}
-            </span>
+
+        <div class="informacoes">
+
+
+            <div class="info-linha">
+
+                <span class="info-label">
+                    E-mail
+                </span>
+
+                <span class="info-valor">
+                    {{ usuario.email }}
+                </span>
+
+            </div>
+
+
+            <div class="info-linha">
+
+                <span class="info-label">
+                    Data de nascimento
+                </span>
+
+                <span class="info-valor">
+                    {{ usuario.data_nascimento }}
+                </span>
+
+            </div>
+
+
+            <div class="info-linha">
+
+                <span class="info-label">
+                    Gênero
+                </span>
+
+                <span class="info-valor">
+                    {{ usuario.genero }}
+                </span>
+
+            </div>
+
 
         </div>
+
+
+        <!-- =========================
+             ESTATÍSTICA
+             ========================= -->
+
+        <div class="estatisticas">
+
+            <div class="estatistica">
+
+                <div class="estatistica-icone">
+                    
+                </div>
+
+                <h4>
+                    Ingressos comprados
+                </h4>
+
+                <span>
+                    {{ total_ingressos }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÃO -->
+
+        <a
+            href="/meus_ingressos"
+            class="btn-ingressos"
+        >
+            Ver meus ingressos
+        </a>
+
+
+        <hr>
+
+
+        <!-- =========================
+             FOTO DE PERFIL
+             ========================= -->
+
+        <div class="secao-titulo">
+            Personalização
+        </div>
+
+
+        <div class="foto-area">
+
+            <h2 class="titulo-foto">
+                📷 Foto de perfil
+            </h2>
+
+            <p class="descricao-foto">
+                Escolha uma imagem para deixar seu perfil com a sua cara.
+            </p>
+
+
+            <form
+                action="/atualizar_foto"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <input
+                    type="file"
+                    name="foto"
+                    class="form-control mb-3"
+                    accept="image/*"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="btn btn-foto"
+                >
+                    Salvar foto
+                </button>
+
+            </form>
+
+        </div>
+
 
     </div>
 
 
-    <a href="/meus_ingressos" class="btn btn-ingressos">
-        Ver Meus Ingressos
-    </a>
-
-
-    <hr>
-
-
-    <h4 class="titulo-foto">
-         Foto de Perfil
-    </h4>
-
-
-    <form
-        action="/atualizar_foto"
-        method="POST"
-        enctype="multipart/form-data"
-    >
-
-        <input
-            type="file"
-            name="foto"
-            class="form-control mb-3"
-            accept="image/*"
-        >
-
-        <button type="submit" class="btn btn-foto">
-            Salvar foto
-        </button>
-
-    </form>
-
 </div>
 
-
-</div>
 
 </body>
 

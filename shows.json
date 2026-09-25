@@ -22,13 +22,33 @@
     "categoria": "Trap",
     "imagem": "matue.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 1,
-    "esgotado": false
+    "ingressos_vendidos": 0,
+    "esgotado": false,
+    "lotes": [
+      {
+        "nome": "Lote 1",
+        "quantidade": 50,
+        "vendidos": 0,
+        "preco": 220.0
+      },
+      {
+        "nome": "Lote 2",
+        "quantidade": 30,
+        "vendidos": 0,
+        "preco": 240.0
+      },
+      {
+        "nome": "Lote 3",
+        "quantidade": 20,
+        "vendidos": 0,
+        "preco": 260.0
+      }
+    ]
   },
   {
     "id": 3,
     "nome": "KayBlack",
-    "preco": 190,
+    "preco": 190.0,
     "local": "Audio Club - São Paulo",
     "data": "2026-11-12",
     "idade_minima": 16,
@@ -36,7 +56,8 @@
     "imagem": "kayblack.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "admin": "admin@ticketshow.com"
   },
   {
     "id": 4,
@@ -100,7 +121,7 @@
     "categoria": "Trap",
     "imagem": "ghard.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
+    "ingressos_vendidos": 1,
     "esgotado": false
   },
   {
@@ -197,15 +218,36 @@
   {
     "id": 16,
     "nome": "Gaab",
-    "preco": 140,
+    "preco": 280.0,
     "local": "Vivo Rio",
     "data": "2026-07-05",
     "idade_minima": 14,
     "categoria": "R&B",
     "imagem": "gaab.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
-    "esgotado": false
+    "ingressos_vendidos": 1,
+    "esgotado": false,
+    "admin": "admin@ticketshow.com",
+    "lotes": [
+      {
+        "nome": "Lote 1",
+        "quantidade": 50,
+        "vendidos": 0,
+        "preco": 280.0
+      },
+      {
+        "nome": "Lote 2",
+        "quantidade": 30,
+        "vendidos": 0,
+        "preco": 320.0
+      },
+      {
+        "nome": "Lote 3",
+        "quantidade": 20,
+        "vendidos": 0,
+        "preco": 340.0
+      }
+    ]
   },
   {
     "id": 17,

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vendas - TicketShow</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topo h1 {
+            margin: 0;
+        }
+
+        .voltar {
+            text-decoration: none;
+            color: white;
+            background: #26354f;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card-resumo {
+            background: #151d29;
+            border: 1px solid #263b63;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .card-resumo span {
+            color: #8996aa;
+            font-size: 13px;
+        }
+
+        .card-resumo strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 28px;
+        }
+
+        .tabela-area {
+            background: #151d29;
+            border: 1px solid #263b63;
+            border-radius: 14px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #26354f;
+            font-size: 13px;
+        }
+
+        th {
+            color: #4d9aff;
+        }
+
+        td {
+            color: #d9e1ef;
+        }
+
+        .codigo {
+            font-weight: bold;
+            color: #4d9aff;
+        }
+
+        .vazio {
+            padding: 50px;
+            text-align: center;
+            color: #8996aa;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 18px;
+            }
+
+            .topo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .resumo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+
+        <div>
+            <h1>📊 Vendas</h1>
+            <p>Visualização das vendas do TicketShow</p>
+        </div>
+
+        <a href="/admin" class="voltar">
+            ← Voltar
+        </a>
+
+    </div>
+
+
+    <div class="resumo">
+
+        <div class="card-resumo">
+            <span>Ingressos vendidos</span>
+            <strong>{{ vendas|length }}</strong>
+        </div>
+
+        <div class="card-resumo">
+            <span>Faturamento</span>
+            <strong>R$ {{ "%.2f"|format(faturamento) }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="tabela-area">
+
+        {% if vendas %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Evento</th>
+                    <th>Data</th>
+                    <th>Local</th>
+                    <th>Pagamento</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for venda in vendas %}
+
+                <tr>
+
+                    <td class="codigo">
+                        {{ venda.codigo }}
+                    </td>
+
+                    <td>
+                        {{ venda.usuario }}
+                    </td>
+
+                    <td>
+                        {{ venda.show }}
+                    </td>
+
+                    <td>
+                        {{ venda.data }}
+                    </td>
+
+                    <td>
+                        {{ venda.local }}
+                    </td>
+
+                    <td>
+                        {{ venda.pagamento }}
+                    </td>
+
+                    <td>
+                        R$ {{ "%.2f"|format(venda.preco) }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="vazio">
+            <h3>Nenhuma venda registrada</h3>
+            <p>As vendas aparecerão aqui quando houver ingressos.</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
