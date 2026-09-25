@@ -9,8 +9,9 @@
     "categoria": "Trap",
     "imagem": "veigh.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 1,
-    "esgotado": false
+    "ingressos_vendidos": 0,
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 2,
@@ -24,40 +25,42 @@
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
     "esgotado": false,
-    "lotes": [
-      {
-        "nome": "Lote 1",
-        "quantidade": 50,
-        "vendidos": 0,
-        "preco": 220.0
-      },
-      {
-        "nome": "Lote 2",
-        "quantidade": 30,
-        "vendidos": 0,
-        "preco": 240.0
-      },
-      {
-        "nome": "Lote 3",
-        "quantidade": 20,
-        "vendidos": 0,
-        "preco": 260.0
-      }
-    ]
+    "destaque": false
   },
   {
     "id": 3,
     "nome": "KayBlack",
-    "preco": 190.0,
+    "preco": 200.0,
     "local": "Audio Club - São Paulo",
     "data": "2026-11-12",
     "idade_minima": 16,
     "categoria": "Trap",
     "imagem": "kayblack.png",
-    "ingressos_total": 100,
+    "ingressos_total": 35,
     "ingressos_vendidos": 0,
     "esgotado": false,
-    "admin": "admin@ticketshow.com"
+    "admin": "admin@ticketshow.com",
+    "lotes": [
+      {
+        "nome": "Lote 1",
+        "quantidade": 0,
+        "vendidos": 0,
+        "preco": 200.0
+      },
+      {
+        "nome": "Lote 2",
+        "quantidade": 15,
+        "vendidos": 0,
+        "preco": 260.0
+      },
+      {
+        "nome": "Lote 3",
+        "quantidade": 20,
+        "vendidos": 0,
+        "preco": 290.0
+      }
+    ],
+    "destaque": false
   },
   {
     "id": 4,
@@ -70,7 +73,8 @@
     "imagem": "teto.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 5,
@@ -83,7 +87,8 @@
     "imagem": "supernovaent.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 6,
@@ -96,7 +101,8 @@
     "imagem": "niink.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": true
   },
   {
     "id": 7,
@@ -109,7 +115,8 @@
     "imagem": "G.A.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 8,
@@ -122,7 +129,8 @@
     "imagem": "ghard.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 1,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 9,
@@ -135,20 +143,8 @@
     "imagem": "ajuliacosta.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
-  },
-  {
-    "id": 10,
-    "nome": "Duquesa",
-    "preco": 95,
-    "local": "São Paulo",
-    "data": "2026-05-24",
-    "idade_minima": 14,
-    "categoria": "Rap",
-    "imagem": "duquesa.png",
-    "ingressos_total": 100,
-    "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 11,
@@ -161,7 +157,8 @@
     "imagem": "tashaetracie.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 12,
@@ -174,7 +171,8 @@
     "imagem": "mcdonjuan.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 13,
@@ -187,7 +185,8 @@
     "imagem": "ryansp.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 14,
@@ -200,7 +199,8 @@
     "imagem": "hariel.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 15,
@@ -213,41 +213,22 @@
     "imagem": "bts.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 16,
     "nome": "Gaab",
-    "preco": 280.0,
+    "preco": 140,
     "local": "Vivo Rio",
     "data": "2026-07-05",
     "idade_minima": 14,
     "categoria": "R&B",
     "imagem": "gaab.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 1,
+    "ingressos_vendidos": 0,
     "esgotado": false,
-    "admin": "admin@ticketshow.com",
-    "lotes": [
-      {
-        "nome": "Lote 1",
-        "quantidade": 50,
-        "vendidos": 0,
-        "preco": 280.0
-      },
-      {
-        "nome": "Lote 2",
-        "quantidade": 30,
-        "vendidos": 0,
-        "preco": 320.0
-      },
-      {
-        "nome": "Lote 3",
-        "quantidade": 20,
-        "vendidos": 0,
-        "preco": 340.0
-      }
-    ]
+    "destaque": false
   },
   {
     "id": 17,
@@ -260,7 +241,8 @@
     "imagem": "BRANDAO.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 18,
@@ -273,7 +255,8 @@
     "imagem": "kyan.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 19,
@@ -285,8 +268,9 @@
     "categoria": "Trap",
     "imagem": "marinasena.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
-    "esgotado": false
+    "ingressos_vendidos": 1,
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 20,
@@ -299,7 +283,8 @@
     "imagem": "paiva.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 21,
@@ -312,7 +297,8 @@
     "imagem": "tuto.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 22,
@@ -325,7 +311,8 @@
     "imagem": "vulgofk.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 23,
@@ -338,7 +325,8 @@
     "imagem": "orochi.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 24,
@@ -351,7 +339,8 @@
     "imagem": "alee.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 25,
@@ -364,7 +353,8 @@
     "imagem": "wiu.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 26,
@@ -377,7 +367,8 @@
     "imagem": "mccabelinho.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 27,
@@ -390,7 +381,8 @@
     "imagem": "djonga.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 28,
@@ -403,7 +395,8 @@
     "imagem": "bk.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 29,
@@ -416,7 +409,8 @@
     "imagem": "l7nnon.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 30,
@@ -429,7 +423,8 @@
     "imagem": "caetano.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 31,
@@ -441,8 +436,9 @@
     "categoria": "MPB",
     "imagem": "gilbertogil.png",
     "ingressos_total": 100,
-    "ingressos_vendidos": 0,
-    "esgotado": false
+    "ingressos_vendidos": 1,
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 32,
@@ -455,7 +451,8 @@
     "imagem": "theweeknd.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 100,
-    "esgotado": true
+    "esgotado": true,
+    "destaque": false
   },
   {
     "id": 33,
@@ -468,7 +465,8 @@
     "imagem": "seujorge.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 34,
@@ -481,7 +479,8 @@
     "imagem": "ludmilla.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 35,
@@ -494,7 +493,8 @@
     "imagem": "blackpink.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 36,
@@ -507,7 +507,8 @@
     "imagem": "twice.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 37,
@@ -520,7 +521,8 @@
     "imagem": "straykids.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 38,
@@ -533,7 +535,8 @@
     "imagem": "seventeen.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 39,
@@ -546,7 +549,8 @@
     "imagem": "newjeans.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 40,
@@ -559,7 +563,8 @@
     "imagem": "ive.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 41,
@@ -572,7 +577,8 @@
     "imagem": "jaypark.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false
   },
   {
     "id": 42,
@@ -585,6 +591,60 @@
     "imagem": "arianagrande.png",
     "ingressos_total": 100,
     "ingressos_vendidos": 0,
-    "esgotado": false
+    "esgotado": false,
+    "destaque": false,
+    "lotes": [
+      {
+        "nome": "Lote 1",
+        "quantidade": 50,
+        "vendidos": 0,
+        "preco": 350.0
+      },
+      {
+        "nome": "Lote 2",
+        "quantidade": 30,
+        "vendidos": 0,
+        "preco": 420.0
+      },
+      {
+        "nome": "Lote 3",
+        "quantidade": 20,
+        "vendidos": 0,
+        "preco": 540.0
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "nome": "Anita ",
+    "categoria": "Pop",
+    "local": "Audio Club - São Paulo",
+    "data": "2027-11-10",
+    "idade_minima": 17,
+    "preco": 200.0,
+    "imagem": "anita.png",
+    "ingressos_total": 100,
+    "ingressos_vendidos": 0,
+    "lotes": [
+      {
+        "nome": "Lote 1",
+        "quantidade": 50,
+        "vendidos": 0,
+        "preco": 200.0
+      },
+      {
+        "nome": "Lote 2",
+        "quantidade": 30,
+        "vendidos": 0,
+        "preco": 220.0
+      },
+      {
+        "nome": "Lote 3",
+        "quantidade": 20,
+        "vendidos": 0,
+        "preco": 240.0
+      }
+    ],
+    "admin": "admin@ticketshow.com"
   }
 ]

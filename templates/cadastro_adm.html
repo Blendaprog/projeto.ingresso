@@ -1,43 +1,352 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Administrador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro de Administrador — TicketShow</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* CSS específico — cadastro admin */
+        .cadastro-admin-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            background:
+                radial-gradient(circle at 80% 15%, rgba(139, 92, 246, 0.16), transparent 38%),
+                radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.12), transparent 38%),
+                var(--bg);
+        }
+
+        .cadastro-admin-card {
+            width: 100%;
+            max-width: 520px;
+            padding: 40px 36px;
+            background: var(--surface);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: var(--radius-xl);
+            box-shadow:
+                var(--shadow-lg),
+                0 0 45px rgba(139, 92, 246, 0.15);
+            animation: cardIn 0.5s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cadastro-admin-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--violet), var(--primary), var(--violet));
+            background-size: 200% 100%;
+            animation: lineMove 4s linear infinite;
+        }
+
+        @keyframes lineMove {
+            0%   { background-position: 0% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Badge admin */
+        .admin-badge-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            margin-bottom: 22px;
+            background: rgba(139, 92, 246, 0.12);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 30px;
+            color: #c4b5fd;
+            font-size: 10px;
+            font-weight: 850;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .admin-badge-top::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--violet);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.9);
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        .cadastro-admin-card h1 {
+            margin: 0 0 8px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -0.8px;
+        }
+
+        .cadastro-admin-card > p {
+            margin: 0 0 28px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Inputs */
+        .cadastro-form-group {
+            margin-bottom: 14px;
+        }
+
+        .cadastro-form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-soft);
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .cadastro-form-group input,
+        .cadastro-form-group select {
+            width: 100%;
+            min-height: 46px;
+            padding: 11px 15px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all var(--t);
+        }
+
+        .cadastro-form-group input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .cadastro-form-group input:focus,
+        .cadastro-form-group select:focus {
+            border-color: var(--violet);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+        }
+
+        .cadastro-form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2394a3b8'%3e%3cpath d='M8 11L3 6h10z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 14px;
+            padding-right: 40px;
+        }
+
+        .cadastro-form-group select option {
+            background: var(--surface-2);
+            color: #fff;
+        }
+
+        /* Grid de duas colunas */
+        .cadastro-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Aviso */
+        .admin-aviso {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 10px;
+            color: #fcd34d;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .admin-aviso span:first-child {
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Botão */
+        .cadastro-admin-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 48px;
+            margin-top: 18px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--violet) 0%, var(--primary) 100%);
+            border: 0;
+            border-radius: 11px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: 0 10px 28px rgba(139, 92, 246, 0.35);
+            transition: all var(--t);
+        }
+
+        .cadastro-admin-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 38px rgba(139, 92, 246, 0.55);
+        }
+
+        /* Link voltar */
+        .cadastro-admin-back {
+            display: block;
+            margin-top: 22px;
+            padding-top: 22px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            transition: color var(--t);
+        }
+
+        .cadastro-admin-back:hover {
+            color: #fff;
+        }
+
+        /* Logo */
+        .cadastro-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 26px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 850;
+            text-decoration: none;
+            transition: transform var(--t);
+        }
+
+        .cadastro-logo:hover {
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        @media (max-width: 520px) {
+            .cadastro-admin-card { padding: 30px 22px; }
+            .cadastro-grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body class="bg-light">
 
-<div class="container mt-5">
+<body class="pagina-home">
 
-    <div class="card shadow p-4 mx-auto" style="max-width:500px;">
+<main class="cadastro-admin-page">
 
-        <h2 class="text-center mb-4">Cadastro de Administrador</h2>
+    <div class="cadastro-admin-card">
 
-        <form action="/salvar_adm" method="POST">
+        <!-- Logo -->
+        <a href="/" class="cadastro-logo">
+            <span class="brand-ticket-icon">T</span>
+            <span>TicketShow</span>
+        </a>
 
-            <input type="text" class="form-control mb-3" name="nome" placeholder="Nome" required>
+        <!-- Badge -->
+        <div class="admin-badge-top">
+            Cadastro de administrador
+        </div>
 
-            <input type="email" class="form-control mb-3" name="email" placeholder="E-mail" required>
+        <h1>Criar conta admin</h1>
+        <p>Preencha os dados para criar uma nova conta administrativa.</p>
 
-            <input type="password" class="form-control mb-3" name="senha" placeholder="Senha" required>
+        <!-- Aviso -->
+        <div class="admin-aviso">
+            <span>⚠️</span>
+            <span>Esta conta terá acesso ao painel administrativo. Crie apenas se você for autorizado.</span>
+        </div>
 
-            <input type="date" class="form-control mb-3" name="data_nascimento" required>
+        <!-- FORM -->
+        <form action="/salvar_adm" method="POST" autocomplete="off">
 
-            <select class="form-control mb-3" name="genero">
-                <option value="Masculino">Masculino</option>
-                <option value="Feminino">Feminino</option>
-                <option value="Outro">Outro</option>
-            </select>
+            <div class="cadastro-form-group">
+                <label for="nome">Nome completo</label>
+                <input type="text"
+                       id="nome"
+                       name="nome"
+                       placeholder="Seu nome"
+                       required
+                       autofocus>
+            </div>
 
-            <button class="btn btn-success w-100">
-                Cadastrar
+            <div class="cadastro-form-group">
+                <label for="email">E-mail administrativo</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       placeholder="admin@ticketshow.com"
+                       required>
+            </div>
+
+            <div class="cadastro-form-group">
+                <label for="senha">Senha</label>
+                <input type="password"
+                       id="senha"
+                       name="senha"
+                       placeholder="Crie uma senha forte"
+                       minlength="6"
+                       required>
+            </div>
+
+            <div class="cadastro-grid-2">
+
+                <div class="cadastro-form-group">
+                    <label for="data_nascimento">Data de nascimento</label>
+                    <input type="date"
+                           id="data_nascimento"
+                           name="data_nascimento"
+                           required>
+                </div>
+
+                <div class="cadastro-form-group">
+                    <label for="genero">Gênero</label>
+                    <select id="genero" name="genero">
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                        <option value="Outro">Outro</option>
+                        <option value="Prefiro não informar">Prefiro não informar</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="cadastro-admin-submit">
+                🛡️ Criar conta admin
             </button>
 
         </form>
 
+        <a href="/login" class="cadastro-admin-back">
+            ← Voltar para login
+        </a>
+
     </div>
 
-</div>
+</main>
 
 </body>
+
 </html>

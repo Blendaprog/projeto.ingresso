@@ -2,741 +2,584 @@
 <html lang="pt-br">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Meu Perfil - TicketShow</title>
+    <title>Meu Perfil — TicketShow</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-
+        /* CSS específico — perfil */
+        .perfil-page {
+            padding: 50px 20px 80px;
             background:
-                radial-gradient(
-                    circle at top,
-                    rgba(25, 118, 255, 0.14),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    135deg,
-                    #060b14,
-                    #0b1220 55%,
-                    #101a2b
-                );
-
-            color: #e5e7eb;
+                radial-gradient(circle at 80% 15%, rgba(59, 130, 246, 0.12), transparent 38%),
+                radial-gradient(circle at 15% 85%, rgba(139, 92, 246, 0.10), transparent 38%),
+                var(--bg);
+            min-height: calc(100vh - 72px);
         }
-
-
-        /* =========================
-           CONTAINER
-           ========================= */
 
         .perfil-container {
-            width: min(720px, 92%);
-            margin: 45px auto 70px;
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
         }
-
-
-        /* =========================
-           TOPO
-           ========================= */
-
-        .topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            margin-bottom: 20px;
-        }
-
-        .logo {
-            color: white;
-            text-decoration: none;
-
-            font-size: 20px;
-            font-weight: 900;
-        }
-
-        .logo:hover {
-            color: white;
-        }
-
-        .btn-voltar {
-            color: #c7d3e5;
-            text-decoration: none;
-
-            background: #111b2b;
-            border: 1px solid #29405f;
-
-            padding: 9px 15px;
-
-            border-radius: 9px;
-
-            font-size: 11px;
-            font-weight: 800;
-
-            transition: .2s;
-        }
-
-        .btn-voltar:hover {
-            background: #1976ff;
-            border-color: #1976ff;
-            color: white;
-        }
-
-
-        /* =========================
-           CARD PRINCIPAL
-           ========================= */
 
         .perfil-card {
-            background: rgba(15, 25, 41, 0.96);
-
-            border: 1px solid #243b5b;
-
-            border-radius: 22px;
-
-            padding: 36px;
-
-            box-shadow:
-                0 25px 60px rgba(0, 0, 0, 0.35);
+            padding: 40px 36px;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            animation: cardIn 0.5s ease both;
+            position: relative;
+            overflow: hidden;
         }
 
+        .perfil-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--violet), var(--primary));
+            background-size: 200% 100%;
+            animation: lineMove 4s linear infinite;
+        }
 
-        /* =========================
-           CABEÇALHO DO PERFIL
-           ========================= */
+        @keyframes lineMove {
+            0%   { background-position: 0% 0; }
+            100% { background-position: 200% 0; }
+        }
 
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header do perfil */
         .perfil-header {
             text-align: center;
-
-            margin-bottom: 28px;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
         }
 
         .foto-wrapper {
             position: relative;
-
             display: inline-block;
-
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
 
         .foto-perfil {
-            width: 135px;
-            height: 135px;
-
+            width: 140px;
+            height: 140px;
             object-fit: cover;
-
             border-radius: 50%;
-
-            border: 4px solid #1976ff;
-
+            border: 4px solid var(--primary);
             box-shadow:
-                0 0 0 5px rgba(25, 118, 255, 0.10);
-
+                0 0 0 6px rgba(59, 130, 246, 0.10),
+                0 15px 40px rgba(59, 130, 246, 0.30);
             display: block;
+            transition: transform var(--t);
         }
 
-        .status {
+        .foto-perfil:hover {
+            transform: scale(1.03);
+        }
+
+        .status-online {
             position: absolute;
-
-            width: 18px;
-            height: 18px;
-
-            right: 4px;
-            bottom: 5px;
-
+            width: 22px;
+            height: 22px;
+            right: 8px;
+            bottom: 10px;
             border-radius: 50%;
-
             background: #22c55e;
+            border: 4px solid var(--surface);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.7);
+        }
 
-            border: 4px solid #0f1929;
+        .status-online::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: onlinePulse 2s ease-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes onlinePulse {
+            0%   { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2); opacity: 0; }
         }
 
         .nome {
-            color: #ffffff;
-
-            font-size: 29px;
+            margin: 0 0 8px;
+            color: #fff;
+            font-size: 30px;
             font-weight: 900;
-
-            margin: 0;
+            letter-spacing: -0.8px;
         }
 
         .subtitulo {
-            color: #7f8da4;
-
-            font-size: 12px;
-
-            margin-top: 7px;
-            margin-bottom: 0;
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
         }
 
-
-        /* =========================
-           TÍTULOS
-           ========================= */
-
+        /* Seções */
         .secao-titulo {
-            color: #4d9aff;
-
-            font-size: 10px;
-
-            font-weight: 900;
-
-            letter-spacing: 1.7px;
-
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 16px;
+            color: var(--primary-light);
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 1.8px;
             text-transform: uppercase;
-
-            margin-bottom: 12px;
         }
 
-
-        /* =========================
-           INFORMAÇÕES
-           ========================= */
-
+        /* Info cards */
         .informacoes {
-            background: #111c2e;
-
-            border: 1px solid #213957;
-
-            border-radius: 15px;
-
-            padding: 20px;
-
-            margin-bottom: 24px;
+            padding: 22px 24px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 28px;
         }
 
         .info-linha {
             display: flex;
-
             justify-content: space-between;
             align-items: center;
-
             gap: 20px;
-
-            padding: 11px 0;
-
-            border-bottom: 1px solid #1c314c;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .info-linha:first-child {
-            padding-top: 0;
-        }
-
-        .info-linha:last-child {
-            padding-bottom: 0;
-            border-bottom: none;
-        }
+        .info-linha:first-child { padding-top: 0; }
+        .info-linha:last-child { padding-bottom: 0; border-bottom: none; }
 
         .info-label {
-            color: #7f8da4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 650;
+        }
 
-            font-size: 11px;
-
-            font-weight: 700;
+        .info-label::before {
+            font-size: 15px;
         }
 
         .info-valor {
-            color: #e1e8f2;
-
-            font-size: 12px;
-
+            color: #fff;
+            font-size: 14px;
             font-weight: 700;
-
             text-align: right;
+            word-break: break-word;
         }
 
-
-        /* =========================
-           ESTATÍSTICA
-           ========================= */
-
+        /* Estatística */
         .estatisticas {
-            display: flex;
-
-            justify-content: center;
-
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
         }
 
         .estatistica {
-            width: 230px;
-
+            padding: 24px;
             text-align: center;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: var(--radius);
+            transition: all var(--t);
+        }
 
-            background:
-                linear-gradient(
-                    180deg,
-                    #142139,
-                    #101a2a
-                );
-
-            border: 1px solid #294365;
-
-            border-radius: 15px;
-
-            padding: 20px;
+        .estatistica:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15);
         }
 
         .estatistica-icone {
-            font-size: 23px;
-
-            margin-bottom: 7px;
+            font-size: 30px;
+            margin-bottom: 10px;
         }
 
         .estatistica h4 {
-            color: #91a2ba;
-
+            margin: 0 0 8px;
+            color: var(--text-muted);
             font-size: 12px;
-
-            margin: 0 0 7px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .estatistica span {
             display: block;
-
-            color: #ffffff;
-
-            font-size: 30px;
-
+            color: var(--primary-light);
+            font-size: 36px;
             font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1;
         }
 
-
-        /* =========================
-           BOTÃO INGRESSOS
-           ========================= */
-
+        /* Botão ingressos */
         .btn-ingressos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
-
-            border: none;
-
-            background: #1976ff;
-
-            color: white;
-
-            padding: 12px 20px;
-
-            border-radius: 9px;
-
-            font-size: 11px;
-
-            font-weight: 900;
-
-            text-decoration: none;
-
-            display: block;
-
+            min-height: 50px;
+            padding: 13px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--violet) 100%);
+            border-radius: 11px;
+            color: #fff !important;
+            font-size: 14px;
+            font-weight: 850;
+            letter-spacing: 0.3px;
             text-align: center;
-
-            transition: .2s;
+            text-decoration: none;
+            box-shadow: 0 10px 28px rgba(59, 130, 246, 0.30);
+            transition: all var(--t);
         }
 
         .btn-ingressos:hover {
-            background: #3488ff;
-
-            color: white;
-
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 38px rgba(59, 130, 246, 0.50);
+            color: #fff !important;
         }
 
-
-        /* =========================
-           DIVISÓRIA
-           ========================= */
-
-        hr {
-            border: 0;
-
-            border-top: 1px solid #203651;
-
-            margin: 30px 0;
-        }
-
-
-        /* =========================
-           FOTO
-           ========================= */
-
+        /* Foto de perfil (atualizar) */
         .foto-area {
-            background: #111c2e;
-
-            border: 1px solid #213957;
-
-            border-radius: 15px;
-
-            padding: 20px;
+            padding: 24px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
         }
 
         .titulo-foto {
-            color: #ffffff;
-
-            font-size: 17px;
-
-            font-weight: 800;
-
-            margin-bottom: 6px;
+            margin: 0 0 6px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 850;
         }
 
         .descricao-foto {
-            color: #7f8da4;
-
-            font-size: 11px;
-
-            margin-bottom: 15px;
+            margin: 0 0 18px;
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.5;
         }
 
-        .form-control {
-            background: #0c1524 !important;
-
-            border: 1px solid #2b4465 !important;
-
-            color: white !important;
-
-            border-radius: 9px;
-
-            padding: 10px 12px;
-
-            font-size: 11px;
+        .foto-input-wrap {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            flex-wrap: wrap;
         }
 
-        .form-control:focus {
-            background: #0c1524 !important;
-
-            color: white !important;
-
-            border-color: #1976ff !important;
-
-            box-shadow:
-                0 0 0 3px rgba(25,118,255,.10) !important;
-        }
-
-        .form-control::file-selector-button {
-            background: #1a2b44;
-
-            color: #dbe6f4;
-
-            border: none;
-
-            margin: -10px 10px -10px -12px;
-
-            padding: 10px 12px;
-
+        .foto-input {
+            flex: 1;
+            min-width: 200px;
+            min-height: 46px;
+            padding: 10px 14px;
+            background: var(--bg-alt);
+            border: 1px dashed var(--border-strong);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-family: inherit;
             cursor: pointer;
+            transition: all var(--t);
+        }
+
+        .foto-input:hover {
+            border-color: var(--primary);
+            color: var(--text-soft);
         }
 
         .btn-foto {
-            background: #263b59;
-
-            border: 1px solid #355474;
-
-            color: white;
-
-            padding: 10px 19px;
-
-            border-radius: 9px;
-
-            font-size: 11px;
-
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            padding: 12px 22px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--violet) 100%);
+            border: 0;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
             font-weight: 800;
-
-            transition: .2s;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(59, 130, 246, 0.28);
+            transition: all var(--t);
         }
 
         .btn-foto:hover {
-            background: #315170;
-
-            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.45);
         }
 
+        /* Botão sair */
+        .btn-sair-perfil {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 46px;
+            margin-top: 24px;
+            padding: 12px 20px;
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 11px;
+            color: #fca5a5;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all var(--t);
+        }
 
-        /* =========================
-           MOBILE
-           ========================= */
+        .btn-sair-perfil:hover {
+            background: rgba(239, 68, 68, 0.10);
+            border-color: var(--danger);
+            color: #fff;
+        }
 
-        @media (max-width: 600px) {
-
-            .perfil-container {
-                width: 94%;
-
-                margin: 22px auto 45px;
-            }
-
-            .topo {
-                flex-direction: column;
-
-                align-items: flex-start;
-
-                gap: 12px;
-            }
-
-            .perfil-card {
-                padding: 25px 18px;
-            }
-
-            .foto-perfil {
-                width: 115px;
-                height: 115px;
-            }
-
-            .nome {
-                font-size: 25px;
-            }
-
+        @media (max-width: 640px) {
+            .perfil-card { padding: 28px 22px; }
+            .foto-perfil { width: 110px; height: 110px; }
+            .nome { font-size: 24px; }
             .info-linha {
                 flex-direction: column;
-
                 align-items: flex-start;
-
                 gap: 4px;
             }
-
-            .info-valor {
-                text-align: left;
-            }
-
-            .estatistica {
-                width: 100%;
-            }
-
+            .info-valor { text-align: left; }
         }
-
     </style>
-
 </head>
 
+<body class="pagina-home">
 
-<body>
+<!-- ========================= NAVBAR ========================= -->
+<nav class="navbar navbar-expand-lg ticket-navbar">
+    <div class="container">
 
-
-<div class="perfil-container">
-
-
-    <!-- =========================
-         TOPO
-         ========================= -->
-
-    <div class="topo">
-
-        <a href="/" class="logo">
-            🎟️ TicketShow
+        <a class="navbar-brand ticket-logo" href="/">
+            <span class="brand-ticket-icon">T</span>
+            <span>TicketShow</span>
         </a>
 
-        <a href="/" class="btn-voltar">
-            ← Voltar
-        </a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menu"
+                aria-controls="menu"
+                aria-expanded="false"
+                aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    </div>
+        <div class="collapse navbar-collapse" id="menu">
 
+            <div class="ticket-menu">
+                <a href="/#shows">Shows</a>
+                <a href="/#categorias">Categorias</a>
+                <a href="/#locais">Locais</a>
+            </div>
 
-    <!-- =========================
-         PERFIL
-         ========================= -->
+            <div class="ticket-actions">
 
-    <div class="perfil-card">
+                <span class="user-greeting">
+                    <span class="user-online"></span>
+                    Olá, {{ nome }}
+                </span>
 
+                <a href="/perfil" class="ticket-profile">👤</a>
 
-        <!-- CABEÇALHO -->
-
-        <div class="perfil-header">
-
-            <div class="foto-wrapper">
-
-                {% if usuario.foto %}
-
-                    <img
-                        src="{{ url_for('static', filename='img/' + usuario.foto) }}"
-                        class="foto-perfil"
-                        alt="Foto de perfil"
-                    >
-
-                {% else %}
-
-                    <img
-                        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                        class="foto-perfil"
-                        alt="Foto padrão"
-                    >
-
+                {% if session["tipo"] == "admin" %}
+                    <a href="/cadastrar_show" class="ticket-admin">➕ Cadastrar</a>
+                    <a href="/meus_shows" class="ticket-admin">🎤 Meus shows</a>
                 {% endif %}
 
-                <span class="status"></span>
+                <a href="/meus_ingressos" class="ticket-tickets">🎟 Ingressos</a>
+                <a href="/logout" class="ticket-logout">Sair</a>
 
             </div>
-
-
-            <h1 class="nome">
-                {{ usuario.nome }}
-            </h1>
-
-
-            <p class="subtitulo">
-                Minha conta TicketShow
-            </p>
 
         </div>
+    </div>
+</nav>
 
 
-        <!-- =========================
-             INFORMAÇÕES
-             ========================= -->
+<!-- ========================= PERFIL ========================= -->
+<main class="perfil-page">
 
-        <div class="secao-titulo">
-            Informações da conta
-        </div>
+    <div class="perfil-container">
 
+        <div class="perfil-card">
 
-        <div class="informacoes">
+            <!-- ========= HEADER ========= -->
+            <div class="perfil-header">
 
+                <div class="foto-wrapper">
 
-            <div class="info-linha">
+                    {% if usuario.foto %}
+                        <img src="{{ url_for('static', filename='img/' + usuario.foto) }}"
+                             class="foto-perfil"
+                             alt="Foto de perfil">
+                    {% else %}
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                             class="foto-perfil"
+                             alt="Foto padrão">
+                    {% endif %}
 
-                <span class="info-label">
-                    E-mail
-                </span>
+                    <span class="status-online"></span>
 
-                <span class="info-valor">
-                    {{ usuario.email }}
-                </span>
-
-            </div>
-
-
-            <div class="info-linha">
-
-                <span class="info-label">
-                    Data de nascimento
-                </span>
-
-                <span class="info-valor">
-                    {{ usuario.data_nascimento }}
-                </span>
-
-            </div>
-
-
-            <div class="info-linha">
-
-                <span class="info-label">
-                    Gênero
-                </span>
-
-                <span class="info-valor">
-                    {{ usuario.genero }}
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =========================
-             ESTATÍSTICA
-             ========================= -->
-
-        <div class="estatisticas">
-
-            <div class="estatistica">
-
-                <div class="estatistica-icone">
-                    
                 </div>
 
-                <h4>
-                    Ingressos comprados
-                </h4>
-
-                <span>
-                    {{ total_ingressos }}
-                </span>
+                <h1 class="nome">{{ usuario.nome }}</h1>
+                <p class="subtitulo">Minha conta TicketShow</p>
 
             </div>
 
+            <!-- ========= INFORMAÇÕES ========= -->
+            <div class="secao-titulo">
+                📋 Informações da conta
+            </div>
+
+            <div class="informacoes">
+
+                <div class="info-linha">
+                    <span class="info-label">✉️ E-mail</span>
+                    <span class="info-valor">{{ usuario.email }}</span>
+                </div>
+
+                <div class="info-linha">
+                    <span class="info-label">🎂 Data de nascimento</span>
+                    <span class="info-valor">{{ usuario.data_nascimento }}</span>
+                </div>
+
+                <div class="info-linha">
+                    <span class="info-label">👤 Gênero</span>
+                    <span class="info-valor">{{ usuario.genero }}</span>
+                </div>
+
+            </div>
+
+            <!-- ========= ESTATÍSTICA ========= -->
+            <div class="secao-titulo">
+                📊 Estatísticas
+            </div>
+
+            <div class="estatisticas">
+
+                <div class="estatistica">
+                    <div class="estatistica-icone">🎟️</div>
+                    <h4>Ingressos comprados</h4>
+                    <span>{{ total_ingressos }}</span>
+                </div>
+
+            </div>
+
+            <!-- ========= BOTÃO INGRESSOS ========= -->
+            <a href="/meus_ingressos" class="btn-ingressos">
+                🎟 Ver meus ingressos
+            </a>
+
+            <!-- ========= FOTO DE PERFIL ========= -->
+            <div style="margin-top: 30px;">
+
+                <div class="secao-titulo">
+                    📷 Personalização
+                </div>
+
+                <div class="foto-area">
+
+                    <h2 class="titulo-foto">Atualizar foto de perfil</h2>
+                    <p class="descricao-foto">
+                        Escolha uma imagem JPG, PNG ou WEBP para deixar seu perfil com a sua cara.
+                    </p>
+
+                    <form action="/atualizar_foto"
+                          method="POST"
+                          enctype="multipart/form-data">
+
+                        <div class="foto-input-wrap">
+
+                            <input type="file"
+                                   name="foto"
+                                   class="foto-input"
+                                   accept="image/*"
+                                   required>
+
+                            <button type="submit" class="btn-foto">
+                                💾 Salvar foto
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- ========= SAIR ========= -->
+            <a href="/logout" class="btn-sair-perfil">
+                🚪 Sair da conta
+            </a>
+
         </div>
-
-
-        <!-- BOTÃO -->
-
-        <a
-            href="/meus_ingressos"
-            class="btn-ingressos"
-        >
-            Ver meus ingressos
-        </a>
-
-
-        <hr>
-
-
-        <!-- =========================
-             FOTO DE PERFIL
-             ========================= -->
-
-        <div class="secao-titulo">
-            Personalização
-        </div>
-
-
-        <div class="foto-area">
-
-            <h2 class="titulo-foto">
-                📷 Foto de perfil
-            </h2>
-
-            <p class="descricao-foto">
-                Escolha uma imagem para deixar seu perfil com a sua cara.
-            </p>
-
-
-            <form
-                action="/atualizar_foto"
-                method="POST"
-                enctype="multipart/form-data"
-            >
-
-                <input
-                    type="file"
-                    name="foto"
-                    class="form-control mb-3"
-                    accept="image/*"
-                    required
-                >
-
-
-                <button
-                    type="submit"
-                    class="btn btn-foto"
-                >
-                    Salvar foto
-                </button>
-
-            </form>
-
-        </div>
-
 
     </div>
 
+</main>
 
-</div>
 
+<!-- ========================= FOOTER ========================= -->
+<footer class="footer">
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>
+                <span class="brand-ticket-icon">T</span>
+                TicketShow
+            </h3>
+            <p>Os melhores shows e experiências em um só lugar.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="/">Início</a>
+            <a href="/meus_ingressos">Meus ingressos</a>
+            <a href="#">Ajuda</a>
+            <a href="#">Contato</a>
+        </div>
+
+        <p class="copyright">© 2026 TicketShow. Todos os direitos reservados.</p>
+
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

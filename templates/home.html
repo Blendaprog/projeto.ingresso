@@ -1,30 +1,48 @@
-<a href="{{ url_for('perfil') }}" class="btn btn-info">
-    Meu Perfil
-</a>
-<p>Imagem: {{ show.imagem }}</p>
+<article class="show-card" data-show-search="{{ show.nome }} {{ show.categoria }} {{ show.local }}">
 
-<img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
-     class="card-img-top"
-     alt="{{ show.nome }}"
-     style="height:200px;">
-     {% if show.encerrado %}
-    <span class="badge bg-secondary">Show Encerrado</span>
-{% endif %}
-{% if show.esgotado %}
-    <span class="badge bg-danger">Esgotado</span>
-{% endif %}
-{% if show.encerrado %}
-    <button class="btn btn-secondary" disabled>
-        Show Encerrado
-    </button>
+    <a href="{{ url_for('comprar_ingresso', id_show=show.id) }}" class="show-image">
+        <img src="{{ url_for('static', filename='imagens/' + show.imagem) }}"
+             alt="{{ show.nome }}">
 
-{% elif show.esgotado %}
-    <button class="btn btn-danger" disabled>
-        Ingressos Esgotados
-    </button>
-
-{% else %}
-    <a href="{{ url_for('comprar_ingresso', id_show=show.id) }}"
-       class="btn btn-success">
-       Comprar
+        <span class="card-category">{{ show.categoria }}</span>
+        <span class="card-arrow">↗</span>
     </a>
+
+    <div class="card-body">
+
+        <h3 class="show-title">{{ show.nome }}</h3>
+
+        {% if show.esgotado %}
+            <span class="status last">Esgotado</span>
+        {% else %}
+            <span class="status available">Disponível</span>
+        {% endif %}
+
+        <div class="show-info">
+            <p><span>📅</span> {{ show.data }}</p>
+            <p><span>📍</span> {{ show.local }}</p>
+            <p><span>🔞</span> Maiores de {{ show.idade_minima }} anos</p>
+        </div>
+
+        <div class="ticket-price-area">
+            <div>
+                <small>A partir de</small>
+                <div class="ticket-price">R$ {{ show.preco }}</div>
+            </div>
+            <span class="ticket-mini-icon">🎟</span>
+        </div>
+
+    </div>
+
+    <div class="card-footer">
+        {% if show.esgotado %}
+            <button class="sold-out-btn" disabled>Ingressos esgotados</button>
+        {% else %}
+            <a href="{{ url_for('comprar_ingresso', id_show=show.id) }}" class="buy-ticket-btn">
+                Selecionar ingressos
+                <span>→</span>
+            </a>
+        {% endif %}
+    </div>
+
+</article>
