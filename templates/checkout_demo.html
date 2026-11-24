@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout | TicketShow</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='ticketshow-checkout.css') }}">
+  <script defer src="{{ url_for('static', filename='ticketshow-checkout.js') }}"></script>
+</head>
+<body class="ts-checkout">
+<header class="checkout-nav">
+  <div class="checkout-nav-inner">
+    <a class="checkout-logo" href="{{ url_for('home') }}">Ticket<span>Show</span></a>
+    <div class="secure-label"><span class="secure-dot"></span> AMBIENTE DE DEMONSTRAÇÃO</div>
+    <a class="checkout-back" href="{{ url_for('comprar', id=show.id) }}">← Voltar</a>
+  </div>
+</header>
+
+<main class="checkout-wrap ts-wrap">
+  <div class="checkout-heading ts-heading">
+    <span class="eyebrow">TICKETSHOW / CHECKOUT</span>
+    <h1>Quase lá<span>.</span></h1>
+    <p>Revise os detalhes e conclua sua experiência de compra demonstrativa.</p>
+  </div>
+
+  <div class="ts-progress" aria-label="Etapas da compra">
+    <div class="ts-progress-step is-done"><span>✓</span><small>Evento</small></div>
+    <i class="ts-progress-line is-done"></i>
+    <div class="ts-progress-step is-active"><span>02</span><small>Pagamento</small></div>
+    <i class="ts-progress-line"></i>
+    <div class="ts-progress-step"><span>03</span><small>Conclusão</small></div>
+  </div>
+
+  <div class="checkout-grid ts-grid">
+    <section class="checkout-panel ts-panel">
+      <div class="ts-panel-top">
+        <div>
+          <span class="ts-kicker">FORMA DE PAGAMENTO</span>
+          <h2>{% if forma == 'CARTAO' %}Cartão de crédito{% else %}PIX{% endif %}</h2>
+        </div>
+        <span class="ts-step-pill">ETAPA 02 / 03</span>
+      </div>
+
+      {% if forma == 'CARTAO' %}
+      <div class="ts-card-preview" id="cardPreview" aria-label="Prévia ilustrativa do cartão">
+        <div class="ts-card-shine"></div>
+        <div class="ts-card-top"><span class="ts-card-brand">TICKET<span>SHOW</span></span><span class="ts-chip"></span></div>
+        <div class="ts-card-number" id="previewNumber">•••• •••• •••• ••••</div>
+        <div class="ts-card-bottom">
+          <div><small>NOME NO CARTÃO</small><strong id="previewName">SEU NOME</strong></div>
+          <div><small>VALIDADE</small><strong id="previewExpiry">MM/AA</strong></div>
+          <div class="ts-card-mark">●●</div>
+        </div>
+      </div>
+
+      <div class="ts-demo-warning"><span>ⓘ</span><div><strong>Cartão fictício para demonstração</strong><p>Digite apenas informações inventadas. Os campos ficam somente nesta tela e não são enviados ao servidor.</p></div></div>
+
+      <div class="ts-fields">
+        <label>Nome no cartão
+          <input id="cardName" type="text" autocomplete="off" maxlength="28" placeholder="Ex.: NOME DE TESTE">
+        </label>
+        <label>Número fictício do cartão
+          <input id="cardNumber" type="text" inputmode="numeric" autocomplete="off" maxlength="19" placeholder="0000 0000 0000 0000">
+        </label>
+        <div class="ts-fields-row">
+          <label>Validade
+            <input id="cardExpiry" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM/AA">
+          </label>
+          <label>Parcelamento
+            <select id="installments">
+              <option value="1">1x sem juros</option>
+              <option value="2">2x sem juros</option>
+              <option value="3">3x sem juros</option>
+              <option value="4">4x sem juros</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      {% else %}
+      <div class="ts-pix-intro">
+        <div class="ts-pix-icon">✳</div>
+        <div><strong>Pagamento rápido com PIX</strong><p>Use o QR visual abaixo para conhecer o fluxo. Ele é ilustrativo e não pode ser pago.</p></div>
+      </div>
+      <div class="ts-pix-area">
+        <div class="ts-qr-frame"><div class="ts-qr" id="demoQr" aria-label="QR Code visual ilustrativo"></div><span class="ts-qr-center">TS</span></div>
+        <div class="ts-pix-caption"><strong>QR Code demonstrativo</strong><small>Não representa uma cobrança real</small></div>
+      </div>
+      <div class="ts-copy-row">
+        <div><small>CÓDIGO PIX DE EXEMPLO</small><strong id="fakePixCode">TICKETSHOW-DEMO-NAO-PAGAVEL-2026</strong></div>
+        <button type="button" class="ts-copy-btn" id="copyPix">Copiar</button>
+      </div>
+      <div class="ts-timer"><span class="ts-pulse"></span><div><small>SESSÃO DE DEMONSTRAÇÃO</small><strong id="pixTimer">05:00</strong></div><span class="ts-timer-note">Tempo ilustrativo</span></div>
+      {% endif %}
+
+      <div class="ts-status" id="paymentStatus" role="status" aria-live="polite">
+        <span class="ts-status-dot"></span>
+        <span>{% if forma == 'CARTAO' %}Preencha os dados fictícios para testar a animação.{% else %}Aguardando sua ação para simular a confirmação.{% endif %}</span>
+      </div>
+
+      <form action="{{ url_for('concluir_demo') }}" method="POST" id="demoPaymentForm">
+        <input type="hidden" name="token" value="{{ nonce }}">
+        <button type="submit" class="checkout-button ts-pay-button" id="payButton">
+          <span>{% if forma == 'CARTAO' %}Simular pagamento{% else %}Simular pagamento PIX{% endif %}</span><b>→</b>
+        </button>
+      </form>
+      <p class="ts-no-charge">🔒 Nenhuma cobrança será feita. Esta ação registra um pedido identificado como NÃO PAGO.</p>
+      <a class="checkout-text-link ts-back-link" href="{{ url_for('comprar', id=show.id) }}">Escolher outra forma de pagamento</a>
+    </section>
+
+    <aside class="order-panel ts-order">
+      <div class="ts-order-label"><span>SEU PEDIDO</span><span class="ts-live-dot">● EM TESTE</span></div>
+      <div class="ts-event-art">
+        <img class="order-image" src="{{ url_for('static', filename='imagens/' ~ show.imagem) }}" alt="{{ show.nome }}" onerror="this.style.display='none'">
+        <span class="ts-art-overlay">TICKETSHOW EXPERIENCE</span>
+      </div>
+      <span class="ts-event-category">{{ show.categoria }}</span>
+      <h3>{{ show.nome }}</h3>
+      <div class="order-detail"><span>Local</span><strong>{{ show.local }}</strong></div>
+      <div class="order-detail"><span>Data</span><strong>{{ show.data }}</strong></div>
+      <div class="order-detail"><span>Pagamento</span><strong>{{ 'Cartão (teste)' if forma == 'CARTAO' else 'PIX (teste)' }}</strong></div>
+      <div class="ts-price-breakdown"><div><span>Ingresso</span><strong>R$ {{ '%.2f'|format(show.preco|float) }}</strong></div><div><span>Taxa de serviço</span><strong>R$ 0,00</strong></div></div>
+      <div class="order-total"><span>Total</span><strong id="totalPrice" data-price="{{ '%.2f'|format(show.preco|float) }}">R$ {{ '%.2f'|format(show.preco|float) }}</strong></div>
+      <div class="ts-order-foot">Pedido demonstrativo · Sem valor financeiro</div>
+    </aside>
+  </div>
+</main>
+<div class="ts-processing" id="processingOverlay" aria-hidden="true">
+  <div class="ts-processing-card"><div class="ts-spinner"></div><span class="ts-kicker">TICKETSHOW</span><h2>Processando simulação</h2><p>Estamos finalizando a demonstração do checkout...</p></div>
+</div>
+</body>
+</html>

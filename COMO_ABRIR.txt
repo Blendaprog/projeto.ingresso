@@ -1,0 +1,57 @@
+TICKETSHOW - CHECKOUT CORRIGIDO | 17/11/2026
+
+IMPORTANTE: NAO COPIE O APP.PY PARA UMA PASTA ANTIGA.
+Extraia o ZIP e abra a pasta NOVA "TicketShow_CHECKOUT_CORRIGIDO_17_11".
+O nome diferente evita abrir sem querer a versao antiga.
+
+FORMA MAIS SIMPLES NO WINDOWS
+1. Extraia o ZIP em Documents, Desktop ou outra pasta.
+2. Abra a pasta TicketShow_CHECKOUT_CORRIGIDO_17_11.
+3. Clique duas vezes em INICIAR_TICKETSHOW.bat.
+   O iniciador cria o ambiente, instala as bibliotecas (primeira vez),
+   testa as rotas principais e abre o site.
+4. No navegador, entre em http://127.0.0.1:5000.
+
+COMANDOS ALTERNATIVOS NO TERMINAL POWERSHELL
+  cd "C:\caminho\para\TicketShow_CHECKOUT_CORRIGIDO_17_11"
+  python -m venv .venv
+  .venv\Scripts\python.exe -m pip install -r requirements.txt
+  .venv\Scripts\python.exe TESTAR_SISTEMA.py
+  .venv\Scripts\python.exe app.py
+
+CONFIRA QUAL APP.PY ESTA EXECUTANDO
+No PowerShell, dentro da pasta NOVA:
+  .venv\Scripts\python.exe -c "import app; print(app.__file__)"
+O resultado PRECISA terminar em:
+  TicketShow_CHECKOUT_CORRIGIDO_17_11\app.py
+Se aparecer TicketShow_NEUTRO3 ou outra pasta, voce esta na copia antiga.
+
+ADMINISTRADOR
+- Clique duas vezes em CRIAR_OU_REDEFINIR_ADMIN.bat depois de instalar as bibliotecas.
+- Escolha seu e-mail e sua propria senha (pelo menos 8 caracteres).
+- Faca login e entre em http://127.0.0.1:5000/admin.
+- O cadastro comum cria somente usuarios comuns.
+
+SOBRE O ERRO NameError: login_required not defined
+- O app.py desta versao define login_required ANTES da rota /pagar.
+- Se voce encontrar @app.route('/pagar') logo na linha 49, esta usando outra versao.
+- O diagnostico TESTAR_SISTEMA.py verifica este ponto, sem consultar as APIs reais.
+
+INTEGRACOES
+- /api/clima usa Open-Meteo.
+- /api/cep/01001000 usa ViaCEP.
+- Sem internet, a API externa devolve aviso e o restante do site continua funcionando.
+- Pagamentos reais nao sao processados nesta versao demonstrativa.
+
+DADOS IMPORTANTES
+- Os arquivos usuarios.json, ingressos.json e shows.json vieram do projeto anterior.
+- Faca backup antes de substitui-los pelos do seu computador.
+- Para publicar em producao, revise seguranca, permissao, senhas, SECRET_KEY e pagamentos.
+
+
+NOVO CHECKOUT DEMONSTRATIVO
+- Abra um evento, clique em Comprar ingresso, escolha PIX ou Cartao.
+- Clique em Concluir simulacao: cria somente um pedido de teste (NAO PAGO).
+- Nao informa dados de cartao, nao transfere dinheiro e nao gera ingresso real.
+- O contador de ingressos VENDIDOS nao aumenta com simulacoes.
+- A tela de pedidos indica claramente DEMONSTRACAO - NAO PAGO.

@@ -1,0 +1,5 @@
+Flask>=3.0,<4
+Flask-Mail>=0.9.1
+requests>=2.32
+mercadopago>=2.2
+qrcode[pil]>=7.4

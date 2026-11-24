@@ -1,0 +1,78 @@
+/* Tema institucional neutro · TicketShow */
+:root{--ts-bg:#f4f5f7;--ts-text:#243344;--ts-accent:#405166;--ts-muted:#657486}
+body,body.ts-lookup-page,body.ts-admin-page{background:#f3f5f7!important;color:#263342!important;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.navbar,.ts-admin-header{background:#fff!important;border-bottom:1px solid #e2e7ee!important;box-shadow:0 4px 18px #23344814!important}
+.navbar a,.navbar .nav-link,.navbar-brand,.ts-brand,.ts-admin-header a{color:#34465b!important;text-decoration:none}
+.btn,.featured-btn,.buy-ticket-btn,.ts-admin-edit button{border-radius:10px!important;transition:transform .2s,box-shadow .2s}
+.btn:hover,.featured-btn:hover{transform:translateY(-2px)}
+.btn-primary,.featured-btn,.buy-ticket-btn,.ts-admin-edit button{background:#405166!important;border-color:#405166!important;color:white!important}
+.btn-success{background:#506f68!important;border-color:#506f68!important}
+.btn-warning{background:#dbcbad!important;color:#283241!important;border-color:#dbcbad!important}
+.show-card,.card,.perfil-card{background:#fff!important;border:1px solid #dfe5ec!important;border-radius:16px!important;box-shadow:0 12px 25px #1a283718!important;color:#243344!important}
+.show-card .card-body,.show-card .card-footer{background:#fff!important;color:#243344!important}
+.show-card h3,.show-card h4,.show-card p,.card h3,.card p{color:#243344!important}
+.featured-show{box-shadow:inset 0 -80px 130px #070d1d6e}
+.featured-content,.featured-content h1{color:white!important}
+.categoria-lista a{background:#e6ebf0!important;border:1px solid #cbd4df!important;color:#34465b!important;border-radius:25px!important}
+.ts-info-section{padding:42px 0;color:#273748}
+.ts-info-header{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.ts-info-header h2{font-size:clamp(24px,3vw,37px);font-weight:800;letter-spacing:-.8px;margin:8px 0}
+.ts-info-header p,.ts-info-card p{font-size:13px;color:#677589}
+.ts-kicker{font-size:11px;letter-spacing:1.6px;font-weight:850;color:#64748b}
+.ts-info-link,.ts-back{color:#405166;text-decoration:none;font-weight:800}
+.ts-info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.ts-info-card{display:flex;align-items:center;gap:18px;min-height:166px;padding:25px;border-radius:19px;border:1px solid #e0e5ec;background:#fff;color:#243344;text-decoration:none;box-shadow:0 12px 27px #1a2a3b12;position:relative}
+.ts-card-icon{width:64px;height:64px;flex-shrink:0;display:grid;place-items:center;border-radius:16px;font-size:31px;background:#e7edf2;color:#405166}
+.ts-card-label{color:#718195;font-weight:900;letter-spacing:1.2px;font-size:10px}
+.ts-info-card h3{font-size:19px;margin:5px 0;font-weight:800;color:#253448}
+.ts-temp{font-size:32px;font-weight:900;color:#33475f}
+.ts-card-cta{display:inline-block;margin-top:10px;color:#405166;font-size:12px;font-weight:800}
+.ts-refresh{position:absolute;right:15px;top:15px;border:1px solid #d4dce5;border-radius:50%;background:#f5f7fa;width:33px;height:33px;color:#34465b;font-size:20px;cursor:pointer}
+.ts-lookup-nav,.ts-admin-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;padding:21px max(23px,calc((100vw - 1120px)/2));background:#fff;border-bottom:1px solid #dce3e9}
+.ts-brand{font-size:24px;font-weight:850}
+.ts-lookup-main{max-width:790px;margin:70px auto;padding:0 23px}
+.ts-lookup-main h1{font-size:clamp(30px,5vw,50px);letter-spacing:-1.6px;margin:15px 0;font-weight:850;color:#263342}
+.ts-lookup-main>p,.ts-lookup-status{color:#68788b;margin-bottom:26px}
+.ts-lookup-form{padding:27px;background:#fff;border:1px solid #e0e6ed;border-radius:17px;box-shadow:0 14px 30px #1c2c3b13}
+.ts-lookup-form label{display:block;margin-bottom:10px;font-weight:800;font-size:12px}
+.ts-lookup-controls{display:flex;gap:11px}
+.ts-lookup-controls input{flex:1;min-width:0;background:#f7f9fa;border:1px solid #cbd5df;border-radius:10px;padding:14px;font-size:17px;color:#243344}
+.ts-lookup-controls button{border:0;border-radius:10px;background:#405166;color:white;padding:12px 18px;font-weight:800;cursor:pointer}
+.ts-lookup-status{margin:18px 3px}
+.ts-lookup-result{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:19px}
+.ts-lookup-result[hidden]{display:none}
+.ts-lookup-result>div{display:flex;flex-direction:column;gap:7px;padding:18px;border:1px solid #e1e7ed;background:#fff;border-radius:12px}
+.ts-lookup-result small{color:#718195;font-size:11px;text-transform:uppercase}
+.ts-lookup-result strong{color:#243344}
+.ts-admin-header{padding:19px 5%}
+.ts-admin-header nav{display:flex;gap:19px;flex-wrap:wrap}
+.ts-admin-header a{font-size:13px;font-weight:750}
+.ts-admin-main{max-width:1190px;margin:0 auto;padding:40px 24px}
+.ts-admin-intro h1{font-size:36px;letter-spacing:-.9px;color:#243344}
+.ts-admin-intro p{color:#68788b}
+.ts-admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:29px 0}
+.ts-admin-stats>div{padding:24px;background:#fff;border:1px solid #e1e7ec;border-radius:15px;box-shadow:0 12px 22px #1c283610}
+.ts-admin-stats span{display:block;color:#66768a;font-size:12px}
+.ts-admin-stats strong{display:block;color:#253446;font-size:33px;margin-top:8px}
+.ts-admin-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:28px 0 13px}
+.ts-admin-section-head h2{font-size:22px;color:#263342}
+.ts-admin-section-head a{border-radius:10px;padding:12px 16px;background:#405166;color:#fff;text-decoration:none;font-weight:750}
+.ts-admin-list{display:grid;gap:13px}
+.ts-admin-event{display:flex;justify-content:space-between;align-items:center;gap:22px;background:#fff;border:1px solid #e0e5eb;border-radius:15px;padding:22px}
+.ts-admin-tag{display:inline-block;background:#edf1f5;color:#5c6d7c;border-radius:20px;padding:5px 9px;font-size:10px}
+.ts-admin-event h3{font-size:19px;margin:9px 0 4px;color:#263342}
+.ts-admin-event p{font-size:12px;color:#697888}
+.ts-admin-edit{display:flex;align-items:end;gap:9px;flex-wrap:wrap}
+.ts-admin-edit label{display:grid;gap:5px;font-size:11px;color:#657384}
+.ts-admin-edit input{width:92px;border:1px solid #d0d8e1;border-radius:8px;padding:9px}
+.ts-admin-edit button{padding:10px 14px;border-radius:8px;cursor:pointer}
+.ts-error{text-align:center;max-width:550px;margin:15vh auto;padding:24px}
+.ts-error span{color:#8493a5;font-size:80px;font-weight:900}
+.ts-error a{display:inline-block;margin-top:25px;background:#405166;color:white;padding:11px 17px;border-radius:10px;text-decoration:none}
+/* As páginas originais tinham estilos escuros inline; sobrepor sem destruir layout */
+body .login-card{background:#fff!important;border:1px solid #dee6ed!important;box-shadow:0 18px 40px #16273a1c!important;color:#253446!important}
+body .login-card h1,body .login-card p,body .login-card label,body .login-card .logo h1{color:#253446!important}
+body .login-card .form-control{background:#f7f9fa!important;border:1px solid #cad6df!important;color:#253446!important}
+body .login-card .btn-entrar{background:#405166!important;color:#fff!important}
+body .login-card .btn-cadastro{border-color:#405166!important;color:#405166!important}
+@media(max-width:780px){.ts-info-grid,.ts-admin-stats{grid-template-columns:1fr}.ts-admin-event{flex-direction:column;align-items:stretch}.ts-lookup-controls{flex-direction:column}.ts-lookup-result{grid-template-columns:1fr}.ts-info-section{padding:28px 12px}}

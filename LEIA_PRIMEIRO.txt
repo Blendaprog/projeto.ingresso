@@ -1,0 +1,63 @@
+TICKETSHOW — VERSÃO NEUTRA REVISADA
+
+Site Flask em tons de cinza, branco, azul ardósia e sombras discretas.
+
+O que foi revisado:
+- Login comum e administrador com senha armazenada em hash
+- Cadastros antigos duplicados por e-mail normalizados (prioridade para conta comum)
+- Cadastro público cria somente usuário comum
+- Novo administrador apenas por administrador logado ou comando do terminal
+- Páginas de administração e eventos com permissões separadas
+- Correção do cancelamento de ingressos e atualização das quantidades
+- Arquivos de shows/ingressos salvos entre reinicializações
+- Consulta de clima Open-Meteo e de CEP ViaCEP com falhas tratadas
+- Pagamentos reais DESABILITADOS: somente demonstração
+
+COMO ABRIR (Windows PowerShell, dentro da pasta projeto.ingresso):
+  python -m venv .venv
+  .venv\Scripts\Activate.ps1
+  pip install -r requirements.txt
+  python app.py
+Acesse http://127.0.0.1:5000
+
+COMO CRIAR/REDEFINIR A SENHA DO ADMINISTRADOR:
+  flask --app app criar-admin
+Informe nome, e-mail e uma senha com 8 ou mais caracteres.
+O comando cria ou redefine a conta e a marca como administradora.
+Depois use o mesmo e-mail e senha no login e abra /admin.
+
+USUÁRIO COMUM:
+Cadastre-se pela página Criar conta. E-mail deve ser único e senha precisa de 8+ caracteres.
+Os cadastros antigos foram preservados com senhas em hash, exceto duplicidades.
+Se seu login antigo estava duplicado, redefina por cadastro novo com outro e-mail,
+ou use a conta original que foi preservada.
+
+ATENÇÃO:
+Faça backup dos arquivos JSON antes de substituir uma instalação anterior.
+Ao copiar esta versão, não misture usuarios.json com um backup antigo de cadastro duplicado.
+Projeto escolar: não está pronto para pagamentos ou publicação com dados reais.
+Variáveis de ambiente SECRET_KEY, MAIL_USERNAME e MAIL_PASSWORD são opcionais no teste local,
+mas SECRET_KEY forte é obrigatória antes de qualquer publicação.
+O modo debug está desligado por padrão.
+
+TESTES RECOMENDADOS:
+- Cadastre usuário comum, faça login; /admin deve mostrar 403.
+- Crie admin pelo comando e faça login; /admin deve abrir.
+- Tente e-mail duplicado: HTTP 409.
+- /api/cep/01001000: Praça da Sé; /api/cep/123: HTTP 400.
+- /api/clima: dados atuais quando online; status 503 quando API estiver fora.
+- Confirme que cancelar um ingresso devolve a vaga ao evento.
+- A compra PIX é apenas simulação, não processamento real.
+
+
+CORREÇÃO NOVEMBRO 2026 — ERRO AO INICIAR
+- Corrigido NameError: name 'login_required' is not defined, que ocorria na linha 49 do app.py.
+- A rota POST /pagar foi movida para depois da definição de login_required.
+- O código da rota deve ter methods=["POST"] (sem asteriscos antes e depois da palavra methods).
+- Validação executada: inicialização/importação Flask, cadastro/login comum, criação de admin,
+  autorização /admin, APIs de CEP e clima (respostas simuladas), templates e sintaxe Python.
+- O comando de criação de administrador continua: flask --app app criar-admin
+- Use esta pasta atualizada INTEIRA. Não misture app.py de versões anteriores.
+
+
+CHECKOUT DE DEMONSTRACAO: o fluxo de cartao e PIX nao processa pagamento real. Nunca informe dados reais de cartao. Pedidos gerados sao apenas demonstrativos, nao ingressos pagos.

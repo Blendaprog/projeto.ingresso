@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consultar CEP · TicketShow</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='ticketshow-pro.css') }}">
+</head>
+<body class="ts-lookup-page">
+<header class="ts-lookup-nav"><a href="{{ url_for('home') }}" class="ts-brand">✦ TicketShow</a><a href="{{ url_for('home') }}" class="ts-back">← Voltar aos shows</a></header>
+<main class="ts-lookup-main">
+  <span class="ts-kicker">SERVIÇOS INTELIGENTES · VIACEP</span>
+  <h1>Encontre qualquer endereço pelo CEP.</h1>
+  <p>Digite os 8 números do CEP para consultar logradouro, bairro, cidade e estado.</p>
+  <form id="formCep" class="ts-lookup-form"><label for="cepInput">CEP</label><div class="ts-lookup-controls"><input id="cepInput" inputmode="numeric" maxlength="9" placeholder="01001-000" autocomplete="postal-code" required><button type="submit">Buscar endereço →</button></div></form>
+  <div id="cepStatus" class="ts-lookup-status" role="status" aria-live="polite">Exemplo: 01001000 — Praça da Sé, São Paulo.</div>
+  <div id="cepResultado" class="ts-lookup-result" hidden>
+    <div><small>CEP</small><strong id="rCep"></strong></div>
+    <div><small>Logradouro</small><strong id="rRua"></strong></div>
+    <div><small>Bairro</small><strong id="rBairro"></strong></div>
+    <div><small>Cidade</small><strong id="rCidade"></strong></div>
+    <div><small>UF</small><strong id="rUf"></strong></div>
+  </div>
+</main>
+<script src="{{ url_for('static', filename='ticketshow-api.js') }}" defer></script>
+</body></html>

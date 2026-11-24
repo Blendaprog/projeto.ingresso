@@ -1,520 +1,98 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>TicketShow</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f8ff">
+  <title>TicketShow | Eventos e ingressos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='ticketshow-site.css') }}">
+  <script src="{{ url_for('static', filename='ticketshow-api.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='ticketshow-site.js') }}" defer></script>
 </head>
-
-<body class="pagina-home">
-
-<!-- ========================= NAVBAR ========================= -->
-<nav class="navbar navbar-expand-lg ticket-navbar">
-
-    <div class="container">
-
-        <!-- LOGO -->
-        <a class="navbar-brand ticket-logo" href="/">
-            <span class="brand-ticket-icon">T</span>
-            <span>TicketShow</span>
-        </a>
-
-        <!-- BOTÃO MOBILE -->
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#menu"
-                aria-controls="menu"
-                aria-expanded="false"
-                aria-label="Abrir menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="menu">
-
-            <!-- LINKS -->
-            <div class="ticket-menu">
-                <a href="#shows">Shows</a>
-                <a href="#categorias">Categorias</a>
-                <a href="#locais">Locais</a>
-            </div>
-
-            <!-- PARTE DIREITA -->
-            <div class="ticket-actions">
-
-                <span class="user-greeting">
-                    <span class="user-online"></span>
-                    Olá, {{ nome }}
-                </span>
-
-                <a href="/perfil" class="ticket-profile">👤</a>
-
-                {% if session["tipo"] == "admin" %}
-                    <a href="/cadastrar_show" class="ticket-admin">➕ Cadastrar</a>
-                    <a href="/meus_shows" class="ticket-admin">🎤 Meus shows</a>
-                {% endif %}
-
-                <a href="/meus_ingressos" class="ticket-tickets">🎟 Ingressos</a>
-                <a href="/logout" class="ticket-logout">Sair</a>
-
-            </div>
-
+<body class="ts-public">
+  {% macro ico(name, size='18') -%}
+  <svg class="ts-icon" width="{{ size }}" height="{{ size }}" aria-hidden="true"><use href="{{ url_for('static', filename='ticketshow-icons.svg') }}#{{ name }}"></use></svg>
+  {%- endmacro %}
+  <header class="ts-topbar">
+    <div class="ts-topbar-inner">
+      <a href="{{ url_for('home') }}" class="ts-logo" aria-label="TicketShow, página inicial">Ticket<span>Show</span></a>
+      <button type="button" class="ts-mobile-menu" id="mobileMenu" aria-expanded="false" aria-controls="ts-navigation">{{ ico('menu','21') }}<span class="sr-only">Abrir navegação</span></button>
+      <nav class="ts-navigation" id="ts-navigation" aria-label="Navegação principal">
+        <a href="{{ url_for('home') }}" class="ts-nav-link {% if not categoria %}active{% endif %}">Início</a>
+        <a href="#eventos" class="ts-nav-link">Eventos</a>
+        <div class="ts-nav-dropdown"><button type="button" class="ts-nav-link ts-dropdown-toggle" aria-expanded="false" id="categoriesTrigger">Categorias {{ ico('chevron-down','14') }}</button>
+          <div class="ts-dropdown-panel" id="categoriesMenu">
+            {% for nome_categoria in ['Trap','K-Pop','Rap','Funk','MPB','Pop','R&B'] %}
+              <a href="{{ url_for('filtrar_categoria', categoria=nome_categoria.lower()) }}">{{ nome_categoria }}</a>
+            {% endfor %}
+          </div>
         </div>
-
+        <a href="{{ url_for('pagina_clima') }}" class="ts-nav-link">Clima</a>
+      </nav>
+      <div class="ts-top-actions">
+        <button type="button" id="searchToggle" class="ts-icon-button" aria-label="Buscar eventos">{{ ico('search','20') }}</button>
+        <a href="{{ url_for('meus_ingressos') }}" class="ts-tickets-button">{{ ico('ticket','19') }} <span>Ingressos</span></a>
+        {% if session.get('tipo') == 'admin' %}
+        <a href="{{ url_for('admin') }}" class="ts-icon-button" aria-label="Painel administrativo" title="Painel administrativo">{{ ico('layout','20') }}</a>
+        {% endif %}
+        <a href="{{ url_for('perfil') }}" class="ts-icon-button" aria-label="Meu perfil">{{ ico('user','20') }}</a>
+      </div>
     </div>
+    <form id="quickSearch" class="ts-search-form" role="search" action="#eventos" hidden>
+      <label for="searchInput">Pesquisar eventos</label>
+      <input type="search" id="searchInput" name="buscar" placeholder="Artista, evento ou cidade..." autocomplete="off">
+      <button type="submit">Buscar</button>
+    </form>
+  </header>
+  <main>
+    <section class="ts-services ts-page-width" id="servicos" aria-labelledby="servicesTitle">
+      <div class="ts-section-intro ts-services-heading">
+        <div><div class="ts-eyebrow">SERVIÇOS INTELIGENTES</div><h1 id="servicesTitle">Seu evento começa por aqui.</h1><p>Confira as condições em Campos do Jordão e consulte endereços sem sair do TicketShow.</p></div>
+        <a href="{{ url_for('consultar_cep') }}" class="ts-text-link">Consultar endereço por CEP ↗</a>
+      </div>
+      <div class="ts-services-grid">
+        <div class="ts-service-card ts-weather"><div class="ts-service-icon">{{ ico('sun','34') }}</div><div class="ts-service-details"><span class="ts-mini-label">CLIMA AGORA</span><h2 id="climaCidade">Campos do Jordão</h2><strong class="ts-climate-value" id="climaTemperatura">-- °C</strong><p id="climaDescricao" aria-live="polite">Consultando o clima...</p></div><button type="button" class="ts-refresh" id="atualizarClima" aria-label="Atualizar clima">{{ ico('refresh','19') }}</button></div>
+        <a href="{{ url_for('consultar_cep') }}" class="ts-service-card ts-service-link"><div class="ts-service-icon">{{ ico('pin','35') }}</div><div class="ts-service-details"><span class="ts-mini-label">LOCALIZAÇÃO</span><h2>Encontre um endereço</h2><p>Pesquise um CEP e descubra rua, bairro, cidade e estado.</p><span class="ts-text-link">Consultar ViaCEP →</span></div></a>
+      </div>
+    </section>
 
-</nav>
-
-
-{% if shows %}
-
-    {% set destaque = shows[0] %}
-
-    {% if not categoria and not local %}
-
-        <!-- ========================= HERO ========================= -->
-        <section class="ticket-hero">
-            <div class="container">
-
-                <div class="hero-text">
-                    <span class="hero-kicker">TICKETSHOW</span>
-
-                    <h1>Encontre seu próximo evento</h1>
-
-                    <p>Descubra shows, artistas e experiências incríveis em um só lugar.</p>
-                </div>
-
-                <div class="hero-search">
-                    <span class="hero-search-icon">⌕</span>
-
-                    <input type="text"
-                           id="buscaShow"
-                           placeholder="Busque por artista, show ou local..."
-                           autocomplete="off">
-
-                    <button type="button"
-                            onclick="limparBusca()"
-                            id="limparBusca">
-                        Limpar
-                    </button>
-                </div>
-
-                <div class="search-tags">
-                    <button type="button" onclick="buscarRapido('Trap')">🎤 Trap</button>
-                    <button type="button" onclick="buscarRapido('Rap')">🔥 Rap</button>
-                    <button type="button" onclick="buscarRapido('K-Pop')">💜 K-Pop</button>
-                    <button type="button" onclick="buscarRapido('Allianz Parque')">📍 Allianz Parque</button>
-                </div>
-
-            </div>
-        </section>
-
+    {% if destaque %}
+    <section class="ts-hero ts-page-width" aria-label="Evento em destaque" style="background-image: url('{{ url_for('static', filename='imagens/' ~ destaque.imagem) }}');">
+      <div class="ts-hero-content">
+        <span class="ts-hero-badge">🔥 &nbsp;EM DESTAQUE</span>
+        <h2>{{ destaque.nome }}</h2>
+        <p>Uma experiência inesquecível ao vivo.</p>
+        <div class="ts-hero-meta"><span>{{ ico('calendar','19') }} {{ destaque.data }}</span><span>{{ ico('pin','19') }} {{ destaque.local }}</span></div>
+        <a href="{{ url_for('comprar', id=destaque.id) }}" class="ts-hero-button">{{ ico('ticket','18') }} Comprar ingresso {{ ico('chevron-right','18') }}</a>
+      </div>
+    </section>
     {% endif %}
 
-
-    <!-- ========================= DESTAQUE ========================= -->
-    {% if not categoria and not local %}
-
-        <section class="featured-show">
-
-            <div class="featured-photo"
-                 style="background-image: url('{{ url_for("static", filename="imagens/" + destaque["imagem"]) }}');">
-            </div>
-
-            <div class="featured-dark"></div>
-
-            <div class="featured-content">
-
-                <span class="featured-label">
-                    <span class="featured-dot"></span>
-                    EVENTO EM DESTAQUE
-                </span>
-
-                <h1>{{ destaque["nome"] }}</h1>
-
-                <p class="featured-description">
-                    Viva uma experiência inesquecível.
-                </p>
-
-                <div class="featured-info">
-                    <span>📅 {{ destaque["data"] }}</span>
-                    <span>📍 {{ destaque["local"] }}</span>
-                    <span>🔞 {{ destaque["idade_minima"] }}+</span>
-                </div>
-
-                <div class="featured-action">
-
-                    <div class="featured-price">
-                        <small>A partir de</small>
-                        <strong>R$ {{ destaque["preco"] }}</strong>
-                    </div>
-
-                    <a href="/comprar/{{ destaque['id'] }}" class="featured-btn">
-                        🎟️ Comprar ingresso
-                        <span>→</span>
-                    </a>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    {% endif %}
-
-
-    <!-- ========================= CONTEÚDO ========================= -->
-    <main class="home-content">
-        <div class="container">
-
-            {% if not categoria and not local %}
-            <section class="em-alta-area">
-
-                <div class="section-heading-modern">
-                    <div>
-                        <span class="section-label">AGORA NO TICKETSHOW</span>
-                        <h2>🔥 Em alta agora</h2>
-                    </div>
-                    <span class="section-note">Os shows mais procurados</span>
-                </div>
-
-                <div class="row g-4">
-                    {% set shows_em_alta = shows|sort(attribute='ingressos_vendidos', reverse=true) %}
-                    {% for show in shows_em_alta[:3] %}
-                    <div class="col-md-4">
-                        <a href="/comprar/{{ show['id'] }}" class="alta-card">
-                            <div class="alta-image">
-                                <img src="{{ url_for('static', filename='imagens/' + show['imagem']) }}" alt="{{ show['nome'] }}">
-                                <span class="alta-badge">🔥 EM ALTA</span>
-                            </div>
-                            <div class="alta-content">
-                                <span>{{ show['categoria'] }}</span>
-                                <h3>{{ show['nome'] }}</h3>
-                                <p>📍 {{ show['local'] }}</p>
-                                <strong>R$ {{ show['preco'] }}</strong>
-                            </div>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-
-            </section>
-            {% endif %}
-
-
-            <!-- ========================= CATEGORIAS ========================= -->
-            <section class="categorias" id="categorias">
-
-                <div class="category-heading">
-                    <h2>Encontre por categorias</h2>
-                </div>
-
-                <div class="categoria-lista">
-                    <a href="/categoria/trap">Trap</a>
-                    <a href="/categoria/k-pop">K-Pop</a>
-                    <a href="/categoria/rap">Rap</a>
-                    <a href="/categoria/funk">Funk</a>
-                    <a href="/categoria/mpb">MPB</a>
-                    <a href="/categoria/pop">Pop</a>
-                    <a href="/categoria/r&b">R&B</a>
-                </div>
-
-            </section>
-
-
-            <!-- ========================= LOCAIS ========================= -->
-            <section class="locais-area" id="locais">
-
-                <div class="locais-topo">
-                    <div>
-                        <span class="section-label">ENCONTRE SEU EVENTO</span>
-                        <h2>Explore por local</h2>
-                        <p>Confira os eventos disponíveis nos principais espaços de São Paulo.</p>
-                    </div>
-                </div>
-
-                <div class="locais-lista">
-
-                    <!-- ALLIANZ PARQUE -->
-                    <article class="local-card">
-                        <div class="local-icon">📍</div>
-                        <div class="local-info">
-                            <h3>Allianz Parque</h3>
-                            <p>Água Branca, São Paulo</p>
-                        </div>
-                        <a href="/local/Allianz%20Parque" class="local-programacao">
-                            Ver programação
-                            <span>→</span>
-                        </a>
-                    </article>
-
-                    <!-- AUDIO CLUB -->
-                    <article class="local-card">
-                        <div class="local-icon">📍</div>
-                        <div class="local-info">
-                            <h3>Audio Club</h3>
-                            <p>Barra Funda, São Paulo</p>
-                        </div>
-                        <a href="/local/Audio%20Club" class="local-programacao">
-                            Ver programação
-                            <span>→</span>
-                        </a>
-                    </article>
-
-                    <!-- ESPAÇO UNIMED -->
-                    <article class="local-card">
-                        <div class="local-icon">📍</div>
-                        <div class="local-info">
-                            <h3>Espaço Unimed</h3>
-                            <p>Barra Funda, São Paulo</p>
-                        </div>
-                        <a href="/local/Espa%C3%A7o%20Unimed" class="local-programacao">
-                            Ver programação
-                            <span>→</span>
-                        </a>
-                    </article>
-
-                    <!-- VIBRA SÃO PAULO -->
-                    <article class="local-card">
-                        <div class="local-icon">📍</div>
-                        <div class="local-info">
-                            <h3>Vibra São Paulo</h3>
-                            <p>São Paulo, SP</p>
-                        </div>
-                        <a href="/local/Vibra%20S%C3%A3o%20Paulo" class="local-programacao">
-                            Ver programação
-                            <span>→</span>
-                        </a>
-                    </article>
-
-                </div>
-
-            </section>
-
-
-            <!-- ========================= EVENTOS ========================= -->
-            <section class="events-area" id="shows">
-
-                <div class="events-title">
-                    <div>
-                        <span class="section-label">INGRESSOS</span>
-                        <h2>Todos os eventos</h2>
-                    </div>
-                </div>
-
-                <div class="row g-4">
-
-                    {% for show in shows %}
-
-                    <div class="col-md-4">
-
-                        <article class="show-card"
-                                 data-show-search="{{ show['nome'] }} {{ show['categoria'] }} {{ show['local'] }}">
-
-                            <!-- IMAGEM -->
-                            <a href="/comprar/{{ show['id'] }}" class="show-image">
-                                <img src="{{ url_for('static', filename='imagens/' + show['imagem']) }}"
-                                     alt="{{ show['nome'] }}">
-
-                                <span class="card-category">{{ show['categoria'] }}</span>
-                                <span class="card-arrow">↗</span>
-                            </a>
-
-                            <!-- CORPO -->
-                            <div class="card-body">
-
-                                <h3 class="show-title">{{ show['nome'] }}</h3>
-
-                                {% set porcentagem = (show['ingressos_vendidos'] / show['ingressos_total']) * 100 %}
-
-                                {% if porcentagem >= 90 %}
-                                    <span class="status last">Últimos ingressos</span>
-                                {% elif porcentagem >= 50 %}
-                                    <span class="status medium">Alta procura</span>
-                                {% else %}
-                                    <span class="status available">Disponível</span>
-                                {% endif %}
-
-                                <div class="show-info">
-                                    <p><span>📅</span> {{ show['data'] }}</p>
-                                    <p><span>📍</span> {{ show['local'] }}</p>
-                                    <p><span>🔞</span> Maiores de {{ show['idade_minima'] }} anos</p>
-                                </div>
-
-                                <div class="ticket-price-area">
-                                    <div>
-                                        <small>A partir de</small>
-                                        <div class="ticket-price">R$ {{ show['preco'] }}</div>
-                                    </div>
-                                    <span class="ticket-mini-icon">🎟</span>
-                                </div>
-
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: {{ porcentagem }}%;"></div>
-                                </div>
-
-                                <p class="tickets-left">
-                                    {{ show['ingressos_vendidos'] }} / {{ show['ingressos_total'] }} ingressos vendidos
-                                </p>
-
-                            </div>
-
-                            <!-- RODAPÉ -->
-                            <div class="card-footer">
-                                {% if show['esgotado'] %}
-                                    <button class="sold-out-btn" disabled>
-                                        Ingressos esgotados
-                                    </button>
-                                {% else %}
-                                    <a href="/comprar/{{ show['id'] }}" class="buy-ticket-btn">
-                                        Selecionar ingressos
-                                        <span>→</span>
-                                    </a>
-                                {% endif %}
-                            </div>
-
-                        </article>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-                <div id="resultadoBuscaVazio"
-                     class="resultado-busca-vazio"
-                     style="display:none;">
-                    <div>🔎</div>
-                    <h3>Nenhum evento encontrado</h3>
-                    <p>Tente buscar por outro artista, categoria ou local.</p>
-                </div>
-
-            </section>
-
-        </div>
-    </main>
-
-{% else %}
-
-<!-- ========================= SEM EVENTOS ========================= -->
-<div class="container mt-5">
-    <div class="empty-events">
-        <div class="empty-icon">🎟️</div>
-        <h2>Nenhum show disponível</h2>
-        <p>Não há eventos disponíveis no momento.</p>
-    </div>
-</div>
-
-{% endif %}
-
-
-<!-- ========================= FOOTER ========================= -->
-<footer class="footer">
-
-    <div class="footer-content">
-
-        <div class="footer-brand">
-            <h3>
-                <span class="brand-ticket-icon">T</span>
-                TicketShow
-            </h3>
-            <p>Os melhores shows e experiências em um só lugar.</p>
-        </div>
-
-        <div class="footer-links">
-            <a href="/">Início</a>
-            <a href="/meus_ingressos">Meus ingressos</a>
-            <a href="#">Ajuda</a>
-            <a href="#">Contato</a>
-        </div>
-
-        <p class="copyright">
-            © 2026 TicketShow. Todos os direitos reservados.
-        </p>
-
-    </div>
-
-</footer>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-const campoBusca = document.getElementById("buscaShow");
-const botaoLimpar = document.getElementById("limparBusca");
-
-function executarBusca(termo) {
-    if (!campoBusca) return;
-
-    campoBusca.value = termo;
-
-    const busca = termo.trim().toLowerCase();
-    const cards = document.querySelectorAll(".show-card");
-    const vazio = document.getElementById("resultadoBuscaVazio");
-
-    let encontrados = 0;
-
-    cards.forEach(card => {
-        const texto = (card.dataset.showSearch || "").toLowerCase();
-        const mostrar = !busca || texto.includes(busca);
-        const coluna = card.closest(".col-md-4");
-
-        if (coluna) {
-            coluna.style.display = mostrar ? "" : "none";
-        }
-
-        if (mostrar) {
-            encontrados++;
-        }
-    });
-
-    if (botaoLimpar) {
-        botaoLimpar.style.display = busca ? "block" : "none";
-    }
-
-    if (vazio) {
-        vazio.style.display = (busca && encontrados === 0) ? "block" : "none";
-    }
-}
-
-function buscarRapido(termo) {
-    executarBusca(termo);
-
-    const eventos = document.getElementById("shows");
-    if (eventos) {
-        eventos.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-}
-
-function limparBusca() {
-    executarBusca("");
-    if (campoBusca) {
-        campoBusca.focus();
-    }
-}
-
-if (campoBusca) {
-    campoBusca.addEventListener("input", function () {
-        executarBusca(this.value);
-    });
-
-    campoBusca.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            limparBusca();
-        }
-    });
-}
-</script>
-
+    <section class="ts-events ts-page-width" id="eventos" aria-labelledby="eventsTitle">
+      <div class="ts-section-intro"><div class="ts-eyebrow">{{ ico('ticket','16') }} INGRESSOS</div><h2 id="eventsTitle">Eventos em destaque</h2><p>Descubra os principais eventos e garanta já o seu ingresso.</p></div>
+      <div class="ts-filters" aria-label="Filtrar por categoria">
+        <a href="{{ url_for('home') }}#eventos" class="ts-filter {% if not categoria %}is-active{% endif %}">{{ ico('grid','16') }} Todos</a>
+        {% set filters = [('🔥','Trap'),('☆','K-Pop'),('🎤','Rap'),('🎧','Funk'),('♫','MPB'),('✦','Pop'),('♡','R&B')] %}
+        {% for emoji, label in filters %}<a href="{{ url_for('filtrar_categoria', categoria=label.lower()) }}#eventos" class="ts-filter {% if categoria and categoria|lower == label|lower %}is-active{% endif %}"><span aria-hidden="true">{{ emoji }}</span> {{ label }}</a>{% endfor %}
+      </div>
+      <div class="ts-event-grid" id="eventGrid">
+        {% for show in shows %}
+        {% set total = show.ingressos_total|default(100)|int %}
+        {% set vendidos = show.ingressos_vendidos|default(0)|int %}
+        {% set restantes = [total - vendidos, 0]|max %}
+        <article class="ts-event-card" data-search="{{ (show.nome ~ ' ' ~ show.local ~ ' ' ~ show.categoria)|lower }}">
+          <a href="{{ url_for('comprar', id=show.id) }}" class="ts-event-photo" aria-label="Ver ingressos para {{ show.nome }}"><img src="{{ url_for('static', filename='imagens/' ~ show.imagem) }}" loading="lazy" alt="Foto de divulgação do evento {{ show.nome }}"><span class="ts-age-tag">{{ show.idade_minima }} anos</span></a>
+          <div class="ts-event-body"><span class="ts-event-category">{{ show.categoria|upper }}</span><h3>{{ show.nome }}</h3>
+            <div class="ts-event-info"><span>{{ ico('pin','14') }} {{ show.local }}</span><span>{{ ico('calendar','14') }} {{ show.data }}</span></div>
+            <div class="ts-event-bottom"><strong>R$ {{ show.preco|int if show.preco == show.preco|int else show.preco }}</strong><span class="ts-count">{{ ico('ticket','15') }} {{ vendidos }} / {{ total }} ingressos vendidos</span></div>
+            <a href="{{ url_for('comprar', id=show.id) }}" class="ts-buy-button">{{ ico('ticket','17') }} Comprar ingresso</a>
+          </div>
+        </article>
+        {% else %}<div class="ts-no-results">{{ mensagem|default('Nenhum evento disponível nesta categoria.') }} <a href="{{ url_for('home') }}">Ver todos os eventos</a></div>{% endfor %}
+      </div>
+      <p class="ts-no-results" id="emptySearch" hidden>Nenhum evento corresponde à sua busca.</p>
+    </section>
+  </main>
+  <footer class="ts-footer"><div class="ts-page-width ts-footer-inner"><div><strong class="ts-logo">Ticket<span>Show</span></strong><p>Experiências ao vivo, em um só lugar.</p></div><div><a href="{{ url_for('home') }}">Início</a><a href="{{ url_for('meus_ingressos') }}">Meus ingressos</a><a href="{{ url_for('consultar_cep') }}">Consultar CEP</a><a href="{{ url_for('logout') }}">Sair</a></div></div><p class="ts-copy">© TicketShow • Projeto demonstrativo de TI. Pagamentos reais desativados.</p></footer>
 </body>
-
 </html>
