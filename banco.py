@@ -1,43 +1,58 @@
+"""Camada de banco de dados SQLite do TicketShow."""
+
+import json
+import os
 import sqlite3
+from contextlib import contextmanager
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CAMINHO_BANCO = os.path.join(BASE_DIR, "ticketshow.db")
 
 
-class Banco:
-    def __init__(self, nome_banco="ticketshow.db"):
-        self.conexao = sqlite3.connect(nome_banco)
-        self.conexao.row_factory = sqlite3.Row
-        self.criar_tabelas()
+@contextmanager
+def conectar():
+    conexao = sqlite3.connect(CAMINHO_BANCO)
+    conexao.row_factory = sqlite3.Row
 
-    def criar_tabelas(self):
-        cursor = self.conexao.cursor()
+    try:
+        yield conexao
+        conexao.commit()
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        conexao.close()
 
-        # ==========================
-        # TABELA DE USUÁRIOS
-        # ==========================
-        cursor.execute("""
+
+def _json(dados):
+    return json.dumps(dados, ensure_ascii=False)
+
+
+def inicializar_banco():
+    with conectar() as db:
+        db.execute("""
             CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
+                id INTEGER PRIMARY KEY,
+                nome TEXT,
                 email TEXT NOT NULL UNIQUE,
-                senha TEXT NOT NULL,
+                senha TEXT,
                 tipo TEXT NOT NULL DEFAULT 'usuario',
                 data_nascimento TEXT,
                 genero TEXT,
-                foto TEXT DEFAULT 'sem_foto.png'
+                foto TEXT,
+                ingressos TEXT NOT NULL DEFAULT '[]'
             )
         """)
 
-        # ==========================
-        # TABELA DE SHOWS
-        # ==========================
-        cursor.execute("""
+        db.execute("""
             CREATE TABLE IF NOT EXISTS shows (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY,
                 nome TEXT NOT NULL,
-                preco REAL NOT NULL,
-                local TEXT NOT NULL,
-                data TEXT NOT NULL,
-                idade_minima INTEGER NOT NULL,
-                categoria TEXT NOT NULL,
+                preco REAL,
+                local TEXT,
+                data TEXT,
+                idade_minima INTEGER,
+                categoria TEXT,
                 imagem TEXT,
                 ingressos_total INTEGER DEFAULT 100,
                 ingressos_vendidos INTEGER DEFAULT 0,
@@ -46,543 +61,322 @@ class Banco:
             )
         """)
 
-        # ==========================
-        # TABELA DE LOTES
-        # ==========================
-        cursor.execute("""
+        db.execute("""
             CREATE TABLE IF NOT EXISTS lotes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 show_id INTEGER NOT NULL,
-                nome TEXT NOT NULL,
-                quantidade INTEGER NOT NULL,
+                nome TEXT,
+                quantidade INTEGER,
                 vendidos INTEGER DEFAULT 0,
-                preco REAL NOT NULL,
-
-                FOREIGN KEY (show_id)
-                REFERENCES shows(id)
-                ON DELETE CASCADE
+                preco REAL,
+                FOREIGN KEY(show_id) REFERENCES shows(id)
             )
         """)
 
-        # ==========================
-        # TABELA DE INGRESSOS
-        # ==========================
-        cursor.execute("""
+        db.execute("""
             CREATE TABLE IF NOT EXISTS ingressos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY,
                 show TEXT NOT NULL,
-                preco REAL NOT NULL,
-                local TEXT NOT NULL,
-                data TEXT NOT NULL,
-                pagamento TEXT NOT NULL,
+                preco REAL,
+                local TEXT,
+                data TEXT,
+                pagamento TEXT,
                 usuario_id INTEGER NOT NULL,
-                codigo TEXT NOT NULL UNIQUE,
-
-                FOREIGN KEY (usuario_id)
-                REFERENCES usuarios(id)
+                codigo TEXT UNIQUE,
+                FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
             )
         """)
 
-        self.conexao.commit()
+        colunas = [
+            coluna["name"]
+            for coluna in db.execute("PRAGMA table_info(usuarios)")
+        ]
 
-    # ==================================================
-    # USUÁRIOS
-    # ==================================================
+        if "ingressos" not in colunas:
+            db.execute("""
+                ALTER TABLE usuarios
+                ADD COLUMN ingressos TEXT NOT NULL DEFAULT '[]'
+            """)
 
-    def adicionar_usuario(
-        self,
-        nome,
-        email,
-        senha,
-        tipo="usuario",
-        data_nascimento=None,
-        genero=None,
-        foto="sem_foto.png"
-    ):
-        cursor = self.conexao.cursor()
 
-        cursor.execute("""
-            INSERT INTO usuarios
-            (nome, email, senha, tipo, data_nascimento, genero, foto)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            nome,
-            email,
-            senha,
-            tipo,
-            data_nascimento,
-            genero,
-            foto
-        ))
+def listar_usuarios():
+    with conectar() as db:
+        registros = db.execute(
+            "SELECT * FROM usuarios ORDER BY id"
+        ).fetchall()
 
-        self.conexao.commit()
+        resultado = []
 
-        return cursor.lastrowid
-
-    def buscar_usuario_por_email(self, email):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM usuarios
-            WHERE email = ?
-        """, (email,))
-
-        return cursor.fetchone()
-
-    def buscar_usuario_por_id(self, usuario_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM usuarios
-            WHERE id = ?
-        """, (usuario_id,))
-
-        return cursor.fetchone()
-
-    def listar_usuarios(self):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM usuarios
-            ORDER BY id
-        """)
-
-        return cursor.fetchall()
-
-    def atualizar_foto_usuario(self, usuario_id, foto):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            UPDATE usuarios
-            SET foto = ?
-            WHERE id = ?
-        """, (foto, usuario_id))
-
-        self.conexao.commit()
-
-    # ==================================================
-    # SHOWS
-    # ==================================================
-
-    def adicionar_show(
-        self,
-        nome,
-        preco,
-        local,
-        data,
-        idade_minima,
-        categoria,
-        imagem,
-        admin=None,
-        ingressos_total=100
-    ):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            INSERT INTO shows
-            (
-                nome,
-                preco,
-                local,
-                data,
-                idade_minima,
-                categoria,
-                imagem,
-                ingressos_total,
-                ingressos_vendidos,
-                destaque,
-                admin
+        for registro in registros:
+            usuario = dict(registro)
+            usuario["ingressos"] = json.loads(
+                usuario.get("ingressos") or "[]"
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)
-        """, (
-            nome,
-            preco,
-            local,
-            data,
-            idade_minima,
-            categoria,
-            imagem,
-            ingressos_total,
-            admin
-        ))
+            resultado.append(usuario)
 
-        self.conexao.commit()
+        return resultado
 
-        return cursor.lastrowid
 
-    def buscar_show(self, show_id):
-        cursor = self.conexao.cursor()
+def salvar_usuarios(lista):
+    with conectar() as db:
+        ids = []
 
-        cursor.execute("""
-            SELECT *
-            FROM shows
-            WHERE id = ?
-        """, (show_id,))
+        for item in lista:
+            d = item.to_dict() if hasattr(item, "to_dict") else dict(item)
 
-        return cursor.fetchone()
+            ids.append(d["id"])
 
-    def listar_shows(self):
-        cursor = self.conexao.cursor()
+            db.execute("""
+                INSERT INTO usuarios (
+                    id, nome, email, senha, tipo,
+                    data_nascimento, genero, foto, ingressos
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    nome=excluded.nome,
+                    email=excluded.email,
+                    senha=excluded.senha,
+                    tipo=excluded.tipo,
+                    data_nascimento=excluded.data_nascimento,
+                    genero=excluded.genero,
+                    foto=excluded.foto,
+                    ingressos=excluded.ingressos
+            """, (
+                d["id"],
+                d.get("nome", ""),
+                d["email"].strip().lower(),
+                d.get("senha", ""),
+                d.get("tipo", "usuario"),
+                d.get("data_nascimento", ""),
+                d.get("genero", ""),
+                d.get("foto", "sem_foto.png"),
+                _json(d.get("ingressos", []))
+            ))
 
-        cursor.execute("""
-            SELECT *
-            FROM shows
-            ORDER BY id
-        """)
+        if ids:
+            marcadores = ",".join("?" for _ in ids)
+            db.execute(
+                f"DELETE FROM usuarios WHERE id NOT IN ({marcadores})",
+                ids
+            )
+        else:
+            db.execute("DELETE FROM usuarios")
 
-        return cursor.fetchall()
 
-    def listar_shows_disponiveis(self):
-        cursor = self.conexao.cursor()
+def listar_shows():
+    with conectar() as db:
+        registros = db.execute(
+            "SELECT * FROM shows ORDER BY id"
+        ).fetchall()
 
-        cursor.execute("""
-            SELECT *
-            FROM shows
-            WHERE ingressos_vendidos < ingressos_total
-            ORDER BY id
-        """)
+        resultado = []
 
-        return cursor.fetchall()
+        for registro in registros:
+            show = dict(registro)
 
-    def listar_shows_por_categoria(self, categoria):
-        cursor = self.conexao.cursor()
+            lotes = db.execute(
+                "SELECT * FROM lotes WHERE show_id = ? ORDER BY id",
+                (show["id"],)
+            ).fetchall()
 
-        cursor.execute("""
-            SELECT *
-            FROM shows
-            WHERE LOWER(categoria) = LOWER(?)
-            AND ingressos_vendidos < ingressos_total
-            ORDER BY id
-        """, (categoria,))
+            show["lotes"] = [dict(lote) for lote in lotes]
 
-        return cursor.fetchall()
+            total = show.get("ingressos_total") or 0
+            vendidos = show.get("ingressos_vendidos") or 0
 
-    def atualizar_show(
-        self,
-        show_id,
-        nome,
-        categoria,
-        local,
-        data,
-        idade_minima,
-        preco,
-        ingressos_total
-    ):
-        cursor = self.conexao.cursor()
+            show["esgotado"] = (
+                total > 0 and vendidos >= total
+            )
 
-        cursor.execute("""
-            UPDATE shows
-            SET
-                nome = ?,
-                categoria = ?,
-                local = ?,
-                data = ?,
-                idade_minima = ?,
-                preco = ?,
-                ingressos_total = ?
-            WHERE id = ?
-        """, (
-            nome,
-            categoria,
-            local,
-            data,
-            idade_minima,
-            preco,
-            ingressos_total,
-            show_id
-        ))
+            show["destaque"] = bool(show.get("destaque", 0))
 
-        self.conexao.commit()
+            resultado.append(show)
 
-    def atualizar_ingressos_show(
-        self,
-        show_id,
-        ingressos_total,
-        ingressos_vendidos
-    ):
-        cursor = self.conexao.cursor()
+        return resultado
 
-        cursor.execute("""
-            UPDATE shows
-            SET
-                ingressos_total = ?,
-                ingressos_vendidos = ?
-            WHERE id = ?
-        """, (
-            ingressos_total,
-            ingressos_vendidos,
-            show_id
-        ))
 
-        self.conexao.commit()
+def salvar_shows(lista):
+    with conectar() as db:
+        ids = []
 
-    def definir_destaque(self, show_id):
-        cursor = self.conexao.cursor()
+        for d in lista:
+            show_id = d["id"]
+            ids.append(show_id)
 
-        # Retira o destaque dos outros shows
-        cursor.execute("""
-            UPDATE shows
-            SET destaque = 0
-        """)
-
-        # Coloca destaque no show escolhido
-        cursor.execute("""
-            UPDATE shows
-            SET destaque = 1
-            WHERE id = ?
-        """, (show_id,))
-
-        self.conexao.commit()
-
-    def excluir_show(self, show_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            DELETE FROM shows
-            WHERE id = ?
-        """, (show_id,))
-
-        self.conexao.commit()
-
-    # ==================================================
-    # LOTES
-    # ==================================================
-
-    def adicionar_lote(
-        self,
-        show_id,
-        nome,
-        quantidade,
-        preco
-    ):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            INSERT INTO lotes
-            (
+            db.execute("""
+                INSERT INTO shows (
+                    id, nome, preco, local, data, idade_minima,
+                    categoria, imagem, ingressos_total,
+                    ingressos_vendidos, destaque, admin
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    nome=excluded.nome,
+                    preco=excluded.preco,
+                    local=excluded.local,
+                    data=excluded.data,
+                    idade_minima=excluded.idade_minima,
+                    categoria=excluded.categoria,
+                    imagem=excluded.imagem,
+                    ingressos_total=excluded.ingressos_total,
+                    ingressos_vendidos=excluded.ingressos_vendidos,
+                    destaque=excluded.destaque,
+                    admin=excluded.admin
+            """, (
                 show_id,
-                nome,
-                quantidade,
-                vendidos,
-                preco
+                d.get("nome", "Evento"),
+                d.get("preco", 0),
+                d.get("local", ""),
+                d.get("data", ""),
+                d.get("idade_minima", 0),
+                d.get("categoria", ""),
+                d.get("imagem", ""),
+                d.get("ingressos_total", 100),
+                d.get("ingressos_vendidos", 0),
+                int(bool(d.get("destaque", False))),
+                d.get("admin", "")
+            ))
+
+            db.execute(
+                "DELETE FROM lotes WHERE show_id = ?",
+                (show_id,)
             )
-            VALUES (?, ?, ?, 0, ?)
-        """, (
-            show_id,
-            nome,
-            quantidade,
-            preco
-        ))
 
-        self.conexao.commit()
+            for lote in d.get("lotes", []) or []:
+                lote_id = lote.get("id")
 
-        self.atualizar_total_ingressos(show_id)
+                if lote_id is not None:
+                    db.execute("""
+                        INSERT INTO lotes (
+                            id, show_id, nome, quantidade, vendidos, preco
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (
+                        lote_id,
+                        show_id,
+                        lote.get("nome", "Lote"),
+                        lote.get("quantidade", 0),
+                        lote.get("vendidos", 0),
+                        lote.get("preco", 0)
+                    ))
+                else:
+                    db.execute("""
+                        INSERT INTO lotes (
+                            show_id, nome, quantidade, vendidos, preco
+                        )
+                        VALUES (?, ?, ?, ?, ?)
+                    """, (
+                        show_id,
+                        lote.get("nome", "Lote"),
+                        lote.get("quantidade", 0),
+                        lote.get("vendidos", 0),
+                        lote.get("preco", 0)
+                    ))
 
-        return cursor.lastrowid
-
-    def listar_lotes(self, show_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM lotes
-            WHERE show_id = ?
-            ORDER BY id
-        """, (show_id,))
-
-        return cursor.fetchall()
-
-    def atualizar_lote(
-        self,
-        lote_id,
-        quantidade,
-        preco
-    ):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            UPDATE lotes
-            SET
-                quantidade = ?,
-                preco = ?
-            WHERE id = ?
-        """, (
-            quantidade,
-            preco,
-            lote_id
-        ))
-
-        self.conexao.commit()
-
-    def excluir_lote(self, lote_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT show_id
-            FROM lotes
-            WHERE id = ?
-        """, (lote_id,))
-
-        lote = cursor.fetchone()
-
-        if lote is None:
-            return
-
-        show_id = lote["show_id"]
-
-        cursor.execute("""
-            DELETE FROM lotes
-            WHERE id = ?
-        """, (lote_id,))
-
-        self.conexao.commit()
-
-        self.atualizar_total_ingressos(show_id)
-
-    def atualizar_total_ingressos(self, show_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT COALESCE(SUM(quantidade), 0) AS total
-            FROM lotes
-            WHERE show_id = ?
-        """, (show_id,))
-
-        resultado = cursor.fetchone()
-
-        total = resultado["total"]
-
-        cursor.execute("""
-            UPDATE shows
-            SET ingressos_total = ?
-            WHERE id = ?
-        """, (
-            total,
-            show_id
-        ))
-
-        self.conexao.commit()
-
-    # ==================================================
-    # INGRESSOS
-    # ==================================================
-
-    def adicionar_ingresso(
-        self,
-        show,
-        preco,
-        local,
-        data,
-        pagamento,
-        usuario_id,
-        codigo
-    ):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            INSERT INTO ingressos
-            (
-                show,
-                preco,
-                local,
-                data,
-                pagamento,
-                usuario_id,
-                codigo
+        if ids:
+            marcadores = ",".join("?" for _ in ids)
+            db.execute(
+                f"DELETE FROM shows WHERE id NOT IN ({marcadores})",
+                ids
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            show,
-            preco,
-            local,
-            data,
-            pagamento,
-            usuario_id,
-            codigo
-        ))
-
-        self.conexao.commit()
-
-        return cursor.lastrowid
-
-    def listar_ingressos_usuario(self, usuario_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM ingressos
-            WHERE usuario_id = ?
-            ORDER BY id DESC
-        """, (usuario_id,))
-
-        return cursor.fetchall()
-
-    def buscar_ingresso_por_codigo(self, codigo):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM ingressos
-            WHERE codigo = ?
-        """, (codigo,))
-
-        return cursor.fetchone()
-
-    def excluir_ingresso(self, ingresso_id, usuario_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            DELETE FROM ingressos
-            WHERE id = ?
-            AND usuario_id = ?
-        """, (
-            ingresso_id,
-            usuario_id
-        ))
-
-        self.conexao.commit()
-
-    # ==================================================
-    # VENDA
-    # ==================================================
-
-    def registrar_venda(self, show_id):
-        cursor = self.conexao.cursor()
-
-        cursor.execute("""
-            UPDATE shows
-            SET ingressos_vendidos = ingressos_vendidos + 1
-            WHERE id = ?
-            AND ingressos_vendidos < ingressos_total
-        """, (show_id,))
-
-        self.conexao.commit()
-
-        return cursor.rowcount > 0
-
-    # ==================================================
-    # FECHAR BANCO
-    # ==================================================
-
-    def fechar(self):
-        self.conexao.close()
+            db.execute(
+                f"DELETE FROM lotes WHERE show_id NOT IN ({marcadores})",
+                ids
+            )
+        else:
+            db.execute("DELETE FROM lotes")
+            db.execute("DELETE FROM shows")
 
 
-# ======================================================
-# TESTE DO BANCO
-# ======================================================
+def listar_ingressos():
+    with conectar() as db:
+        registros = db.execute(
+            "SELECT * FROM ingressos ORDER BY id"
+        ).fetchall()
 
-if __name__ == "__main__":
-    banco = Banco()
+        return [dict(registro) for registro in registros]
 
-    print("Banco de dados conectado com sucesso!")
-    print("Tabelas criadas:")
-    print("- usuarios")
-    print("- shows")
-    print("- lotes")
-    print("- ingressos")
 
-    banco.fechar()
+def salvar_ingressos(lista):
+    with conectar() as db:
+        ids = []
+
+        for item in lista:
+            d = item.to_dict() if hasattr(item, "to_dict") else dict(item)
+
+            ids.append(d["id"])
+
+            db.execute("""
+                INSERT INTO ingressos (
+                    id, show, preco, local, data,
+                    pagamento, usuario_id, codigo
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    show=excluded.show,
+                    preco=excluded.preco,
+                    local=excluded.local,
+                    data=excluded.data,
+                    pagamento=excluded.pagamento,
+                    usuario_id=excluded.usuario_id,
+                    codigo=excluded.codigo
+            """, (
+                d["id"],
+                d.get("show", "Evento"),
+                d.get("preco", 0),
+                d.get("local", ""),
+                d.get("data", ""),
+                d.get("pagamento", ""),
+                d["usuario_id"],
+                d.get("codigo")
+            ))
+
+        if ids:
+            marcadores = ",".join("?" for _ in ids)
+            db.execute(
+                f"DELETE FROM ingressos WHERE id NOT IN ({marcadores})",
+                ids
+            )
+        else:
+            db.execute("DELETE FROM ingressos")
+
+
+def migrar_json_se_necessario():
+    arquivos = {
+        "usuarios": os.path.join(BASE_DIR, "usuarios.json"),
+        "shows": os.path.join(BASE_DIR, "shows.json"),
+        "ingressos": os.path.join(BASE_DIR, "ingressos.json")
+    }
+
+    with conectar() as db:
+        totais = [
+            db.execute(
+                f"SELECT COUNT(*) FROM {tabela}"
+            ).fetchone()[0]
+            for tabela in ("usuarios", "shows", "ingressos")
+        ]
+
+    if any(totais):
+        return False
+
+    dados = {}
+
+    for chave, caminho in arquivos.items():
+        try:
+            with open(caminho, encoding="utf-8") as arquivo:
+                conteudo = json.load(arquivo)
+
+            dados[chave] = (
+                conteudo if isinstance(conteudo, list) else []
+            )
+        except (OSError, ValueError):
+            dados[chave] = []
+
+    salvar_usuarios(dados["usuarios"])
+    salvar_shows(dados["shows"])
+    salvar_ingressos(dados["ingressos"])
+
+    return True
+
+
+inicializar_banco()

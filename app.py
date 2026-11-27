@@ -1,5 +1,5 @@
-import json
 import os
+from dotenv import load_dotenv
 import uuid
 import random
 import secrets
@@ -15,15 +15,16 @@ import qrcode
 
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from modelos import Usuario, Ingresso
+import banco
 from clima import buscar_clima
 from cep import buscar_cep
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "chave-local-apenas-para-desenvolvimento")
-app.config["SECURITY_PASSWORD_SALT"] = os.environ.get("SECURITY_PASSWORD_SALT", "ticketshow-reset-local")
+app.secret_key = os.environ["SECRET_KEY"]
 
 # =========================
 # MERCADO PAGO
@@ -38,7 +39,6 @@ app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME", "")
 app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD", "")
-app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_USERNAME", "noreply@ticketshow.local")
 
 mail = Mail(app)
 
@@ -483,34 +483,19 @@ def corrigir_shows():
 corrigir_shows()
 
 # ---------------------------------------------------------------------------
-# Carrega usuarios salvos em disco (se existir o arquivo)
+# Banco de dados: migra os JSON antigos uma única vez e passa a usar SQLite.
+# Os arquivos JSON originais são preservados como cópia de segurança.
 # ---------------------------------------------------------------------------
-try:
-    with open(os.path.join(os.path.dirname(__file__), "usuarios.json"), "r", encoding="utf-8") as arquivo:
-        dados = json.load(arquivo)
-        usuarios = [Usuario(**usuario) for usuario in dados]
-except FileNotFoundError:
-    pass
+banco.migrar_json_se_necessario()
 
-
-# Restaurar shows e ingressos salvos; não perder alterações após reiniciar.
-for nome_arquivo, destino in (("shows.json", "shows"), ("ingressos.json", "ingressos")):
-    try:
-        with open(os.path.join(os.path.dirname(__file__), nome_arquivo), encoding="utf-8") as arquivo:
-            dados_salvos = json.load(arquivo)
-        if isinstance(dados_salvos, list):
-            if destino == "shows":
-                SHOWS = dados_salvos
-            else:
-                ingressos = [Ingresso(**item) for item in dados_salvos]
-    except (OSError, ValueError, TypeError):
-        pass
-
+usuarios = [Usuario(**usuario) for usuario in banco.listar_usuarios()]
+shows_salvos = banco.listar_shows()
+if shows_salvos:
+    SHOWS = shows_salvos
+ingressos = [Ingresso(**item) for item in banco.listar_ingressos()]
 corrigir_shows()
 
 # Evita colisões de login entre cadastros antigos duplicados.
-# Um administrador com e-mail repetido não será escolhido automaticamente.
-# Para criar ou redefinir uma conta administrativa, rode: flask --app app criar-admin.
 normalizados = []
 emails_vistos = set()
 for usuario in sorted(usuarios, key=lambda u: (u.email.strip().lower(), u.tipo == "admin", u.id)):
@@ -521,33 +506,37 @@ for usuario in sorted(usuarios, key=lambda u: (u.email.strip().lower(), u.tipo =
         normalizados.append(usuario)
 usuarios = normalizados
 
-# Migração automática de senhas antigas em texto para hashes.
+# Senhas antigas em texto puro são convertidas para hash antes de persistir.
 senhas_migradas = False
 for usuario in usuarios:
     if not usuario.senha.startswith(("scrypt:", "pbkdf2:")):
         usuario.senha = generate_password_hash(usuario.senha)
         senhas_migradas = True
 
+
 def _to_dict(obj):
-    """Converte um objeto Usuario/Ingresso em dict para salvar em JSON."""
-    if hasattr(obj, "to_dict"):
-        return obj.to_dict()
-    return vars(obj)
+    return obj.to_dict() if hasattr(obj, "to_dict") else vars(obj)
 
 
 def salvar_usuarios_json():
-    with open(os.path.join(os.path.dirname(__file__), "usuarios.json"), "w", encoding="utf-8") as arquivo:
-        json.dump([_to_dict(u) for u in usuarios], arquivo, ensure_ascii=False, indent=2)
-# Normalização dos cadastros é persistida no primeiro carregamento.
-salvar_usuarios_json()
+    """Compatibilidade com as rotas antigas; grava no SQLite, não em JSON."""
+    banco.salvar_usuarios(usuarios)
+
 
 def salvar_shows_json():
-    with open(os.path.join(os.path.dirname(__file__), "shows.json"), "w", encoding="utf-8") as arquivo:
-        json.dump(SHOWS, arquivo, ensure_ascii=False, indent=2)
+    """Compatibilidade com as rotas antigas; grava no SQLite, não em JSON."""
+    banco.salvar_shows(SHOWS)
+
 
 def salvar_ingressos_json():
-    with open(os.path.join(os.path.dirname(__file__), "ingressos.json"), "w", encoding="utf-8") as arquivo:
-        json.dump([_to_dict(i) for i in ingressos], arquivo, ensure_ascii=False, indent=2)
+    """Compatibilidade com as rotas antigas; grava no SQLite, não em JSON."""
+    banco.salvar_ingressos(ingressos)
+
+
+# Persiste normalizações, hashes convertidos e o catálogo inicial.
+salvar_usuarios_json()
+salvar_shows_json()
+salvar_ingressos_json()
 
 
 def atualizar_shows():
@@ -619,86 +608,6 @@ def autenticar_credenciais(email, senha):
             session["tipo"] = usuario.tipo
             return True
     return False
-
-
-def gerar_token_redefinicao(email):
-    serializer = URLSafeTimedSerializer(app.secret_key)
-    return serializer.dumps(email, salt=app.config["SECURITY_PASSWORD_SALT"])
-
-
-def validar_token_redefinicao(token, validade=900):
-    serializer = URLSafeTimedSerializer(app.secret_key)
-    try:
-        return serializer.loads(
-            token,
-            salt=app.config["SECURITY_PASSWORD_SALT"],
-            max_age=validade,
-        )
-    except (BadSignature, SignatureExpired):
-        return None
-
-
-@app.route("/esqueci-senha", methods=["GET", "POST"])
-def esqueci_senha():
-    mensagem = None
-    if request.method == "POST":
-        email = (request.form.get("email") or "").strip().lower()
-        usuario = next((u for u in usuarios if u.email.lower() == email), None)
-        # A mesma resposta é exibida exista ou não a conta, evitando revelar cadastros.
-        if usuario:
-            token = gerar_token_redefinicao(usuario.email)
-            link = url_for("redefinir_senha", token=token, _external=True)
-            try:
-                mensagem_email = Message(
-                    subject="TicketShow | Recuperação de senha",
-                    recipients=[usuario.email],
-                    body=(
-                        f"Olá, {usuario.nome}!\n\n"
-                        "Recebemos um pedido para redefinir sua senha. "
-                        "Acesse o link abaixo em até 15 minutos:\n\n"
-                        f"{link}\n\n"
-                        "Se você não solicitou, ignore este e-mail."
-                    ),
-                )
-                mail.send(mensagem_email)
-            except Exception:
-                app.logger.exception("Não foi possível enviar o e-mail de recuperação.")
-                flash("Não foi possível enviar o e-mail agora. Confira a configuração de e-mail.", "erro")
-                return render_template("esqueci_senha.html", mensagem=None), 503
-        mensagem = "Se o e-mail estiver cadastrado, você receberá um link de recuperação."
-    return render_template("esqueci_senha.html", mensagem=mensagem)
-
-
-@app.route("/redefinir-senha/<token>", methods=["GET", "POST"])
-def redefinir_senha(token):
-    email = validar_token_redefinicao(token)
-    if not email:
-        return render_template(
-            "redefinir_senha.html", token=None, expirado=True
-        ), 400
-    usuario = next((u for u in usuarios if u.email.lower() == email.lower()), None)
-    if usuario is None:
-        abort(404)
-    if request.method == "POST":
-        senha = request.form.get("senha") or ""
-        confirmacao = request.form.get("confirmacao") or ""
-        if len(senha) < 8:
-            flash("A senha precisa ter pelo menos 8 caracteres.", "erro")
-        elif senha != confirmacao:
-            flash("As senhas não coincidem.", "erro")
-        else:
-            usuario.senha = generate_password_hash(senha)
-            salvar_usuarios_json()
-            flash("Senha alterada! Entre com sua nova senha.", "sucesso")
-            return redirect(url_for("login"))
-    return render_template("redefinir_senha.html", token=token, expirado=False)
-
-
-@app.route("/clima")
-@login_required
-def pagina_clima():
-    dados = buscar_clima()
-    return render_template("clima.html", clima=dados)
 
 
 @app.route("/login", methods=["GET", "POST"])

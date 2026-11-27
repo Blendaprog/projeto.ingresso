@@ -61,3 +61,12 @@ CORREÇÃO NOVEMBRO 2026 — ERRO AO INICIAR
 
 
 CHECKOUT DE DEMONSTRACAO: o fluxo de cartao e PIX nao processa pagamento real. Nunca informe dados reais de cartao. Pedidos gerados sao apenas demonstrativos, nao ingressos pagos.
+
+BANCO DE DADOS SQLITE — NOVA ETAPA
+- O TicketShow agora usa banco.py e o arquivo ticketshow.db (SQLite).
+- Na primeira inicialização, os dados de usuarios.json, shows.json e ingressos.json
+  são importados automaticamente para o banco, se ele ainda estiver vazio.
+- Os JSON originais NÃO são apagados; mantenha-os como backup.
+- Depois da migração, as rotas salvam e carregam os dados pelo banco SQLite.
+- Não apague ticketshow.db depois da primeira execução, pois ele contém os dados atuais.
+- Para fazer backup, feche o servidor e copie ticketshow.db para outro local.

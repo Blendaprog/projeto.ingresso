@@ -55,3 +55,8 @@ NOVO CHECKOUT DEMONSTRATIVO
 - Nao informa dados de cartao, nao transfere dinheiro e nao gera ingresso real.
 - O contador de ingressos VENDIDOS nao aumenta com simulacoes.
 - A tela de pedidos indica claramente DEMONSTRACAO - NAO PAGO.
+
+BANCO DE DADOS
+- Na primeira abertura, o sistema cria ticketshow.db e importa os JSON antigos.
+- Não apague ticketshow.db: ele passa a ser o armazenamento principal.
+- Os arquivos JSON originais ficam preservados como backup da migração.
