@@ -1,44 +1,96 @@
-# TicketShow — Projeto Final (versão de evolução)
+# 🎟️ TicketShow
 
-Projeto Flask de venda demonstrativa de ingressos, desenvolvido a partir do PP3.
+**Plataforma web de eventos e gerenciamento de ingressos.**
 
-## O que foi acrescentado nesta versão
+O TicketShow é um projeto desenvolvido em Python com Flask, com o objetivo de oferecer uma plataforma para visualizar eventos, gerenciar ingressos e administrar informações.
 
-* Tema visual escuro em preto/grafite com cartões e sombras.
-* Fluxo de recuperação de senha com token assinado e validade de 15 minutos.
-* Envio do link por Flask-Mail (requer configuração de e-mail no `.env`).
-* Página de clima que exibe dados da API Open-Meteo e trata indisponibilidade.
-* Arquivo `.env.example` e configuração inicial do Flake8.
+## ✨ Funcionalidades
 
-## Executar localmente
+- Cadastro e login de usuários.
+- Autenticação com senhas protegidas por hash.
+- Painel administrativo.
+- Cadastro e gerenciamento de eventos.
+- Gerenciamento de lotes de ingressos.
+- Visualização e gerenciamento de ingressos.
+- Persistência de dados com SQLite.
+- Interface personalizada para navegação.
 
-1. Crie e ative um ambiente virtual.
-2. Instale as dependências: `pip install -r requirements.txt`.
-3. Copie `.env.example` para `.env` e preencha as variáveis.
-4. Execute `python app.py`.
+## 🛠️ Tecnologias utilizadas
 
-## Configuração de e-mail
+- Python
+- Flask
+- SQLite
+- HTML5
+- CSS3
+- JavaScript
 
-Use uma conta Gmail com senha de app em `MAIL\\\_USERNAME` e `MAIL\\\_PASSWORD`. Nunca envie o `.env` ao GitHub.
-Sem essas variáveis, o fluxo de recuperação não conseguirá enviar mensagens.
+## 🚀 Como executar localmente
 
-## API externa
+**1. Clone o repositório:**
 
-A página `/clima` usa a API Open-Meteo, sem chave, com `requests`, timeout e tratamento de falhas.
+```bash
+git clone https://github.com/Blendaprog/projeto.ingresso.git
+```
 
-## Atenção — pendências obrigatórias antes da entrega
+**2. Entre na pasta:**
 
-Esta versão ainda utiliza arquivos JSON para usuários e ingressos. O enunciado do Projeto Final exige
-Flask-SQLAlchemy; portanto, a migração do armazenamento para banco SQLAlchemy ainda precisa ser feita
-antes de considerar o projeto pronto para avaliação.
+```bash
+cd projeto.ingresso
+```
 
-Também é necessário executar os testes completos, revisar todos os acessos por usuário (incluindo
-retornos 403/404), rodar `flake8`, configurar `SECRET\\\_KEY` no PythonAnywhere, publicar o site e criar
-uma conta de teste. Não publique dados pessoais ou o arquivo `.env`.
+**3. Crie um ambiente virtual:**
 
-## API permitida pelo enunciado
+```bash
+python -m venv .venv
+```
 
-Open-Meteo (clima), listada na tabela do enunciado do professor.
+**4. Ative o ambiente no Windows:**
 
+```powershell
+.venv\Scripts\activate
+```
 
+**5. Instale as dependências:**
 
+```bash
+pip install -r requirements.txt
+```
+
+**6. Configure as variáveis de ambiente**, utilizando o arquivo `.env.example` como referência.
+
+**7. Execute a aplicação:**
+
+```bash
+python app.py
+```
+
+Acesse pelo navegador:
+
+`http://127.0.0.1:5000`
+
+## 📁 Estrutura do projeto
+
+| Arquivo/Pasta | Descrição |
+|---|---|
+| `app.py` | Aplicação e rotas Flask |
+| `banco.py` | Operações com o banco SQLite |
+| `modelos.py` | Modelos do sistema |
+| `templates/` | Páginas HTML |
+| `static/` | Arquivos CSS e recursos estáticos |
+| `requirements.txt` | Dependências do projeto |
+
+## 🔒 Segurança
+
+- Senhas armazenadas utilizando hash.
+- Banco de dados local SQLite.
+- Arquivos de configuração e dados privados protegidos pelo `.gitignore`.
+
+## 👩‍💻 Desenvolvedora
+
+**Blendaprog**
+
+Projeto desenvolvido para fins educacionais.
+
+---
+
+⭐ Obrigada por conhecer o TicketShow!
